@@ -1,13 +1,11 @@
 from pyteal import *
 
 
-def methods_calls(methods: list, methods_branches: list):
-
-    assert len(methods) == len(methods_branches)
+def methods_calls(methods: dict):
 
     args = []
-    for i in range(len(methods)):
-        args += [[Txn.application_args[0] == methods[i], methods_branches[i]]]
+    for method_name, method_call in methods.items():
+        args += [[Txn.application_args[0] == Bytes(method_name), method_call]]
 
     precondition = And(
         Txn.type_enum() == TxnType.ApplicationCall,
@@ -42,16 +40,10 @@ if __name__ == "__main__":
         return Return(Int(1))
 
 
-    methods = [
-        Bytes("methodA"),
-        Bytes("methodB"),
-        Bytes("methodC"),
-    ]
+    methods = {
+        'methodA': method_a(),
+        'methodB': method_b(),
+        'methodC': method_c(),
+    }
 
-    methods_branches = [
-        method_a(),
-        method_b(),
-        method_c(),
-    ]
-
-    teal = compile_stateful(methods_calls(methods, methods_branches))
+    teal = compile_stateful(methods_calls(methods))
