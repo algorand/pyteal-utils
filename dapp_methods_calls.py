@@ -1,16 +1,28 @@
 from pyteal import *
 
 
-def methods_calls(methods: dict):
+def methods_calls(methods: dict, call_idx: int):
+    """
+    dApp's methods calls dispatching utility function.
+
+    Args:
+        methods: methods calls dictionary {'method_name': method_call()}
+        call_idx: method call group index
+
+    Returns:
+        dApp's methods calls dispatching TEAL logic
+    """
 
     args = []
     for method_name, method_call in methods.items():
-        args += [[Txn.application_args[0] == Bytes(method_name), method_call]]
+        args += [
+            [Gtxn[call_idx].application_args[0] == Bytes(method_name),
+             method_call]
+        ]
 
     precondition = And(
-        Txn.type_enum() == TxnType.ApplicationCall,
-        Txn.rekey_to() == Global.zero_address(),
-        Txn.application_args.length() >= Int(1),
+        Gtxn[call_idx].type_enum() == TxnType.ApplicationCall,
+        Gtxn[call_idx].application_args.length() >= Int(1),
     )
 
     return Seq([
@@ -46,4 +58,11 @@ if __name__ == "__main__":
         'methodC': method_c(),
     }
 
-    teal = compile_stateful(methods_calls(methods))
+    call_idx = 0
+
+    teal = compile_stateful(
+        Cond(
+            [Txn.on_completion() == OnComplete.NoOp,
+             methods_calls(methods, call_idx)]
+        )
+    )
