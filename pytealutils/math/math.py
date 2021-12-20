@@ -1,4 +1,4 @@
-from pyteal import Subroutine, TealType, Exp, Int, If
+from pyteal import Exp, Subroutine, TealType, Int, If
 
 # TODO: Wide math?
 
