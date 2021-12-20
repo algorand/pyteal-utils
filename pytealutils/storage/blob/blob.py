@@ -1,4 +1,24 @@
-from pyteal import *
+from pyteal import (
+    Extract,
+    GetByte,
+    SetByte,
+    Concat,
+    Substring,
+    Len,
+    Or,
+    Itob,
+    BytesZero,
+    Subroutine,
+    Int,
+    TealType,
+    ScratchVar,
+    For,
+    App,
+    Expr,
+    Seq,
+    Bytes,
+    If,
+)
 
 max_keys = 16
 page_size = 128 - 1  # need 1 byte for key
