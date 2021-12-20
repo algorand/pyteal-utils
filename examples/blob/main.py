@@ -6,6 +6,7 @@ def test():
     b = Blob()
 
     test = Seq(
+        b.zero(),  # Required on initialization
         Pop(b.write(Int(0), Int(0), Bytes("deadbeef" * 16))),
         Log(b.read(Int(0), Int(8), Int(32))),
         Int(1),
