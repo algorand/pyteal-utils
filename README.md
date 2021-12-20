@@ -40,6 +40,8 @@ tail - string minus first byte
 
 common transaction filter safety checks
 
+common inner transaction operations
+
 ## Math
 
 This is barely a math package
