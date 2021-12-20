@@ -15,6 +15,11 @@ def intkey(i: TealType.uint64) -> Expr:
     return Extract(Itob(i), Int(7), Int(1))
 
 class Blob:
+    """
+        Blob is a class holding static methods to work with the local storage of an account as a binary large object
+
+        The `zero` method must be called on an account on opt in and the schema of the local storage should be 16 bytes
+    """
     def __init__(self):
         # Add Keyspace range?
         # Allow global storage option
@@ -23,6 +28,12 @@ class Blob:
     @staticmethod
     @Subroutine(TealType.none)
     def zero(acct: TealType.uint64) -> Expr:
+        """ 
+        initializes local state of an account to all zero bytes
+
+        This allows us to be lazy later and _assume_ all the strings are the same size
+
+        """
         i = ScratchVar()
         init = i.store(Int(0))
         cond = i.load() < maxKeys
@@ -34,6 +45,9 @@ class Blob:
     @staticmethod
     @Subroutine(TealType.uint64)
     def get_byte(acct: TealType.uint64, idx: TealType.uint64):
+        """
+        Get a single byte from local storage of an account by index
+        """
         key = intkey(idx / pageSize)
         offset = idx % pageSize
         return GetByte(App.localGet(acct, key), offset)
@@ -41,6 +55,9 @@ class Blob:
     @staticmethod
     @Subroutine(TealType.none)
     def set_byte(acct: TealType.uint64, idx: TealType.uint64, byte: TealType.uint64):
+        """
+        Set a single byte from local storage of an account by index
+        """
         key = intkey(idx / pageSize)
         offset = idx % pageSize
         return App.localPut(acct, key, SetByte(App.localGet(acct, key), offset, byte))
@@ -50,6 +67,9 @@ class Blob:
     def read(
         acct: TealType.uint64, bstart: TealType.uint64, bstop: TealType.uint64
     ) -> Expr:
+        """
+        read bytes between bstart and bstop from local storage of an account by index
+        """
 
         startKey = bstart / pageSize
         startOffset = bstart % pageSize
@@ -93,6 +113,9 @@ class Blob:
     def write(
         acct: TealType.uint64, bstart: TealType.uint64, buff: TealType.bytes
     ) -> Expr:
+        """
+        write bytes between bstart and len(buff) to local storage of an account
+        """
 
         length = Len(buff)
 

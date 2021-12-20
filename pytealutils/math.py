@@ -1,24 +1,28 @@
 from pyteal import Subroutine, TealType, Exp, Int, If
 
-# Wide math?
+# TODO: Wide math?
 
 @Subroutine(TealType.uint64)
 def exp10(x: TealType.uint64):
+    """ Returns 10^x, useful for things like total supply of an asset """
     return Exp(Int(10), x)
 
 
 @Subroutine(TealType.uint64)
 def max(a: TealType.uint64, b: TealType.uint64):
+    """ Returns the max of 2 integers """
     return If(a > b, a, b)
 
 
 @Subroutine(TealType.uint64)
 def min(a: TealType.uint64, b: TealType.uint64):
+    """ Returns the min of 2 integers """
     return If(a < b, a, b)
 
 
-# By default division is truncated to floor, this offers the opposite
 @Subroutine(TealType.uint64)
-def ceil(n, d):
-    q = n / d
-    return If(n % d != Int(0), q + Int(1), q)
+def ceil(a: TealType.uint64, b: TealType.uint64):
+    """ Returns the result of division rounded up to the next integer """
+    q = a / b
+    return If(a % b > Int(0), q + Int(1), q)
+
