@@ -1,11 +1,11 @@
 from pyteal import *
 
-max_keys  = 16
+max_keys = 16
 page_size = 128 - 1  # need 1 byte for key
 max_bytes = max_keys * page_size
-max_bits  = max_bytes * 8
+max_bits = max_bytes * 8
 
-maxKeys  = Int(max_keys)
+maxKeys = Int(max_keys)
 pageSize = Int(page_size)
 maxBytes = int(max_bytes)
 
@@ -14,12 +14,14 @@ maxBytes = int(max_bytes)
 def intkey(i: TealType.uint64) -> Expr:
     return Extract(Itob(i), Int(7), Int(1))
 
+
 class Blob:
     """
-        Blob is a class holding static methods to work with the local storage of an account as a binary large object
+    Blob is a class holding static methods to work with the local storage of an account as a binary large object
 
-        The `zero` method must be called on an account on opt in and the schema of the local storage should be 16 bytes
+    The `zero` method must be called on an account on opt in and the schema of the local storage should be 16 bytes
     """
+
     def __init__(self):
         # Add Keyspace range?
         # Allow global storage option
@@ -28,7 +30,7 @@ class Blob:
     @staticmethod
     @Subroutine(TealType.none)
     def zero(acct: TealType.uint64) -> Expr:
-        """ 
+        """
         initializes local state of an account to all zero bytes
 
         This allows us to be lazy later and _assume_ all the strings are the same size

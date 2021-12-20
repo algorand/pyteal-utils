@@ -3,24 +3,24 @@ from pyteal import *
 from .math import exp10
 
 # Magic number to convert between ascii chars and integers
-ascii_offset = Int(48)  
+ascii_offset = Int(48)
 
 
 @Subroutine(TealType.uint64)
 def ascii_to_int(arg: TealType.uint64):
-    """ Convert the integer representing a character in ascii to the actual integer it represents """
+    """Convert the integer representing a character in ascii to the actual integer it represents"""
     return arg - ascii_offset
 
 
 @Subroutine(TealType.bytes)
 def int_to_ascii(arg: TealType.uint64):
-    """ Convert an integer to the ascii byte that represents it """
+    """Convert an integer to the ascii byte that represents it"""
     return Substring(Bytes("0123456789"), arg, arg + Int(1))
 
 
 @Subroutine(TealType.uint64)
 def atoi(a: TealType.bytes):
-    """ Convert a byte string representing a number to the integer value it represents """
+    """Convert a byte string representing a number to the integer value it represents"""
     return If(
         Len(a) > Int(0),
         (ascii_to_int(GetByte(a, Int(0))) * exp10(Len(a) - Int(1)))
@@ -31,7 +31,7 @@ def atoi(a: TealType.bytes):
 
 @Subroutine(TealType.bytes)
 def itoa(i: TealType.uint64):
-    """ Convert an integer to the ascii byte string it represents """
+    """Convert an integer to the ascii byte string it represents"""
     return If(
         i == Int(0),
         Bytes("0"),
@@ -44,27 +44,27 @@ def itoa(i: TealType.uint64):
 
 @Subroutine(TealType.bytes)
 def head(s: TealType.bytes):
-    """ Get the first byte from a bytestring, returns a uint64 """
+    """Get the first byte from a bytestring, returns a uint64"""
     return Extract(s, Int(0), Int(1))
 
 
 @Subroutine(TealType.bytes)
 def tail(s: TealType.bytes):
-    """ Return the string with the first character removed """
+    """Return the string with the first character removed"""
     return Substring(s, Int(1), Len(s))
 
 
 @Subroutine(TealType.bytes)
 def encode_uvarint(val: TealType.uint64, b: TealType.bytes):
-    """ 
+    """
     Returns the uvarint encoding of an integer
 
     Useful in the case that the bytecode for a contract is being populated, since
     integers in a contract are uvarint encoded
 
-    This subroutine is recursive, the first call should include 
+    This subroutine is recursive, the first call should include
     the integer to be encoded and an empty bytestring
-    
+
     """
     buff = ScratchVar()
     return Seq(
