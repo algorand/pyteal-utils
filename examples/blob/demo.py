@@ -1,5 +1,5 @@
 from pyteal import *
-from blob import Blob
+from pytealutils.storage.blob import Blob
 
 
 def test():
