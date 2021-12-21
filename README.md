@@ -34,4 +34,4 @@ Treat local storage of an account as a Binary Large Object with ~2k storage. (16
 
 Api allow read/write by index into `[2032]byte` array
 
->Node: You must zero the blob on initialization, see `examples/blob/main.py`
+> Note: You must zero the blob on initialization, see `examples/blob/main.py`
