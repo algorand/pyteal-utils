@@ -2,14 +2,14 @@ from pyteal import App, TealType, Expr, Assert, Seq, Subroutine, If, Int
 
 
 @Subroutine(TealType.anytype)
-def must_get(key: TealType.bytes) -> Expr:
+def global_must_get(key: TealType.bytes) -> Expr:
     """Returns the result of a global storage MaybeValue if it exists, else Assert and fail the program"""
     maybe = App.globalGetEx(Int(0), key)
     return Seq(maybe, Assert(maybe.hasValue()), maybe.value())
 
 
 @Subroutine(TealType.anytype)
-def get_else(key: TealType.bytes, default: Expr) -> Expr:
+def global_get_else(key: TealType.bytes, default: Expr) -> Expr:
     """Returns the result of a global storage MaybeValue if it exists, else return a default value"""
     maybe = App.globalGetEx(Int(0), key)
     return Seq(maybe, If(maybe.hasValue(), maybe.value(), default))

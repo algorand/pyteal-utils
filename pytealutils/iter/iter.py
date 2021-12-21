@@ -3,7 +3,7 @@ from pyteal import Int, Expr, Subroutine, ScratchVar, For, TealType
 # TODO: pass the scratch var to use?
 
 # TODO: union type?
-def range(n: Int, sub: Expr):
+def iter(sub: Expr, n: Int):
     @Subroutine(TealType.none)
     def _impl():
         i = ScratchVar()

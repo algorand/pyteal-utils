@@ -1,3 +1,4 @@
+from typing import Tuple
 from pyteal import (
     Extract,
     GetByte,
@@ -27,7 +28,11 @@ max_bits = max_bytes * 8
 
 maxKeys = Int(max_keys)
 pageSize = Int(page_size)
-maxBytes = int(max_bytes)
+maxBytes = Int(max_bytes)
+
+
+def _key_and_offset(idx: Int) -> Tuple[Int, Int]:
+    return idx / pageSize, idx % pageSize
 
 
 @Subroutine(TealType.bytes)
@@ -70,9 +75,8 @@ class Blob:
         """
         Get a single byte from local storage of an account by index
         """
-        key = intkey(idx / pageSize)
-        offset = idx % pageSize
-        return GetByte(App.localGet(acct, key), offset)
+        key, offset = _key_and_offset(idx)
+        return GetByte(App.localGet(acct, intkey(key)), offset)
 
     @staticmethod
     @Subroutine(TealType.none)
@@ -80,24 +84,25 @@ class Blob:
         """
         Set a single byte from local storage of an account by index
         """
-        key = intkey(idx / pageSize)
-        offset = idx % pageSize
-        return App.localPut(acct, key, SetByte(App.localGet(acct, key), offset, byte))
+        key, offset = _key_and_offset(idx)
+        return App.localPut(
+            acct, intkey(key), SetByte(App.localGet(acct, intkey(key)), offset, byte)
+        )
 
     @staticmethod
     @Subroutine(TealType.bytes)
     def read(
-        acct: TealType.uint64, bstart: TealType.uint64, bstop: TealType.uint64
+        acct: TealType.uint64, bstart: TealType.uint64, bend: TealType.uint64
     ) -> Expr:
         """
         read bytes between bstart and bstop from local storage of an account by index
         """
 
-        startKey = bstart / pageSize
-        startOffset = bstart % pageSize
+        startKey, startOffset = _key_and_offset(bstart)
+        stopKey, stopOffset = _key_and_offset(bend)
 
-        stopKey = startKey + (bstop / pageSize)
-        stopOffset = startOffset + (bstop % pageSize)
+        stopKey += startKey
+        stopOffset += startOffset
 
         key = ScratchVar()
         buff = ScratchVar()
@@ -106,7 +111,7 @@ class Blob:
         stop = ScratchVar()
 
         init = key.store(startKey)
-        cond = key.load() <= stopKey
+        cond = key.load() < stopKey
         incr = key.store(key.load() + Int(1))
 
         return Seq(
@@ -141,11 +146,11 @@ class Blob:
 
         length = Len(buff)
 
-        startKey = bstart / pageSize
-        startOffset = bstart % pageSize
+        startKey, startOffset = _key_and_offset(bstart)
+        stopKey, stopOffset = _key_and_offset(length)
 
-        stopKey = startKey + (length / pageSize)
-        stopOffset = startOffset + (length % pageSize)
+        stopKey += startKey
+        stopOffset += startOffset
 
         key = ScratchVar()
         start = ScratchVar()
@@ -153,7 +158,7 @@ class Blob:
         written = ScratchVar()
 
         init = key.store(startKey)
-        cond = key.load() <= stopKey
+        cond = key.load() < stopKey
         incr = key.store(key.load() + Int(1))
 
         delta = ScratchVar()

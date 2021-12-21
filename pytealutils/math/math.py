@@ -22,7 +22,7 @@ def min(a: TealType.uint64, b: TealType.uint64):
 
 
 @Subroutine(TealType.uint64)
-def ceil(a: TealType.uint64, b: TealType.uint64):
+def div_ceil(a: TealType.uint64, b: TealType.uint64):
     """Returns the result of division rounded up to the next integer"""
     q = a / b
     return If(a % b > Int(0), q + Int(1), q)

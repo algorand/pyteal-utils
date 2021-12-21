@@ -1,8 +1,10 @@
-from pyteal import *
+from pyteal import Subroutine, TealType, Seq, InnerTxnBuilder, TxnField, Expr, TxnType
 
 
 @Subroutine(TealType.none)
-def axfer(receiver: TealType.uint64, asset_id: TealType.uint64, amt: TealType.uint64):
+def axfer(
+    receiver: TealType.uint64, asset_id: TealType.uint64, amt: TealType.uint64
+) -> Expr:
     return Seq(
         InnerTxnBuilder.Begin(),
         InnerTxnBuilder.SetFields(
@@ -18,7 +20,7 @@ def axfer(receiver: TealType.uint64, asset_id: TealType.uint64, amt: TealType.ui
 
 
 @Subroutine(TealType.none)
-def pay(receiver: TealType.uint64, amt: TealType.uinit64):
+def pay(receiver: TealType.uint64, amt: TealType.uint64) -> Expr:
     return Seq(
         InnerTxnBuilder.Begin(),
         InnerTxnBuilder.SetFields(
