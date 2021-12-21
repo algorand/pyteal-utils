@@ -3,10 +3,13 @@ from pyteal import Int, Expr, Subroutine, ScratchVar, For, TealType
 # TODO: pass the scratch var to use?
 
 # TODO: union type?
-def iter(sub: Expr, n: Int):
+def iterate(sub: Expr, n: Int, i: ScratchVar = None):
+
+    if i is None:
+        i = ScratchVar()
+
     @Subroutine(TealType.none)
     def _impl():
-        i = ScratchVar()
         init = i.store(Int(0))
         cond = i.load() < n
         iter = i.store(i.load() + Int(1))
