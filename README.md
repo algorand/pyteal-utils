@@ -26,7 +26,7 @@ Please follow the [contribution guide](https://github.com/algorand/pyteal-utils/
 
 There is no guarantee to the API of this repository. It is subject to change without a tagged release. 
 
-This repository is mean to contain PyTeal utility methods common in many Smart Contract programs.
+This repository is meant to contain PyTeal utility methods common in many Smart Contract programs.
 
 ## Strings
 
