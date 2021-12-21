@@ -4,7 +4,8 @@ from pytealutils.iter import *
 
 def test():
 
-    test = Seq(iter(Int(10), Log(Bytes("Hi"))), Int(1))
+    i = ScratchVar()
+    test = Seq(iterate(Log(Itob(i.load())), Int(10), i), Int(1))
     return Cond(
         [Txn.application_id() == Int(0), Int(1)],
         [Txn.on_completion() == OnComplete.OptIn, Int(1)],
