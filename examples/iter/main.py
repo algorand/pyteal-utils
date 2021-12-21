@@ -1,10 +1,10 @@
 from pyteal import *
-from pytealutils.iter import range
+from pytealutils.iter import *
 
 
 def test():
 
-    test = Seq(range(Int(10), Log(Bytes("Hi"))), Int(1))
+    test = Seq(iter(Int(10), Log(Bytes("Hi"))), Int(1))
     return Cond(
         [Txn.application_id() == Int(0), Int(1)],
         [Txn.on_completion() == OnComplete.OptIn, Int(1)],
