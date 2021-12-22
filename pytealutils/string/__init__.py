@@ -1,1 +1,1 @@
-from .string import itoa, atoi, head, tail, encode_uvarint
+from .string import atoi, encode_uvarint, head, itoa, tail

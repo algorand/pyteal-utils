@@ -1,18 +1,19 @@
 from pyteal import (
-    Subroutine,
-    If,
-    Seq,
-    ScratchVar,
-    Int,
-    TealType,
     Bytes,
-    Substring,
     Concat,
-    GetByte,
-    Len,
     Extract,
+    GetByte,
+    If,
+    Int,
     Itob,
+    Len,
+    ScratchVar,
+    Seq,
+    Subroutine,
+    Substring,
+    TealType,
 )
+
 from ..math import exp10
 
 # Magic number to convert between ascii chars and integers

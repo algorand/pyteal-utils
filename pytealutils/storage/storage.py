@@ -1,4 +1,4 @@
-from pyteal import App, TealType, Expr, Assert, Seq, Subroutine, If, Int
+from pyteal import App, Assert, Expr, If, Int, Seq, Subroutine, TealType
 
 
 @Subroutine(TealType.anytype)

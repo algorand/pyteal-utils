@@ -24,17 +24,17 @@ Please follow the [contribution guide](https://github.com/algorand/pyteal-utils/
 
 *EXPERIMENTAL* *WIP*
 
-There is no guarantee to the API of this repository. It is subject to change without a tagged release. 
+There is no guarantee to the API of this repository. It is subject to change without a tagged release.
 
 This repository is meant to contain PyTeal utility methods common in many Smart Contract programs.
 
 ## Strings
 
 atoi - ascii representation of number to integer
-itoa - integer to ascii representation 
+itoa - integer to ascii representation
 
 head - first byte of string returned as uint64
-tail - string minus first byte 
+tail - string minus first byte
 
 ## Txn
 
