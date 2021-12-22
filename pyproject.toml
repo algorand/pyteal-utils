@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "pyteal-utils"
+version = "0.0.1"
+description = ""
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pyteal = "^0.9.0"
+py-algorand-sdk = "^1.8.0"
+pytest = "^6.2.5"
+pytest-xdist = "^2.4.0"
+PyYAML = "^6.0"
+pydantic = "^1.8.2"
+pytest-depends = "^1.0.1"
+
+[tool.poetry.dev-dependencies]
+black = {version = "^21.9b0", allow-prereleases = true}
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"

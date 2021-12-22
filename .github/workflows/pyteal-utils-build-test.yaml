@@ -1,4 +1,4 @@
-name: PyTeal Utils Build and Test validation
+name: PyTeal-Utils Build and Test validation
 
 on: [pull_request]
 
@@ -20,7 +20,7 @@ jobs:
       with:
           poetry-version: 1.1.6
 
-    - name: Install python dependencies
+    - name: Install Python dependencies
       run: poetry install
 
     - uses: pre-commit/action@v2.0.3
