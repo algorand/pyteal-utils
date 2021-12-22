@@ -1,0 +1,4 @@
+pyteal
+py-algorand-sdk
+pytest
+pytest-xdist
