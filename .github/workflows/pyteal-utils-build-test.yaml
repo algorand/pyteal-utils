@@ -1,0 +1,42 @@
+name: PyTeal-Utils Build and Test validation
+
+on: [pull_request]
+
+jobs:
+  build-backend:
+    name: Build & Test PyTeal-Utils
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.9.8
+
+    - name: Set up Poetry
+      uses: abatilo/actions-poetry@v2.1.0
+      with:
+          poetry-version: 1.1.6
+
+    - name: Install Python dependencies
+      run: poetry install
+
+    - uses: pre-commit/action@v2.0.3
+      name: "Linters and formatters check"
+      with:
+        extra_args: --all-files
+
+    - name: Clone Algorand Sanbox
+      run: cd .. && git clone https://github.com/algorand/sandbox.git
+
+    - name: Run Algorand Sandbox
+      shell: 'script -q -e -c "bash {0}"' # hacky hack to make TTY work
+      run: cd ../sandbox && ./sandbox up dev -v
+
+    - name: Delay before testing
+      run: sleep 60
+
+    - name: Run pytest
+      run: poetry run pytest
