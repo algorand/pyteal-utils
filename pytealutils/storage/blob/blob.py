@@ -40,17 +40,14 @@ def intkey(i: TealType.uint64) -> Expr:
     return Extract(Itob(i), Int(7), Int(1))
 
 
+# TODO: Add Keyspace range?
+# TODO: Allow global storage option
 class Blob:
     """
     Blob is a class holding static methods to work with the local storage of an account as a binary large object
 
     The `zero` method must be called on an account on opt in and the schema of the local storage should be 16 bytes
     """
-
-    def __init__(self):
-        # Add Keyspace range?
-        # Allow global storage option
-        pass
 
     @staticmethod
     @Subroutine(TealType.none)
@@ -95,14 +92,11 @@ class Blob:
         acct: TealType.uint64, bstart: TealType.uint64, bend: TealType.uint64
     ) -> Expr:
         """
-        read bytes between bstart and bstop from local storage of an account by index
+        read bytes between bstart and bend from local storage of an account by index
         """
 
         startKey, startOffset = _key_and_offset(bstart)
         stopKey, stopOffset = _key_and_offset(bend)
-
-        stopKey += startKey
-        stopOffset += startOffset
 
         key = ScratchVar()
         buff = ScratchVar()
@@ -111,7 +105,7 @@ class Blob:
         stop = ScratchVar()
 
         init = key.store(startKey)
-        cond = key.load() < stopKey
+        cond = key.load() <= stopKey
         incr = key.store(key.load() + Int(1))
 
         return Seq(
@@ -144,13 +138,8 @@ class Blob:
         write bytes between bstart and len(buff) to local storage of an account
         """
 
-        length = Len(buff)
-
         startKey, startOffset = _key_and_offset(bstart)
-        stopKey, stopOffset = _key_and_offset(length)
-
-        stopKey += startKey
-        stopOffset += startOffset
+        stopKey, stopOffset = _key_and_offset(bstart + Len(buff))
 
         key = ScratchVar()
         start = ScratchVar()
@@ -158,7 +147,7 @@ class Blob:
         written = ScratchVar()
 
         init = key.store(startKey)
-        cond = key.load() < stopKey
+        cond = key.load() <= stopKey
         incr = key.store(key.load() + Int(1))
 
         delta = ScratchVar()

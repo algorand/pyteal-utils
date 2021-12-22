@@ -5,11 +5,16 @@ from pytealutils.storage.blob import Blob
 def test():
     b = Blob()
 
-    data = Bytes("deadbeef" * 16)
+    data = Bytes("base16", "deadbeef" * 16)
     test = Seq(
-        b.zero(),  # Required on initialization
-        Pop(b.write(Int(0), Int(0), data)),
-        Assert(b.read(Int(0), Int(7), Int(32)) == Substring(data, Int(7), Int(32))),
+        b.zero(Int(0)),  # Required on initialization
+        Pop(
+            b.write(Int(0), Int(0), data)
+        ),  # write returns the number of bits written, just pop it
+        Log(
+            b.read(Int(0), Int(0), Int(32))
+        ),  # Should return the first 32 bytes of `data`
+        Assert(b.read(Int(0), Int(0), Len(data)) == data),  # Should pass assert
         Int(1),
     )
     return Cond(
