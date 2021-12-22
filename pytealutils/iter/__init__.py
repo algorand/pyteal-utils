@@ -1,1 +1,1 @@
-from .iter import *
+from .iter import iterate
