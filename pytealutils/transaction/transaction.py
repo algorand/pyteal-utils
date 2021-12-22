@@ -1,4 +1,4 @@
-from pyteal import Global, TealType, Subroutine, Assert, Gtxn, Expr
+from pyteal import Assert, Expr, Global, Gtxn, Subroutine, TealType
 
 
 @Subroutine(TealType.none)

@@ -1,24 +1,25 @@
 from typing import Tuple
+
 from pyteal import (
-    Extract,
-    GetByte,
-    SetByte,
+    App,
+    Bytes,
+    BytesZero,
     Concat,
-    Substring,
+    Expr,
+    Extract,
+    For,
+    GetByte,
+    If,
+    Int,
+    Itob,
     Len,
     Or,
-    Itob,
-    BytesZero,
-    Subroutine,
-    Int,
-    TealType,
     ScratchVar,
-    For,
-    App,
-    Expr,
     Seq,
-    Bytes,
-    If,
+    SetByte,
+    Subroutine,
+    Substring,
+    TealType,
 )
 
 _max_keys = 16
@@ -173,11 +174,7 @@ class Blob:
                                         Int(0),
                                         start.load(),
                                     ),
-                                    Extract(
-                                        buff,
-                                        written.load(),
-                                        delta.load(),
-                                    ),
+                                    Extract(buff, written.load(), delta.load()),
                                     Substring(
                                         App.localGet(acct, intkey(key.load())),
                                         stop.load(),

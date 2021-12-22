@@ -1,4 +1,5 @@
-from pyteal import Int, Expr, Subroutine, ScratchVar, For, TealType
+from pyteal import Expr, For, Int, ScratchVar, Subroutine, TealType
+
 
 # TODO: union type?
 def iterate(sub: Expr, n: Int, i: ScratchVar = None) -> Expr:

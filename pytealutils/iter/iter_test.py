@@ -1,5 +1,18 @@
-from pyteal import *
 from iter import iterate
+from pyteal import (
+    Bytes,
+    Expr,
+    Int,
+    Itob,
+    Log,
+    Mode,
+    ScratchVar,
+    Seq,
+    Subroutine,
+    SubroutineCall,
+    TealType,
+    compileTeal,
+)
 
 
 def test_iterate():
