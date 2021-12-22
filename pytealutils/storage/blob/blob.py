@@ -21,18 +21,18 @@ from pyteal import (
     If,
 )
 
-max_keys = 16
-page_size = 128 - 1  # need 1 byte for key
-max_bytes = max_keys * page_size
-max_bits = max_bytes * 8
+_max_keys = 16
+_page_size = 128 - 1  # need 1 byte for key
+_max_bytes = _max_keys * _page_size
+_max_bits = _max_bytes * 8
 
-maxKeys = Int(max_keys)
-pageSize = Int(page_size)
-maxBytes = Int(max_bytes)
+max_keys = Int(_max_keys)
+page_size = Int(_page_size)
+max_bytes = Int(_max_bytes)
 
 
 def _key_and_offset(idx: Int) -> Tuple[Int, Int]:
-    return idx / pageSize, idx % pageSize
+    return idx / page_size, idx % page_size
 
 
 @Subroutine(TealType.bytes)
@@ -60,10 +60,10 @@ class Blob:
         """
         i = ScratchVar()
         init = i.store(Int(0))
-        cond = i.load() < maxKeys
+        cond = i.load() < max_keys
         iter = i.store(i.load() + Int(1))
         return For(init, cond, iter).Do(
-            App.localPut(acct, intkey(i.load()), BytesZero(pageSize))
+            App.localPut(acct, intkey(i.load()), BytesZero(page_size))
         )
 
     @staticmethod
@@ -95,8 +95,8 @@ class Blob:
         read bytes between bstart and bend from local storage of an account by index
         """
 
-        startKey, startOffset = _key_and_offset(bstart)
-        stopKey, stopOffset = _key_and_offset(bend)
+        start_key, start_offset = _key_and_offset(bstart)
+        stop_key, stop_offset = _key_and_offset(bend)
 
         key = ScratchVar()
         buff = ScratchVar()
@@ -104,16 +104,16 @@ class Blob:
         start = ScratchVar()
         stop = ScratchVar()
 
-        init = key.store(startKey)
-        cond = key.load() <= stopKey
+        init = key.store(start_key)
+        cond = key.load() <= stop_key
         incr = key.store(key.load() + Int(1))
 
         return Seq(
             buff.store(Bytes("")),
             For(init, cond, incr).Do(
                 Seq(
-                    start.store(If(key.load() == startKey, startOffset, Int(0))),
-                    stop.store(If(key.load() == stopKey, stopOffset, pageSize)),
+                    start.store(If(key.load() == start_key, start_offset, Int(0))),
+                    stop.store(If(key.load() == stop_key, stop_offset, page_size)),
                     buff.store(
                         Concat(
                             buff.load(),
@@ -138,16 +138,16 @@ class Blob:
         write bytes between bstart and len(buff) to local storage of an account
         """
 
-        startKey, startOffset = _key_and_offset(bstart)
-        stopKey, stopOffset = _key_and_offset(bstart + Len(buff))
+        start_key, start_offset = _key_and_offset(bstart)
+        stop_key, stop_offset = _key_and_offset(bstart + Len(buff))
 
         key = ScratchVar()
         start = ScratchVar()
         stop = ScratchVar()
         written = ScratchVar()
 
-        init = key.store(startKey)
-        cond = key.load() <= stopKey
+        init = key.store(start_key)
+        cond = key.load() <= stop_key
         incr = key.store(key.load() + Int(1))
 
         delta = ScratchVar()
@@ -156,13 +156,13 @@ class Blob:
             written.store(Int(0)),
             For(init, cond, incr).Do(
                 Seq(
-                    start.store(If(key.load() == startKey, startOffset, Int(0))),
-                    stop.store(If(key.load() == stopKey, stopOffset, pageSize)),
+                    start.store(If(key.load() == start_key, start_offset, Int(0))),
+                    stop.store(If(key.load() == stop_key, stop_offset, page_size)),
                     App.localPut(
                         acct,
                         intkey(key.load()),
                         If(
-                            Or(stop.load() != pageSize, start.load() != Int(0))
+                            Or(stop.load() != page_size, start.load() != Int(0))
                         )  # Its a partial write
                         .Then(
                             Seq(
@@ -181,15 +181,15 @@ class Blob:
                                     Substring(
                                         App.localGet(acct, intkey(key.load())),
                                         stop.load(),
-                                        pageSize,
+                                        page_size,
                                     ),
                                 ),
                             )
                         )
                         .Else(
                             Seq(
-                                delta.store(pageSize),
-                                Substring(buff, written.load(), pageSize),
+                                delta.store(page_size),
+                                Substring(buff, written.load(), page_size),
                             )
                         ),
                     ),
