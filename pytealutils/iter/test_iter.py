@@ -10,7 +10,7 @@ from pyteal import (
     TealType,
 )
 
-from tests.conftest import compile_app
+from tests.conftest import compile_app, fully_compile
 
 
 def test_iterate():
@@ -21,11 +21,12 @@ def test_iterate():
     src = compile_app(res)
     assert len(src) > 0
 
+    res = fully_compile(src)
+    assert len(res['hash']) == 58
+
 
 def test_iterate_with_closure():
-
     i = ScratchVar()
-
     @Subroutine(TealType.none)
     def logthing():
         return Log(Itob(i.load()))
@@ -36,3 +37,6 @@ def test_iterate_with_closure():
 
     src = compile_app(res)
     assert len(src) > 0
+
+    res = fully_compile(src)
+    assert len(res['hash']) == 58
