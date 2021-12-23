@@ -22,11 +22,12 @@ def test_iterate():
     assert len(src) > 0
 
     res = fully_compile(src)
-    assert len(res['hash']) == 58
+    assert len(res["hash"]) == 58
 
 
 def test_iterate_with_closure():
     i = ScratchVar()
+
     @Subroutine(TealType.none)
     def logthing():
         return Log(Itob(i.load()))
@@ -39,4 +40,4 @@ def test_iterate_with_closure():
     assert len(src) > 0
 
     res = fully_compile(src)
-    assert len(res['hash']) == 58
+    assert len(res["hash"]) == 58
