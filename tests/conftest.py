@@ -12,6 +12,14 @@ from pyteal import Expr, Int, Mode, Seq, compileTeal
 def compile_app(method: Expr):
     return compileTeal(Seq(method, Int(0)), mode=Mode.Application, version=5)
 
+def compile_sig(method: Expr):
+    return compileTeal(Seq(method, Int(0)), mode=Mode.Signature, version=5)
+
+def fully_compile(src: str):
+    client = _algod_client()
+    return client.compile(src)
+
+
 
 # CLIENTS
 ###############################################################################
