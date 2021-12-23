@@ -1,18 +1,16 @@
 from iter import iterate
 from pyteal import (
     Bytes,
-    Expr,
     Int,
     Itob,
     Log,
-    Mode,
     ScratchVar,
-    Seq,
     Subroutine,
     SubroutineCall,
     TealType,
-    compileTeal,
 )
+
+from tests.conftest import compile_app
 
 
 def test_iterate():
@@ -38,7 +36,3 @@ def test_iterate_with_closure():
 
     src = compile_app(res)
     assert len(src) > 0
-
-
-def compile_app(method: Expr):
-    return compileTeal(Seq(method, Int(0)), mode=Mode.Application, version=5)
