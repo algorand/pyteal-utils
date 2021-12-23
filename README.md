@@ -48,7 +48,7 @@ Refer to `pre-commit-config.yaml`, make sure to have the hook activated when com
 
 ## Testing utilites
 How many times you already found your self copying&pasting the same helper
-functions and classes form different projects? We want to avoid this!
+functions and classes from different projects? We want to avoid this!
 
 To ensure homogeneous and repeatable tests please use common helpers from
 [utils.py](https://github.com/algorand/pyteal-utils/blob/main/tests/utils.py).
