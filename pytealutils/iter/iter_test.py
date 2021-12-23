@@ -41,4 +41,4 @@ def test_iterate_with_closure():
 
 
 def compile_app(method: Expr):
-    return compileTeal(Seq(method, Int(1)), mode=Mode.Application, version=5)
+    return compileTeal(Seq(method, Int(0)), mode=Mode.Application, version=5)
