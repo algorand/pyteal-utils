@@ -92,3 +92,7 @@ def get_kmd_accounts(
         kmd_client.release_wallet_handle(walletHandle)
 
     return kmdAccounts
+
+
+def compile_app(method: Expr):
+    return compileTeal(Seq(method, Int(0)), mode=Mode.Application, version=5)
