@@ -42,7 +42,7 @@ common transaction filter safety checks
 
 common inner transaction operations
 
-## Nums 
+## Nums
 
 Some common math functions
 
