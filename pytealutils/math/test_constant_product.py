@@ -1,3 +1,4 @@
+import random
 from dataclasses import dataclass
 from typing import List
 
@@ -22,7 +23,13 @@ class ConstantProductState:
     fee: int
 
     def mint(self, a, b) -> int:
-        return int(min(a / self.a_supply, b / self.b_supply) * self.issued)
+        return int(
+            int(
+                int(min(a / self.a_supply, b / self.b_supply) * self.scale)
+                * self.issued
+            )
+            / self.scale
+        )
 
     def burn_a(self, amount) -> int:
         return int((self.a_supply * amount) / self.issued)
@@ -49,23 +56,21 @@ class ConstantProductState:
 
 
 def create_state() -> ConstantProductState:
-    # TODO: randomize with constraints
-    return ConstantProductState(500, 100, 1000, int(1e9), 1000, 3)
+    a = random.randint(1000, int(1e9))
+    b = random.randint(1000, int(1e9))
+    issued = random.randint(1000, int(1e9))
+    return ConstantProductState(a, b, issued, int(1e9), 1000, 3)
 
 
 def gen_states() -> List[ConstantProductState]:
-    # TODO: more
-    return [create_state() for _ in range(1)]
+    return [create_state() for _ in range(10)]
 
 
 def test_constant_product_mint():
     states = gen_states()
     for state in states:
-        # TODO: randomize with constraints
-        a_amount = int(100)
+        a_amount = random.randint(10, int(state.a_supply))
         b_amount = int(a_amount * state.ratio())
-
-        print("a amt {} b amt {}".format(a_amount, b_amount))
 
         expr = Log(
             Itob(
@@ -80,7 +85,7 @@ def test_constant_product_mint():
             )
         )
 
-        expected = [logged_int(int(state.mint(a_amount, b_amount)))]
+        expected = [logged_int(state.mint(a_amount, b_amount))]
 
         assert_output(expr, expected)
 
@@ -88,8 +93,9 @@ def test_constant_product_mint():
 def test_constant_product_burn():
     states = gen_states()
     for state in states:
-        # TODO: randomize with constraints
-        amount = 10
+        # Some amount less than issued
+        amount = random.randint(10, state.issued)
+
         expr = Log(Itob(cp.burn(Int(state.issued), Int(state.a_supply), Int(amount))))
 
         expected = [logged_int(int(state.burn_a(amount)))]
@@ -106,8 +112,7 @@ def test_constant_product_burn():
 def test_constant_product_swap():
     states = gen_states()
     for state in states:
-        # TODO: randomize with constraints
-        amount = 10
+        amount = random.randint(10, state.a_supply)
         expr = Log(
             Itob(
                 cp.swap(
@@ -122,7 +127,7 @@ def test_constant_product_swap():
         expected = [logged_int(int(state.swap_a(amount)))]
         assert_output(expr, expected)
 
-        amount = 10
+        amount = random.randint(10, state.b_supply)
         expr = Log(
             Itob(
                 cp.swap(
