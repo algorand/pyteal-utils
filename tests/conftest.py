@@ -101,6 +101,22 @@ def logged_int(i: int):
     return i.to_bytes(8, "big").hex()
 
 
+def assert_stateful_output(expr: Expr, output: List[str]):
+    assert expr is not None
+
+    src = compile_app(expr)
+    assert len(src) > 0
+
+    compiled = fully_compile(src)
+    assert len(compiled["hash"]) == 58
+
+    app_id = create_app(compiled["result"])
+
+    result = call_app(app_id)
+
+    assert result == output
+
+
 def assert_output(expr: Expr, output: List[str]):
     assert expr is not None
 
@@ -149,5 +165,50 @@ def execute_app(bc: str, **kwargs):
 
     txid = client.send_transaction(txn.sign(acct.private_key))
     result = transaction.wait_for_confirmation(client, txid, 3)
-    print(result["logs"])
+    return [b64decode(l).hex() for l in result["logs"]]
+
+
+def create_app(
+    bc: str,
+    local_schema: transaction.StateSchema,
+    global_schema: transaction.StateSchema,
+    **kwargs
+):
+    client = _algod_client()
+    sp = client.suggested_params()
+
+    acct = get_kmd_accounts().pop()
+    clearprog = b64decode("BYEB")  # pragma 5; int 1
+
+    txn = transaction.ApplicationCallTxn(
+        acct.address,
+        sp,
+        0,
+        transaction.OnComplete.NoOpOC,
+        local_schema,
+        global_schema,
+        b64decode(bc),
+        clearprog,
+        **kwargs
+    )
+
+    txid = client.send_transaction(txn.sign(acct.private_key))
+    result = transaction.wait_for_confirmation(client, txid, 3)
+
+    return result["application-index"]
+
+
+def call_app(app_id: int, **kwargs):
+    client = _algod_client()
+    sp = client.suggested_params()
+
+    acct = get_kmd_accounts().pop()
+
+    txn = transaction.ApplicationCallTxn(
+        acct.address, sp, app_id, transaction.OnComplete.NoOpOC, **kwargs
+    )
+
+    txid = client.send_transaction(txn.sign(acct.private_key))
+
+    result = transaction.wait_for_confirmation(client, txid, 3)
     return [b64decode(l).hex() for l in result["logs"]]
