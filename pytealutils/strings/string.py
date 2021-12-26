@@ -14,7 +14,7 @@ from pyteal import (
     TealType,
 )
 
-from pytealutils.nums import exp10
+from pytealutils.math import exp10
 
 # Magic number to convert between ascii chars and integers
 ascii_offset = Int(48)
