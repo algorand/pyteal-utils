@@ -42,9 +42,9 @@ common transaction filter safety checks
 
 common inner transaction operations
 
-## Math
+## Nums 
 
-This is barely a math package
+Some common math functions
 
 ## Storage
 
