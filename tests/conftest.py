@@ -7,7 +7,7 @@ from typing import List, Optional
 from algosdk import account, encoding, kmd, mnemonic
 from algosdk.future import transaction
 from algosdk.v2client import algod, indexer
-from pyteal import Expr, Int, Mode, Seq, compileTeal
+from pyteal import Cond, Expr, Int, Mode, Seq, Txn, compileTeal
 
 ## Clients
 
@@ -104,13 +104,17 @@ def logged_int(i: int):
 def assert_stateful_output(expr: Expr, output: List[str]):
     assert expr is not None
 
-    src = compile_app(expr)
+    src = compile_stateful_app(expr)
     assert len(src) > 0
 
     compiled = fully_compile(src)
     assert len(compiled["hash"]) == 58
 
-    app_id = create_app(compiled["result"])
+    app_id = create_app(
+        compiled["result"],
+        transaction.StateSchema(0, 16),
+        transaction.StateSchema(0, 64),
+    )
 
     result = call_app(app_id)
 
@@ -132,6 +136,11 @@ def assert_output(expr: Expr, output: List[str]):
 
 def compile_app(method: Expr):
     return compileTeal(Seq(method, Int(1)), mode=Mode.Application, version=5)
+
+
+def compile_stateful_app(method: Expr):
+    expr = Cond([Txn.application_id() == Int(0), Int(1)], [Int(1), Seq(method, Int(1))])
+    return compileTeal(expr, mode=Mode.Application, version=5)
 
 
 def compile_sig(method: Expr):
@@ -204,11 +213,16 @@ def call_app(app_id: int, **kwargs):
 
     acct = get_kmd_accounts().pop()
 
-    txn = transaction.ApplicationCallTxn(
-        acct.address, sp, app_id, transaction.OnComplete.NoOpOC, **kwargs
+    txns = transaction.assign_group_id(
+        [
+            transaction.ApplicationOptInTxn(acct.address, sp, app_id),
+            transaction.ApplicationCallTxn(
+                acct.address, sp, app_id, transaction.OnComplete.NoOpOC, **kwargs
+            ),
+        ]
     )
 
-    txid = client.send_transaction(txn.sign(acct.private_key))
+    client.send_transactions([txn.sign(acct.private_key) for txn in txns])
 
-    result = transaction.wait_for_confirmation(client, txid, 3)
+    result = transaction.wait_for_confirmation(client, txns[-1].get_txid(), 3)
     return [b64decode(l).hex() for l in result["logs"]]
