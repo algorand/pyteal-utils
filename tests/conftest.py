@@ -1,13 +1,13 @@
 """Module containing helper functions for testing PyTeal Utils."""
 
-from base64 import b64decode, b64encode
+from base64 import b64decode
 from dataclasses import dataclass
 from typing import Optional
 
 from algosdk import account, encoding, kmd, mnemonic
 from algosdk.future import transaction
 from algosdk.v2client import algod, indexer
-from pyteal import Expr, Int, Mode, Seq, compileTeal, Subroutine, TealType
+from pyteal import Expr, Int, Mode, Seq, compileTeal
 
 ## Clients
 
@@ -112,7 +112,7 @@ def execute_app(bc: str, **kwargs):
 
     acct = get_kmd_accounts().pop()
     schema = transaction.StateSchema(0, 0)
-    clearprog = b64decode("BYEB") # pragma 5; int 1
+    clearprog = b64decode("BYEB")  # pragma 5; int 1
 
     txn = transaction.ApplicationCallTxn(
         acct.address,
@@ -125,7 +125,7 @@ def execute_app(bc: str, **kwargs):
         clearprog,
         **kwargs
     )
-    
+
     txid = client.send_transaction(txn.sign(acct.private_key))
     result = transaction.wait_for_confirmation(client, txid, 3)
-    return [b64decode(l).decode('ascii') for l in result['logs']]
+    return [b64decode(l).decode("ascii") for l in result["logs"]]
