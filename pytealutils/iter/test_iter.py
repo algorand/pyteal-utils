@@ -1,4 +1,3 @@
-from iter import iterate
 from pyteal import (
     Bytes,
     Int,
@@ -11,6 +10,8 @@ from pyteal import (
 )
 
 from tests.conftest import assert_output, logged_bytes, logged_int
+
+from .iter import iterate
 
 
 def test_iterate():

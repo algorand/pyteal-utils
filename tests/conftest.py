@@ -149,4 +149,5 @@ def execute_app(bc: str, **kwargs):
 
     txid = client.send_transaction(txn.sign(acct.private_key))
     result = transaction.wait_for_confirmation(client, txid, 3)
+    print(result["logs"])
     return [b64decode(l).hex() for l in result["logs"]]
