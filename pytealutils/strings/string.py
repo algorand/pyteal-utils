@@ -1,18 +1,5 @@
-from pyteal import (
-    Bytes,
-    Concat,
-    Extract,
-    GetByte,
-    If,
-    Int,
-    Itob,
-    Len,
-    ScratchVar,
-    Seq,
-    Subroutine,
-    Substring,
-    TealType,
-)
+from pyteal import (Bytes, Concat, Extract, GetByte, If, Int, Itob, Len,
+                    ScratchVar, Seq, Subroutine, Substring, TealType)
 
 from pytealutils.nums import exp10
 
