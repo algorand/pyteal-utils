@@ -10,7 +10,7 @@ from pyteal import (
     TealType,
 )
 
-from tests.conftest import compile_app, fully_compile, execute_app
+from tests.conftest import compile_app, execute_app, fully_compile
 
 
 def test_iterate():
@@ -24,7 +24,7 @@ def test_iterate():
     compiled = fully_compile(src)
     assert len(compiled["hash"]) == 58
 
-    result = execute_app(compiled['result'])
+    result = execute_app(compiled["result"])
     assert result == ["a"] * 10
 
 
@@ -45,5 +45,5 @@ def test_iterate_with_closure():
     compiled = fully_compile(src)
     assert len(compiled["hash"]) == 58
 
-    result = execute_app(compiled['result'])
-    assert result == [x.to_bytes(8, 'big').decode('ascii') for x in range(10)] 
+    result = execute_app(compiled["result"])
+    assert result == [x.to_bytes(8, "big").decode("ascii") for x in range(10)]
