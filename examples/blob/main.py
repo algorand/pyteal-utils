@@ -1,5 +1,17 @@
-from pyteal import (Assert, Bytes, Cond, Int, Len, Log, Mode, OnComplete, Pop,
-                    Seq, Txn, compileTeal)
+from pyteal import (
+    Assert,
+    Bytes,
+    Cond,
+    Int,
+    Len,
+    Log,
+    Mode,
+    OnComplete,
+    Pop,
+    Seq,
+    Txn,
+    compileTeal,
+)
 
 from pytealutils.storage.blob import Blob
 
