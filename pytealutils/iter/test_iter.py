@@ -1,14 +1,6 @@
 from iter import iterate
-from pyteal import (
-    Bytes,
-    Int,
-    Itob,
-    Log,
-    ScratchVar,
-    Subroutine,
-    SubroutineCall,
-    TealType,
-)
+from pyteal import (Bytes, Int, Itob, Log, ScratchVar, Subroutine,
+                    SubroutineCall, TealType)
 
 from tests.conftest import assert_output, logged_bytes, logged_int
 

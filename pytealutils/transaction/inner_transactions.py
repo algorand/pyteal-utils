@@ -1,4 +1,5 @@
-from pyteal import Expr, InnerTxnBuilder, Seq, Subroutine, TealType, TxnField, TxnType
+from pyteal import (Expr, InnerTxnBuilder, Seq, Subroutine, TealType, TxnField,
+                    TxnType)
 
 
 @Subroutine(TealType.none)
