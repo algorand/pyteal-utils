@@ -20,9 +20,9 @@ common transaction filter safety checks
 
 common inner transaction operations
 
-## Math
+## Nums 
 
-This is barely a math package
+Some common math functions
 
 ## Storage
 
@@ -54,10 +54,8 @@ Please follow the [contribution guide](https://github.com/algorand/pyteal-utils/
 - [Algorand Sandbox](https://github.com/algorand/sandbox)
 
 ## Set up your PyTeal environment
-1. Install Docker Compose
-2. Clone Algorand Sandbox repo: `git clone https://github.com/algorand/sandbox.git`
-3. Clone this repo: `git clone https://github.com/algorand/pyteal-utils.git`
-4. Install Python dependecies: `poetry install`
-5. Activate a virual env: `poetry shell`
-6. Configure pre-commit hooks: `pre-commit install`
-7. Bootstrap Algorand Sandbox (`dev` mode recommended): `./sandbox up dev`
+1. Set up the [sandbox](https://github.com/algorand/sandbox) and start it (`dev` mode recommended): `./sandbox up dev`
+2. Clone this repo: `git clone https://github.com/algorand/pyteal-utils.git`
+3. Install Python dependecies: `poetry install`
+4. Activate a virual env: `poetry shell`
+5. Configure pre-commit hooks: `pre-commit install`
