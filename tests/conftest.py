@@ -1,29 +1,17 @@
 """Module containing helper functions for testing PyTeal Utils."""
 
+from base64 import b64decode, b64encode
 from dataclasses import dataclass
 from typing import Optional
 
 from algosdk import account, encoding, kmd, mnemonic
 from algosdk.future import transaction
 from algosdk.v2client import algod, indexer
-from pyteal import Expr, Int, Mode, Seq, compileTeal
+from pyteal import Expr, Int, Mode, Seq, compileTeal, Subroutine, TealType
+
+## Clients
 
 
-def compile_app(method: Expr):
-    return compileTeal(Seq(method, Int(0)), mode=Mode.Application, version=5)
-
-
-def compile_sig(method: Expr):
-    return compileTeal(Seq(method, Int(0)), mode=Mode.Signature, version=5)
-
-
-def fully_compile(src: str):
-    client = _algod_client()
-    return client.compile(src)
-
-
-# CLIENTS
-###############################################################################
 def _algod_client(algod_address="http://localhost:4001", algod_token="a" * 64):
     """Instantiate and return Algod client object."""
     return algod.AlgodClient(algod_token, algod_address)
@@ -39,8 +27,7 @@ def _kmd_client(kmd_address="http://localhost:4002", kmd_token="a" * 64):
     return kmd.KMDClient(kmd_token, kmd_address)
 
 
-# HELPERS
-#############################################################################
+# Env helpers
 
 
 @dataclass
@@ -103,5 +90,42 @@ def get_kmd_accounts(
     return kmdAccounts
 
 
+## Teal Helpers
+
+
 def compile_app(method: Expr):
-    return compileTeal(Seq(method, Int(0)), mode=Mode.Application, version=5)
+    return compileTeal(Seq(method, Int(1)), mode=Mode.Application, version=5)
+
+
+def compile_sig(method: Expr):
+    return compileTeal(Seq(method, Int(1)), mode=Mode.Signature, version=5)
+
+
+def fully_compile(src: str):
+    client = _algod_client()
+    return client.compile(src)
+
+
+def execute_app(bc: str, **kwargs):
+    client = _algod_client()
+    sp = client.suggested_params()
+
+    acct = get_kmd_accounts().pop()
+    schema = transaction.StateSchema(0, 0)
+    clearprog = b64decode("BYEB") # pragma 5; int 1
+
+    txn = transaction.ApplicationCallTxn(
+        acct.address,
+        sp,
+        0,
+        transaction.OnComplete.DeleteApplicationOC,
+        schema,
+        schema,
+        b64decode(bc),
+        clearprog,
+        **kwargs
+    )
+    
+    txid = client.send_transaction(txn.sign(acct.private_key))
+    result = transaction.wait_for_confirmation(client, txid, 3)
+    return [b64decode(l).decode('ascii') for l in result['logs']]

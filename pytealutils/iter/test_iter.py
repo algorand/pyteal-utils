@@ -10,19 +10,22 @@ from pyteal import (
     TealType,
 )
 
-from tests.conftest import compile_app, fully_compile
+from tests.conftest import compile_app, fully_compile, execute_app
 
 
 def test_iterate():
-    res = iterate(Log(Bytes("a")), Int(10))
-    assert type(res) is SubroutineCall
-    assert res is not None
+    expr = iterate(Log(Bytes("a")), Int(10))
+    assert type(expr) is SubroutineCall
+    assert expr is not None
 
-    src = compile_app(res)
+    src = compile_app(expr)
     assert len(src) > 0
 
-    res = fully_compile(src)
-    assert len(res["hash"]) == 58
+    compiled = fully_compile(src)
+    assert len(compiled["hash"]) == 58
+
+    result = execute_app(compiled['result'])
+    assert result == ["a"] * 10
 
 
 def test_iterate_with_closure():
@@ -32,12 +35,15 @@ def test_iterate_with_closure():
     def logthing():
         return Log(Itob(i.load()))
 
-    res = iterate(logthing(), Int(10), i)
-    assert type(res) is SubroutineCall
-    assert res is not None
+    expr = iterate(logthing(), Int(10), i)
+    assert expr is not None
+    assert type(expr) is SubroutineCall
 
-    src = compile_app(res)
+    src = compile_app(expr)
     assert len(src) > 0
 
-    res = fully_compile(src)
-    assert len(res["hash"]) == 58
+    compiled = fully_compile(src)
+    assert len(compiled["hash"]) == 58
+
+    result = execute_app(compiled['result'])
+    assert result == [x.to_bytes(8, 'big').decode('ascii') for x in range(10)] 
