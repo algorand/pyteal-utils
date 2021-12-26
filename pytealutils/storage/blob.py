@@ -1,26 +1,8 @@
 from typing import Tuple
 
-from pyteal import (
-    App,
-    Bytes,
-    BytesZero,
-    Concat,
-    Expr,
-    Extract,
-    For,
-    GetByte,
-    If,
-    Int,
-    Itob,
-    Len,
-    Or,
-    ScratchVar,
-    Seq,
-    SetByte,
-    Subroutine,
-    Substring,
-    TealType,
-)
+from pyteal import (App, Bytes, BytesZero, Concat, Expr, Extract, For, GetByte,
+                    If, Int, Itob, Len, Or, ScratchVar, Seq, SetByte,
+                    Subroutine, Substring, TealType)
 
 _max_keys = 16
 _page_size = 128 - 1  # need 1 byte for key
