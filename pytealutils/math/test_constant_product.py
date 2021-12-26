@@ -22,9 +22,7 @@ class ConstantProductState:
     fee: int
 
     def mint(self, a, b) -> int:
-        if a / self.a_supply < b / self.b_supply:
-            return (a / self.a_supply) * self.issued
-        return int((b / self.b_supply) * self.issued)
+        return int(min(a / self.a_supply, b / self.b_supply) * self.issued)
 
     def burn_a(self, amount) -> int:
         return int((self.a_supply * amount) / self.issued)
