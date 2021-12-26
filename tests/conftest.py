@@ -2,7 +2,7 @@
 
 from base64 import b64decode
 from dataclasses import dataclass
-from typing import Optional
+from typing import List, Optional
 
 from algosdk import account, encoding, kmd, mnemonic
 from algosdk.future import transaction
@@ -93,6 +93,27 @@ def get_kmd_accounts(
 ## Teal Helpers
 
 
+def logged_bytes(b: str):
+    return bytes(b, "ascii").hex()
+
+
+def logged_int(i: int):
+    return i.to_bytes(8, "big").hex()
+
+
+def assert_output(expr: Expr, output: List[str]):
+    assert expr is not None
+
+    src = compile_app(expr)
+    assert len(src) > 0
+
+    compiled = fully_compile(src)
+    assert len(compiled["hash"]) == 58
+
+    result = execute_app(compiled["result"])
+    assert result == output
+
+
 def compile_app(method: Expr):
     return compileTeal(Seq(method, Int(1)), mode=Mode.Application, version=5)
 
@@ -128,4 +149,4 @@ def execute_app(bc: str, **kwargs):
 
     txid = client.send_transaction(txn.sign(acct.private_key))
     result = transaction.wait_for_confirmation(client, txid, 3)
-    return [b64decode(l).decode("ascii") for l in result["logs"]]
+    return [b64decode(l).hex() for l in result["logs"]]
