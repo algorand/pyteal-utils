@@ -1,7 +1,6 @@
 """Module containing helper functions for testing PyTeal Utils."""
 
 from base64 import b64decode
-from dataclasses import dataclass
 from typing import List, Optional
 
 from algosdk import account, encoding, kmd, mnemonic
@@ -30,13 +29,21 @@ def _kmd_client(kmd_address="http://localhost:4002", kmd_token="a" * 64):
 # Env helpers
 
 
-@dataclass
 class Account:
     address: str
     private_key: Optional[str]  # Must be explicitly set to None when setting `lsig`.
     lsig: Optional[transaction.LogicSig] = None
 
-    def __post_init__(self):
+    def __init__(
+        self,
+        address: str,
+        private_key: Optional[str],
+        lsig: Optional[transaction.LogicSig] = None,
+    ):
+        self.address = address
+        self.private_key = private_key
+        self.lsig = lsig
+
         assert self.private_key or self.lsig
 
     def mnemonic(self) -> str:
