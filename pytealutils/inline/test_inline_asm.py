@@ -4,7 +4,6 @@ from pyteal import *
 from tests.conftest import *
 
 
-
 def test_custom_op():
 
     expr = Seq(Log(Bytes("hi")))
