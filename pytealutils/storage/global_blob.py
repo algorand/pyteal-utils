@@ -63,13 +63,13 @@ class GlobalBlob:
         # Expects bzero'd, max_keys
         zloop = """
 zero_loop:
+    int 1
+    -               // ["00"*page_size, key-1]
     dup2            // ["00"*page_size, key, "00"*page_size, key]
     itob            // ["00"*page_size, key, "00"*page_size, itob(key)]
     extract 7 1     // ["00"*page_size, key, "00"*page_size, itob(key)[-1]] get the last byte of the int
     swap            // ["00"*page_size, key, itob(key)[-1], "00"*page_size]
     app_global_put  // ["00"*page_size, key]  (removes top 2 elements)
-    int 1
-    -               // ["00"*page_size, key-1]
     dup             // ["00"*page_size, key-1, key-1]
     bnz zero_loop   // start loop over if key-1>0
     pop

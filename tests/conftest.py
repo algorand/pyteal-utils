@@ -134,17 +134,17 @@ def assert_output(expr: Expr, output: List[str], **kwargs):
     assert result == output
 
 
-def compile_app(method: Expr):
-    return compileTeal(Seq(method, Int(1)), mode=Mode.Application, version=5)
+def compile_app(method: Expr, version: int = 5):
+    return compileTeal(Seq(method, Int(1)), mode=Mode.Application, version=version)
 
 
-def compile_stateful_app(method: Expr):
+def compile_stateful_app(method: Expr, version: int = 5):
     expr = Cond([Txn.application_id() == Int(0), Int(1)], [Int(1), Seq(method, Int(1))])
-    return compileTeal(expr, mode=Mode.Application, version=5)
+    return compileTeal(expr, mode=Mode.Application, version=version)
 
 
-def compile_sig(method: Expr):
-    return compileTeal(Seq(method, Int(1)), mode=Mode.Signature, version=5)
+def compile_sig(method: Expr, version: int = 5):
+    return compileTeal(Seq(method, Int(1)), mode=Mode.Signature, version=version)
 
 
 def fully_compile(src: str):
@@ -152,7 +152,10 @@ def fully_compile(src: str):
     return client.compile(src)
 
 
-def execute_app(bc: str, **kwargs):
+CLEAR_PROG = b64decode("BYEB")  # pragma 5; int 1
+
+
+def execute_app(bytecode: str, **kwargs):
     client = _algod_client()
     sp = client.suggested_params()
 
@@ -164,8 +167,6 @@ def execute_app(bc: str, **kwargs):
     if "global_schema" not in kwargs:
         kwargs["global_schema"] = transaction.StateSchema(0, 0)
 
-    clearprog = b64decode("BYEB")  # pragma 5; int 1
-
     txn = transaction.ApplicationCallTxn(
         acct.address,
         sp,
@@ -173,8 +174,8 @@ def execute_app(bc: str, **kwargs):
         transaction.OnComplete.DeleteApplicationOC,
         kwargs["local_schema"],
         kwargs["global_schema"],
-        b64decode(bc),
-        clearprog,
+        b64decode(bytecode),
+        CLEAR_PROG,
     )
 
     txid = client.send_transaction(txn.sign(acct.private_key))
@@ -183,7 +184,7 @@ def execute_app(bc: str, **kwargs):
 
 
 def create_app(
-    bc: str,
+    bytecode: str,
     local_schema: transaction.StateSchema,
     global_schema: transaction.StateSchema,
     **kwargs
@@ -201,8 +202,8 @@ def create_app(
         transaction.OnComplete.NoOpOC,
         local_schema,
         global_schema,
-        b64decode(bc),
-        clearprog,
+        b64decode(bytecode),
+        CLEAR_PROG,
         **kwargs
     )
 
