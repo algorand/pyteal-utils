@@ -58,27 +58,26 @@ class GlobalBlob:
         initializes global state of an application to all zero bytes
 
         This allows us to be lazy later and _assume_ all the strings are the same size
-
         """
 
         # Expects bzero'd, max_keys
-        custom = """
+        zloop = """
 zero_loop:
-    dup2            // ["0"*127,64,"0"*127,64]
-    itob            // ["0"*127,64,"0"*127,itob(64)]
-    extract 7 1     // ["0"*127,64,"0"*127,itob(64)[-1]]
-    swap            // ["0"*127,64,itob(64)[-1], "0"*127]
-    app_global_put  // ["0"*127,64 (removes top 2 elements)]
+    dup2            // ["00"*page_size, key, "00"*page_size, key]
+    itob            // ["00"*page_size, key, "00"*page_size, itob(key)]
+    extract 7 1     // ["00"*page_size, key, "00"*page_size, itob(key)[-1]] get the last byte of the int
+    swap            // ["00"*page_size, key, itob(key)[-1], "00"*page_size]
+    app_global_put  // ["00"*page_size, key]  (removes top 2 elements)
     int 1
     -               // decrement counter
-    dup
-    bnz zero_loop        // start over
+    dup             // ["00"*page_size, key-1, key-1]
+    bnz zero_loop   // start over
+    pop
+    pop             // take out stuff off the stack
     retsub
 callsub zero_loop
         """
-        return InlineAssembly(
-            custom, BytesZero(page_size), max_keys, type=TealType.none
-        )
+        return InlineAssembly(zloop, BytesZero(page_size), max_keys, type=TealType.none)
 
     @staticmethod
     @Subroutine(TealType.uint64)
