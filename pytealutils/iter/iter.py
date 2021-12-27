@@ -2,7 +2,8 @@ from pyteal import Expr, For, Int, ScratchVar, Subroutine, TealType
 
 
 def iterate(sub: Expr, n: Int, i: ScratchVar = None) -> Expr:
-    """ iterate provides a convenience method for calling a method n times
+    """Iterate provides a convenience method for calling a method n times
+    
     Args:
         sub: A PyTEAL Expr to call, should not return anything
         n: The number of times to call the expression
