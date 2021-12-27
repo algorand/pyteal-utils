@@ -11,6 +11,7 @@ from pyteal import (
     GetByte,
     If,
     Int,
+    Itob,
     Len,
     Or,
     ScratchVar,
@@ -39,8 +40,7 @@ def _key_and_offset(idx: Int) -> Tuple[Int, Int]:
 
 @Subroutine(TealType.bytes)
 def intkey(i: TealType.uint64) -> Expr:
-    return Bytes("0")
-    # return Extract(Itob(i), Int(7), Int(1))
+    return Extract(Itob(i), Int(7), Int(1))
 
 
 # TODO: Add Keyspace range?
@@ -69,11 +69,11 @@ zero_loop:
     swap            // ["00"*page_size, key, itob(key)[-1], "00"*page_size]
     app_global_put  // ["00"*page_size, key]  (removes top 2 elements)
     int 1
-    -               // decrement counter
+    -               // ["00"*page_size, key-1]
     dup             // ["00"*page_size, key-1, key-1]
-    bnz zero_loop   // start over
+    bnz zero_loop   // start loop over if key-1>0
     pop
-    pop             // take out stuff off the stack
+    pop             // take extra junk off the stack
     retsub
 callsub zero_loop
         """
