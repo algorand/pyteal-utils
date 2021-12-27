@@ -121,7 +121,7 @@ def assert_stateful_output(expr: Expr, output: List[str]):
     assert result == output
 
 
-def assert_output(expr: Expr, output: List[str]):
+def assert_output(expr: Expr, output: List[str], **kwargs):
     assert expr is not None
 
     src = compile_app(expr)
@@ -130,7 +130,7 @@ def assert_output(expr: Expr, output: List[str]):
     compiled = fully_compile(src)
     assert len(compiled["hash"]) == 58
 
-    result = execute_app(compiled["result"])
+    result = execute_app(compiled["result"], **kwargs)
     assert result == output
 
 
@@ -157,7 +157,13 @@ def execute_app(bc: str, **kwargs):
     sp = client.suggested_params()
 
     acct = get_kmd_accounts().pop()
-    schema = transaction.StateSchema(0, 0)
+
+    if "local_schema" not in kwargs:
+        kwargs["local_schema"] = transaction.StateSchema(0, 0)
+
+    if "global_schema" not in kwargs:
+        kwargs["global_schema"] = transaction.StateSchema(0, 0)
+
     clearprog = b64decode("BYEB")  # pragma 5; int 1
 
     txn = transaction.ApplicationCallTxn(
@@ -165,11 +171,10 @@ def execute_app(bc: str, **kwargs):
         sp,
         0,
         transaction.OnComplete.DeleteApplicationOC,
-        schema,
-        schema,
+        kwargs["local_schema"],
+        kwargs["global_schema"],
         b64decode(bc),
         clearprog,
-        **kwargs
     )
 
     txid = client.send_transaction(txn.sign(acct.private_key))
