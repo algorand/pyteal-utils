@@ -217,7 +217,11 @@ def call_app(app_id: int, **kwargs):
         [
             transaction.ApplicationOptInTxn(acct.address, sp, app_id),
             transaction.ApplicationCallTxn(
-                acct.address, sp, app_id, transaction.OnComplete.DeleteApplicationOC, **kwargs
+                acct.address,
+                sp,
+                app_id,
+                transaction.OnComplete.DeleteApplicationOC,
+                **kwargs
             ),
         ]
     )
