@@ -4,7 +4,7 @@
 
 There is no guarantee to the API of this repository. It is subject to change without a tagged release.
 
-This repository is meant to contain PyTeal utility methods common in many Smart Contract programs.
+This repository is meant to contain PyTEAL utility methods common in many Smart Contract programs.
 
 ## Strings
 
@@ -32,14 +32,14 @@ App Global and Local storage methods
 
 Treat local storage of an account as a Binary Large Object with ~2k storage. (16 * (128 - 1) = 2032 bytes)
 
-Api allow read/write by index into `[2032]byte` array
+API allow read/write by index into `[2032]byte` array
 
 > Note: You must zero the blob on initialization, see `examples/blob/main.py`
 
 
 ## Contributing
 
-As PyTeal user, your contribution is extremely valuable to grow PyTeal utilities!
+As PyTEAL user, your contribution is extremely valuable to grow PyTEAL utilities!
 As [PyTEAL](https://github.com/algorand/pyteal) user, your contribution is extremely valuable to grow PyTEAL utilities!
 
 Please follow the [contribution guide](https://github.com/algorand/pyteal-utils/blob/main/CONTRIBUTING.md)!
