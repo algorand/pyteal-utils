@@ -228,10 +228,11 @@ def call_app(app_id: int, **kwargs):
                 transaction.OnComplete.DeleteApplicationOC,
                 **kwargs
             ),
+            transaction.ApplicationClearStateTxn(acct.address, sp, app_id),
         ]
     )
 
     client.send_transactions([txn.sign(acct.private_key) for txn in txns])
 
-    result = transaction.wait_for_confirmation(client, txns[-1].get_txid(), 3)
+    result = transaction.wait_for_confirmation(client, txns[1].get_txid(), 3)
     return [b64decode(l).hex() for l in result["logs"]]
