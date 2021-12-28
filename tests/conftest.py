@@ -40,9 +40,9 @@ class Account:
         private_key: Optional[str],
         lsig: Optional[transaction.LogicSig] = None,
     ):
-        self.address = address
-        self.private_key = private_key
-        self.lsig = lsig
+        self.address: str = address
+        self.private_key: Optional[str] = private_key
+        self.lsig:  Optional[transaction.LogicSig] = lsig
 
         assert self.private_key or self.lsig
 
