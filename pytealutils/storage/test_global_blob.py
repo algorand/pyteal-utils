@@ -1,7 +1,7 @@
 from algosdk.future.transaction import StateSchema
-from pyteal import Int, Itob, Log, Seq
+from pyteal import Bytes, Int, Itob, Log, Pop, Seq
 
-from tests.helpers import assert_output, logged_int
+from tests.helpers import assert_output, logged_bytes, logged_int
 
 from .global_blob import GlobalBlob
 
@@ -15,15 +15,14 @@ def test_global_blob_zero():
     assert_output(expr, expected, global_schema=StateSchema(0, 64))
 
 
-# TODO: Too expensive to do in a single call
-# def test_global_blob_write_read_bytes():
-#    expr = Seq(
-#        b.zero(),
-#        Pop(b.write(Int(0), Bytes("deadbeef" * 2))),
-#        Log(b.read(Int(0), Int(8))),
-#    )
-#    expected = [logged_bytes("deadbeef")]
-#    assert_output(expr, expected, global_schema=StateSchema(0, 64))
+def test_global_blob_write_read_bytes():
+    expr = Seq(
+        b.zero(),
+        Pop(b.write(Int(0), Bytes("deadbeef" * 2))),
+        Log(b.read(Int(0), Int(8))),
+    )
+    expected = [logged_bytes("deadbeef")]
+    assert_output(expr, expected, global_schema=StateSchema(0, 64), pad_budget=3)
 
 
 def test_global_blob_write_read_byte():

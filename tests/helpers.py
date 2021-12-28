@@ -262,8 +262,8 @@ def execute_app(bytecode: str, **kwargs):
             CLEAR_PROG,
         )
     ]
-    if "pad" in kwargs:
-        for i in range(kwargs):
+    if "pad_budget" in kwargs:
+        for i in range(kwargs["pad_budget"]):
             txns.append(
                 transaction.ApplicationCallTxn(
                     acct.address,
@@ -274,6 +274,7 @@ def execute_app(bytecode: str, **kwargs):
                     transaction.StateSchema(0, 0),
                     CLEAR_PROG,
                     CLEAR_PROG,
+                    note=str(i).encode(),
                 )
             )
 
