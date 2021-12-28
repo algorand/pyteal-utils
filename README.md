@@ -39,7 +39,6 @@ API allow read/write by index into `[2032]byte` array
 
 ## Contributing
 
-As PyTEAL user, your contribution is extremely valuable to grow PyTEAL utilities!
 As [PyTEAL](https://github.com/algorand/pyteal) user, your contribution is extremely valuable to grow PyTEAL utilities!
 
 Please follow the [contribution guide](https://github.com/algorand/pyteal-utils/blob/main/CONTRIBUTING.md)!
