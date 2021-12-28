@@ -153,7 +153,7 @@ def assert_stateful_output(expr: Expr, output: List[str]):
         transaction.StateSchema(0, 64),
     )
 
-    logs, _ = call_app(app_id)
+    logs, _ = call_app(client, app_id)
     assert logs == output
 
 
@@ -183,7 +183,7 @@ def assert_stateful_fail(expr: Expr, output: List[str]):
     assert emsg is not None
     assert output.pop() in emsg
 
-    destroy_app(app_id)
+    destroy_app(client, app_id)
 
 
 def assert_output(expr: Expr, output: List[str], **kwargs):
@@ -208,10 +208,10 @@ def assert_fail(expr: Expr, output: List[str], **kwargs):
         src = compile_app(expr)
         assert len(src) > 0
 
-        compiled = assemble_bytecode(src)
+        compiled = assemble_bytecode(client, src)
         assert len(compiled["hash"]) == 58
 
-        execute_app(compiled["result"])
+        execute_app(client, compiled["result"])
     except Exception as e:
         emsg = str(e)
 
