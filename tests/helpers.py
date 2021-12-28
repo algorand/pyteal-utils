@@ -8,6 +8,7 @@ from algosdk.future import transaction
 from algosdk.v2client import algod, indexer
 from pyteal import Cond, Expr, Int, Mode, Seq, Txn, compileTeal
 
+TEAL_VERSION = 5
 CLEAR_PROG = b64decode("BYEB")  # pragma 5; int 1
 
 ## Clients
@@ -27,6 +28,9 @@ def _kmd_client(kmd_address="http://localhost:4002", kmd_token="a" * 64):
     """Instantiate and return a KMD client object."""
     return kmd.KMDClient(kmd_token, kmd_address)
 
+
+# Create global client to be used in tests
+client = _algod_client()
 
 # Env helpers
 
@@ -139,7 +143,7 @@ def assert_stateful_output(expr: Expr, output: List[str]):
     src = compile_stateful_app(expr)
     assert len(src) > 0
 
-    compiled = fully_compile(src)
+    compiled = assemble_bytecode(src)
     assert len(compiled["hash"]) == 58
 
     app_id = create_app(
@@ -161,7 +165,7 @@ def assert_stateful_fail(expr: Expr, output: List[str]):
         src = compile_stateful_app(expr)
         assert len(src) > 0
 
-        compiled = fully_compile(src)
+        compiled = assemble_bytecode(src)
         assert len(compiled["hash"]) == 58
 
         app_id = create_app(
@@ -186,7 +190,7 @@ def assert_output(expr: Expr, output: List[str], **kwargs):
     src = compile_app(expr)
     assert len(src) > 0
 
-    compiled = fully_compile(src)
+    compiled = assemble_bytecode(src)
     assert len(compiled["hash"]) == 58
 
     logs, _ = execute_app(compiled["result"], **kwargs)
@@ -202,7 +206,7 @@ def assert_fail(expr: Expr, output: List[str], **kwargs):
         src = compile_app(expr)
         assert len(src) > 0
 
-        compiled = fully_compile(src)
+        compiled = assemble_bytecode(src)
         assert len(compiled["hash"]) == 58
 
         execute_app(compiled["result"])
@@ -214,11 +218,11 @@ def assert_fail(expr: Expr, output: List[str], **kwargs):
     assert output.pop() in emsg
 
 
-def compile_app(method: Expr, version: int = 5):
+def compile_app(method: Expr, version: int = TEAL_VERSION):
     return compileTeal(Seq(method, Int(1)), mode=Mode.Application, version=version)
 
 
-def compile_stateful_app(method: Expr, version: int = 5):
+def compile_stateful_app(method: Expr, version: int = TEAL_VERSION):
     expr = Cond(
         [Txn.application_id() == Int(0), Int(1)],
         [Txn.application_args.length() > Int(0), Int(1)],
@@ -227,17 +231,15 @@ def compile_stateful_app(method: Expr, version: int = 5):
     return compileTeal(expr, mode=Mode.Application, version=version)
 
 
-def compile_sig(method: Expr, version: int = 5):
+def compile_sig(method: Expr, version: int = TEAL_VERSION):
     return compileTeal(Seq(method, Int(1)), mode=Mode.Signature, version=version)
 
 
-def fully_compile(src: str):
-    client = _algod_client()
+def assemble_bytecode(src: str):
     return client.compile(src)
 
 
 def execute_app(bytecode: str, **kwargs):
-    client = _algod_client()
     sp = client.suggested_params()
 
     acct = get_kmd_accounts().pop()
@@ -248,18 +250,35 @@ def execute_app(bytecode: str, **kwargs):
     if "global_schema" not in kwargs:
         kwargs["global_schema"] = transaction.StateSchema(0, 0)
 
-    txn = transaction.ApplicationCallTxn(
-        acct.address,
-        sp,
-        0,
-        transaction.OnComplete.DeleteApplicationOC,
-        kwargs["local_schema"],
-        kwargs["global_schema"],
-        b64decode(bytecode),
-        CLEAR_PROG,
-    )
+    txns = [
+        transaction.ApplicationCallTxn(
+            acct.address,
+            sp,
+            0,
+            transaction.OnComplete.DeleteApplicationOC,
+            kwargs["local_schema"],
+            kwargs["global_schema"],
+            b64decode(bytecode),
+            CLEAR_PROG,
+        )
+    ]
+    if "pad" in kwargs:
+        for i in range(kwargs):
+            txns.append(
+                transaction.ApplicationCallTxn(
+                    acct.address,
+                    sp,
+                    0,
+                    transaction.OnComplete.DeleteApplicationOC,
+                    transaction.StateSchema(0, 0),
+                    transaction.StateSchema(0, 0),
+                    CLEAR_PROG,
+                    CLEAR_PROG,
+                )
+            )
 
-    txid = client.send_transaction(txn.sign(acct.private_key))
+    txns = transaction.assign_group_id(txns)
+    txid = client.send_transactions([txn.sign(acct.private_key) for txn in txns])
     result = transaction.wait_for_confirmation(client, txid, 3)
     return [b64decode(l).hex() for l in result["logs"]], result
 
@@ -270,7 +289,6 @@ def create_app(
     global_schema: transaction.StateSchema,
     **kwargs
 ):
-    client = _algod_client()
     sp = client.suggested_params()
 
     acct = get_kmd_accounts().pop()
@@ -294,7 +312,6 @@ def create_app(
 
 
 def call_app(app_id: int, **kwargs):
-    client = _algod_client()
     sp = client.suggested_params()
 
     acct = get_kmd_accounts().pop()
@@ -320,7 +337,6 @@ def call_app(app_id: int, **kwargs):
 
 
 def destroy_app(app_id: int, **kwargs):
-    client = _algod_client()
     sp = client.suggested_params()
 
     acct = get_kmd_accounts().pop()
