@@ -1,6 +1,6 @@
 from pyteal import Bytes, Int, Itob, Log
 
-from tests.helpers import assert_output, logged_bytes, logged_int
+from tests.helpers import assert_fail, assert_output, logged_bytes, logged_int
 
 from .string import atoi, encode_uvarint, head, itoa, tail
 
@@ -9,6 +9,9 @@ def test_atoi():
     expr = Log(Itob(atoi(Bytes("123"))))
     output = [logged_int(int(123))]
     assert_output(expr, output)
+
+    expr = Log(Itob(atoi(Bytes("abc"))))
+    assert_fail(expr, ["logic eval error"])
 
 
 def test_itoa():
@@ -22,11 +25,17 @@ def test_head():
     output = [logged_bytes("d")]
     assert_output(expr, output)
 
+    expr = Log(tail(Bytes("")))
+    assert_fail(expr, ["logic eval error"])
+
 
 def test_tail():
     expr = Log(tail(Bytes("deadbeef")))
     output = [logged_bytes("eadbeef")]
     assert_output(expr, output)
+
+    expr = Log(tail(Bytes("")))
+    assert_fail(expr, ["logic eval error"])
 
 
 def test_encode_uvarint():

@@ -1,6 +1,6 @@
 from pyteal import App, Bytes, Int, Log, Seq
 
-from tests.helpers import assert_stateful_output, logged_bytes
+from tests.helpers import assert_stateful_fail, assert_stateful_output, logged_bytes
 
 from .storage import global_get_else, global_must_get, local_get_else, local_must_get
 
@@ -19,6 +19,9 @@ def test_global_must_get():
     expected = [logged_bytes("success")]
     assert_stateful_output(expr, expected)
 
+    expr = Log(global_must_get(Bytes("doesnt exist")))
+    assert_stateful_fail(expr, ["logic eval error"])
+
 
 def test_local_must_get():
     expr = Seq(
@@ -27,6 +30,9 @@ def test_local_must_get():
     )
     expected = [logged_bytes("success")]
     assert_stateful_output(expr, expected)
+
+    expr = Log(local_must_get(Int(0), Bytes("doesnt exist")))
+    assert_stateful_fail(expr, ["logic eval error"])
 
 
 def test_local_get_else():

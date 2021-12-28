@@ -1,4 +1,5 @@
 from pyteal import (
+    Assert,
     Bytes,
     Concat,
     Extract,
@@ -17,19 +18,22 @@ from pyteal import (
 from pytealutils.math import exp10
 
 # Magic number to convert between ascii chars and integers
-ascii_offset = Int(48)
+_ascii_zero = 48
+_ascii_nine = _ascii_zero + 9
+ascii_zero = Int(_ascii_zero)
+ascii_nine = Int(_ascii_nine)
 
 
 @Subroutine(TealType.uint64)
 def ascii_to_int(arg: TealType.uint64):
     """Convert the integer representing a character in ascii to the actual integer it represents"""
-    return arg - ascii_offset
+    return Seq(Assert(arg >= ascii_zero), Assert(arg <= ascii_nine), arg - ascii_zero)
 
 
 @Subroutine(TealType.bytes)
 def int_to_ascii(arg: TealType.uint64):
     """Convert an integer to the ascii byte that represents it"""
-    return Substring(Bytes("0123456789"), arg, arg + Int(1))
+    return Extract(Bytes("0123456789"), arg, Int(1))
 
 
 @Subroutine(TealType.uint64)
