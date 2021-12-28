@@ -1,7 +1,7 @@
 from algosdk.future.transaction import StateSchema
 from pyteal import *
 
-from tests.conftest import *
+from tests.helpers import *
 
 from .inline_asm import InlineAssembly
 

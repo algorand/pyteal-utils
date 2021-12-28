@@ -3,7 +3,7 @@ from pyteal import *
 from pytealutils.iter import *
 
 
-def test():
+def demo_application():
 
     i = ScratchVar()
     test = Seq(iterate(Log(Itob(i.load())), Int(10), i), Int(1))
@@ -15,4 +15,4 @@ def test():
     )
 
 
-print(compileTeal(test(), mode=Mode.Application, version=5))
+print(compileTeal(demo_application(), mode=Mode.Application, version=5))

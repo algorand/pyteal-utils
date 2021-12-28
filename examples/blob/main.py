@@ -13,11 +13,11 @@ from pyteal import (
     compileTeal,
 )
 
-from pytealutils.storage.blob import Blob
+from pytealutils.storage import LocalBlob
 
 
-def test():
-    b = Blob()
+def demo_application():
+    b = LocalBlob()
 
     data = Bytes("base16", "deadbeef" * 16)
     test = Seq(
@@ -39,4 +39,4 @@ def test():
     )
 
 
-print(compileTeal(test(), mode=Mode.Application, version=5))
+print(compileTeal(demo_application(), mode=Mode.Application, version=5))
