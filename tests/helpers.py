@@ -11,6 +11,7 @@ from pyteal import Cond, Expr, Int, Mode, Seq, Txn, compileTeal
 TEAL_VERSION = 5
 CLEAR_PROG = b64decode("BYEB")  # pragma 5; int 1
 LOGIC_EVAL_ERROR = "logic eval error"
+INVALID_SYNTAX = "invalid syntax"
 
 ## Clients
 
@@ -217,7 +218,6 @@ def assert_fail(expr: Expr, output: List[str], **kwargs):
         emsg = str(e)
 
     assert emsg is not None
-
     assert output.pop() in emsg
 
 

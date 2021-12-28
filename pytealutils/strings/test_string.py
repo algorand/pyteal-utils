@@ -10,6 +10,8 @@ def test_atoi():
     output = [logged_int(int(123))]
     assert_output(expr, output)
 
+
+def test_atoi_invalid():
     expr = Log(Itob(atoi(Bytes("abc"))))
     assert_fail(expr, ["logic eval error"])
 
@@ -25,6 +27,8 @@ def test_head():
     output = [logged_bytes("d")]
     assert_output(expr, output)
 
+
+def test_head_empty():
     expr = Log(tail(Bytes("")))
     assert_fail(expr, ["logic eval error"])
 
@@ -34,6 +38,8 @@ def test_tail():
     output = [logged_bytes("eadbeef")]
     assert_output(expr, output)
 
+
+def test_tail_empty():
     expr = Log(tail(Bytes("")))
     assert_fail(expr, ["logic eval error"])
 

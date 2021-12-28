@@ -19,6 +19,8 @@ def test_global_must_get():
     expected = [logged_bytes("success")]
     assert_stateful_output(expr, expected)
 
+
+def test_global_must_get_missing():
     expr = Log(global_must_get(Bytes("doesnt exist")))
     assert_stateful_fail(expr, ["logic eval error"])
 
@@ -31,6 +33,8 @@ def test_local_must_get():
     expected = [logged_bytes("success")]
     assert_stateful_output(expr, expected)
 
+
+def test_local_must_get_missing():
     expr = Log(local_must_get(Int(0), Bytes("doesnt exist")))
     assert_stateful_fail(expr, ["logic eval error"])
 

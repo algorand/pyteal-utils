@@ -1,4 +1,3 @@
-from algosdk.future.transaction import StateSchema
 from pyteal import *
 
 from tests.helpers import *
@@ -14,4 +13,15 @@ extract 7 1
     expr = Seq(InlineAssembly(get_uint8, Itob(Int(255))), s.store(), Log(s.load()))
 
     expected = [logged_int(255)[-2:]]
-    assert_output(expr, expected, global_schema=StateSchema(0, 64))
+    assert_output(expr, expected)
+
+
+def test_inline_assembly_invalid():
+    get_uint8 = """
+extract a b
+"""
+    s = ScratchSlot()
+    expr = Seq(InlineAssembly(get_uint8, Itob(Int(255))), s.store(), Log(s.load()))
+
+    expected = [INVALID_SYNTAX]
+    assert_fail(expr, expected)
