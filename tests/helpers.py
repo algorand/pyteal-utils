@@ -29,9 +29,6 @@ def _kmd_client(kmd_address="http://localhost:4002", kmd_token="a" * 64):
     return kmd.KMDClient(kmd_token, kmd_address)
 
 
-# Create global client to be used in tests
-client = _algod_client()
-
 # Env helpers
 
 
@@ -128,6 +125,9 @@ def sign_send_wait(
 
 ## Teal Helpers
 
+# Create global client to be used in tests
+client = _algod_client()
+
 
 def logged_bytes(b: str):
     return bytes(b, "ascii").hex()
@@ -143,10 +143,11 @@ def assert_stateful_output(expr: Expr, output: List[str]):
     src = compile_stateful_app(expr)
     assert len(src) > 0
 
-    compiled = assemble_bytecode(src)
+    compiled = assemble_bytecode(client, src)
     assert len(compiled["hash"]) == 58
 
     app_id = create_app(
+        client,
         compiled["result"],
         transaction.StateSchema(0, 16),
         transaction.StateSchema(0, 64),
@@ -165,16 +166,17 @@ def assert_stateful_fail(expr: Expr, output: List[str]):
         src = compile_stateful_app(expr)
         assert len(src) > 0
 
-        compiled = assemble_bytecode(src)
+        compiled = assemble_bytecode(client, src)
         assert len(compiled["hash"]) == 58
 
         app_id = create_app(
+            client,
             compiled["result"],
             transaction.StateSchema(0, 16),
             transaction.StateSchema(0, 64),
         )
 
-        call_app(app_id)
+        call_app(client, app_id)
     except Exception as e:
         emsg = str(e)
 
@@ -190,10 +192,10 @@ def assert_output(expr: Expr, output: List[str], **kwargs):
     src = compile_app(expr)
     assert len(src) > 0
 
-    compiled = assemble_bytecode(src)
+    compiled = assemble_bytecode(client, src)
     assert len(compiled["hash"]) == 58
 
-    logs, _ = execute_app(compiled["result"], **kwargs)
+    logs, _ = execute_app(client, compiled["result"], **kwargs)
     assert logs == output
 
 
@@ -235,11 +237,11 @@ def compile_sig(method: Expr, version: int = TEAL_VERSION):
     return compileTeal(Seq(method, Int(1)), mode=Mode.Signature, version=version)
 
 
-def assemble_bytecode(src: str):
+def assemble_bytecode(client: algod.AlgodClient, src: str):
     return client.compile(src)
 
 
-def execute_app(bytecode: str, **kwargs):
+def execute_app(client: algod.AlgodClient, bytecode: str, **kwargs):
     sp = client.suggested_params()
 
     acct = get_kmd_accounts().pop()
@@ -285,6 +287,7 @@ def execute_app(bytecode: str, **kwargs):
 
 
 def create_app(
+    client: algod.AlgodClient,
     bytecode: str,
     local_schema: transaction.StateSchema,
     global_schema: transaction.StateSchema,
@@ -312,7 +315,7 @@ def create_app(
     return result["application-index"]
 
 
-def call_app(app_id: int, **kwargs):
+def call_app(client: algod.AlgodClient, app_id: int, **kwargs):
     sp = client.suggested_params()
 
     acct = get_kmd_accounts().pop()
@@ -337,7 +340,7 @@ def call_app(app_id: int, **kwargs):
     return [b64decode(l).hex() for l in result["logs"]], result
 
 
-def destroy_app(app_id: int, **kwargs):
+def destroy_app(client: algod.AlgodClient, app_id: int, **kwargs):
     sp = client.suggested_params()
 
     acct = get_kmd_accounts().pop()
