@@ -62,6 +62,29 @@ class Account:
         return encoding.decode_address(self.address)
 
 
+def sign(signer: Account, txn: transaction.Transaction):
+    """Sign a transaction with an Account."""
+    if signer.is_lsig():
+        return transaction.LogicSigTransaction(txn, signer.lsig)
+    else:
+        assert signer.private_key
+        return txn.sign(signer.private_key)
+
+
+def sign_send_wait(algod_client: algod.AlgodClient, signer: Account, 
+                   txn: transaction.Transaction, debug=False):
+    """Sign a transaction, submit it, and wait for its confirmation."""
+    signed_txn = sign(signer, txn)
+    tx_id = signed_txn.transaction.get_txid()
+
+    if debug:
+        transaction.write_to_file([signed_txn], "/tmp/txn.signed", overwrite=True)
+
+    algod_client.send_transactions([signed_txn])
+    transaction.wait_for_confirmation(algod_client, tx_id)
+    return algod_client.pending_transaction_info(tx_id)
+
+
 def get_kmd_accounts(
     kmd_wallet_name="unencrypted-default-wallet", kmd_wallet_password=""
 ):
