@@ -14,3 +14,11 @@ def test_signed_sub():
 
     output = ["ff" * 8, logged_int(num + num + 1)]
     assert_output(expr, output)
+
+
+def test_signed_sub_add():
+    num = 100
+    expr = Seq(Log(Itob(SignedInt(num) - SignedInt(num + 1) - SignedInt(-1))))
+
+    output = [logged_int(0)]
+    assert_output(expr, output)

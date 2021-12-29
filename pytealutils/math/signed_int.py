@@ -1,14 +1,4 @@
-from pyteal import (
-    BinaryExpr,
-    BitwiseXor,
-    Expr,
-    Int,
-    Mode,
-    Op,
-    TealType,
-    UnaryExpr,
-    compileTeal,
-)
+from pyteal import BinaryExpr, BitwiseXor, Expr, Int, Op, TealType, UnaryExpr
 
 # Credit CiottiGiorgio
 
@@ -31,7 +21,6 @@ class SignedInt(Int):
     @staticmethod
     def __add_modulo__(left, right) -> Expr:
         # We use addition wide because there are instances where the result is greater than 2^64.
-        #  (Two's complement. Duh.)
         # Of course when adding any two 64bit uint(s) the result can at most be one bit longer.
         # The overflow is not on top of the stack so we have to swap and pop.
         addition_with_overflow = BinaryExpr(
@@ -50,7 +39,3 @@ class SignedInt(Int):
     def two_complement(n) -> Expr:
         n_xor = BitwiseXor(n, Int(0xFFFFFFFFFFFFFFFF))
         return SignedInt.__add_modulo__(n_xor, Int(1))
-
-
-if __name__ == "__main__":
-    print(compileTeal(SignedInt(100) - SignedInt(101), mode=Mode.Signature, version=5))
