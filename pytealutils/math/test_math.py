@@ -1,48 +1,50 @@
+
 from pyteal import Int, Itob, Log
 
 from tests.helpers import assert_output, logged_int
 
-import math as pymath
-
-from .math import (
-    log2,
-    pow10,
-    max,
-    min,
-    div_ceil,
-    exponential,
-    factorial,
-    wide_factorial,
-)
-
-# def test_bytes_factorial():
-#    num = 55
-#    expr = Log(bytes_factorial(Itob(Int(num))))
-#    #output = [logged_int(int(pymath.factorial(num)))]
-#    print(pymath.factorial(num)/1000)
-#    assert_output(expr, [], pad_budget=15)
-
-# def test_factorial():
-#    num = 21
-#    expr = Log(Itob(factorial(Int(num))))
-#    output = [logged_int(int(pymath.factorial(num)))]
-#    print(pymath.factorial(num))
-#    assert_output(expr, output)
+from .math import Seq, div_ceil, even, odd, pow10
 
 
-def test_wide_exponential():
-    num = 10
-    expr = Log(exponential(Int(num), Int(30)))
-    output = [logged_int(int(pymath.exp(num)))]
+def test_even():
+    num = 5
+    expr = Seq(Log(Itob(even(Int(num)))), Log(Itob(even(Int(num - 1)))))
+    output = [logged_int(0), logged_int(1)]
     assert_output(expr, output, pad_budget=15)
 
 
+def test_odd():
+    num = 6
+    expr = Seq(Log(Itob(odd(Int(num)))), Log(Itob(odd(Int(num - 1)))))
+    output = [logged_int(0), logged_int(1)]
+    assert_output(expr, output, pad_budget=15)
+
+
+# def test_factorial():
+#    num = 5
+#    expr = Log(Itob(bytes_to_int(wide_factorial(Itob(Int(num))))))
+#    output = [logged_int(int(pymath.factorial(num)))]
+#    assert_output(expr, output, pad_budget=15)
+#
+#
+# def test_exponential():
+#    num = 10
+#    expr = Log(Itob(bytes_to_int(exponential(Int(num), Int(30)))))
+#    output = [logged_int(int(pymath.exp(num)))]
+#    assert_output(expr, output, pad_budget=15)
+#
+# def test_ln():
+#    num = 10
+#    expr = Log(Itob(ln(Int(num), Int(2))))
+#    output = [logged_int(int(pymath.log(num)))]
+#    assert_output(expr, output, pad_budget=15)
+#
 # def test_log2():
-#    num = 123123123
-#    expr = Log(Itob(log2(Int(num))))
-#    output = [logged_int(int(pymath.log2(num)))]
-#    print(pymath.log2(num))
-#    assert_output(expr, output)
+#   num = 123123123
+#   expr = Log(log2(Int(num)))
+#   output = [logged_int(int(pymath.log2(num)))]
+#   print(pymath.log2(num))
+#   assert_output(expr, output)
 
 # def test_log10():
 #    num = 123123123
@@ -52,8 +54,8 @@ def test_wide_exponential():
 #    assert_output(expr, output)
 
 
-def test_exp10():
-    expr = Log(Itob(exp10(Int(3))))
+def test_pow10():
+    expr = Log(Itob(pow10(Int(3))))
     output = [logged_int(int(1e3))]
     assert_output(expr, output)
 
