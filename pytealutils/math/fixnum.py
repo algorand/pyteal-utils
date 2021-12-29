@@ -1,11 +1,13 @@
 from typing import Union
-from pyteal import *
 
-#From ABI: ufixed<N>x<M>: An N-bit unsigned fixed-point decimal number with precision M, where 8 <= N <= 512, N % 8 = 0, and 0 < M <= 160, which 
+from pyteal import TealType
 
-class Fixnum():
+# From ABI: ufixed<N>x<M>: An N-bit unsigned fixed-point decimal number with precision M, where 8 <= N <= 512, N % 8 = 0, and 0 < M <= 160, which
 
-    #denotes a value v as v / (10^M)
+
+class Fixnum:
+
+    # denotes a value v as v / (10^M)
     def __init__(self, bits: int, precision: int, value: Union[int, float]):
         assert 8 <= bits <= 512, "Number of bits must be between 8 and 512"
         assert bits % 8 == 0, "Bits must be a multiple of 8"

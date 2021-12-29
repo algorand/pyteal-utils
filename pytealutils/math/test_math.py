@@ -1,4 +1,3 @@
-
 from pyteal import Int, Itob, Log
 
 from tests.helpers import assert_output, logged_int
