@@ -1,1 +1,1 @@
-from .math import div_ceil, exp10, max, min
+from .math import div_ceil, pow10, max, min

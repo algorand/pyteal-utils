@@ -15,7 +15,7 @@ from pyteal import (
     TealType,
 )
 
-from pytealutils.math import exp10
+from pytealutils.math import pow10
 
 # Magic number to convert between ascii chars and integers
 _ascii_zero = 48
@@ -41,7 +41,7 @@ def atoi(a: TealType.bytes):
     """Convert a byte string representing a number to the integer value it represents"""
     return If(
         Len(a) > Int(0),
-        (ascii_to_int(GetByte(a, Int(0))) * exp10(Len(a) - Int(1)))
+        (ascii_to_int(GetByte(a, Int(0))) * pow10(Len(a) - Int(1)))
         + atoi(Substring(a, Int(1), Len(a))),
         Int(0),
     )

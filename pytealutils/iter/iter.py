@@ -1,6 +1,11 @@
 from pyteal import Expr, For, Int, ScratchVar, Subroutine, TealType
 
 
+def accumulate(sub: Expr, n: Int, acc: ScratchVar) -> Expr:
+    # TODO
+    pass
+
+
 def iterate(sub: Expr, n: Int, i: ScratchVar = None) -> Expr:
     """Iterate provides a convenience method for calling a method n times
 

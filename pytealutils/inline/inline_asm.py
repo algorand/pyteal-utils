@@ -16,16 +16,16 @@ class CustomOp:
 class InlineAssembly(LeafExpr):
     """InlineAssembly can be used to inject TEAL source directly into a PyTEAL program
 
-        Often the generated PyTEAL is not as efficient as it can be. This class offers a way to
-        write the most efficient TEAL for code paths that would otherwise be impossible because
-        of opcode budget constraints.
+    Often the generated PyTEAL is not as efficient as it can be. This class offers a way to
+    write the most efficient TEAL for code paths that would otherwise be impossible because
+    of opcode budget constraints.
 
-        It can also be used to implement methods that are not yet available in the PyTEAL repository
+    It can also be used to implement methods that are not yet available in the PyTEAL repository
 
-        Args
-            opcode: string containing the teal to inject
-            args: any number of PyTEAL expressions to place before this opcode
-            type: The type this Expression returns, to help during PyTEAL compilation
+    Args
+        opcode: string containing the teal to inject
+        args: any number of PyTEAL expressions to place before this opcode
+        type: The type this Expression returns, to help during PyTEAL compilation
 
     """
 

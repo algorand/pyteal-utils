@@ -5,8 +5,8 @@ from pyteal import Assert, Expr, Global, Gtxn, Seq, Subroutine, TealType
 def assert_common_checks(idx: TealType.uint64):
     """Calls all txn checker assert methods
 
-        Note: This doesn't mean the transaction is "safe" but these are common things to check for any transaction
-        see https://developer.algorand.org/docs/get-details/dapps/avm/teal/guidelines/ for more details
+    Note: This doesn't mean the transaction is "safe" but these are common things to check for any transaction
+    see https://developer.algorand.org/docs/get-details/dapps/avm/teal/guidelines/ for more details
     """
     return Seq(
         assert_min_fee(idx),
