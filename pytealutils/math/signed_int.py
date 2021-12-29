@@ -1,4 +1,14 @@
-from pyteal import BinaryExpr, BitwiseXor, Expr, Int, Mode, Op, TealType, UnaryExpr, compileTeal
+from pyteal import (
+    BinaryExpr,
+    BitwiseXor,
+    Expr,
+    Int,
+    Mode,
+    Op,
+    TealType,
+    UnaryExpr,
+    compileTeal,
+)
 
 # Credit CiottiGiorgio
 
