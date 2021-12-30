@@ -1,18 +1,8 @@
-import decimal
-from decimal import *
-
 from pyteal import *
 
-from tests.helpers import assert_output, logged_bytes
+from tests.helpers import assert_close_enough
 
 from .fixed_point import *
-
-
-def float_as_string(a: float, b: float, p: int, op):
-    getcontext().prec = p
-    a = Decimal(a)
-    b = Decimal(b)
-    return "{}".format(op(a, b))
 
 
 def test_fixed_point_add():
@@ -25,11 +15,10 @@ def test_fixed_point_add():
 
     s = ScratchVar()
     expr = Seq(s.store(fp_add(fp1, fp2)), Log(fp.to_ascii(s.load())))
-    output = [
-        logged_bytes(float_as_string(a, b, fp.precision, decimal.getcontext().add))
-    ]
+    output = [a + b]
+    precisions = [fp.precision]
 
-    assert_output(expr, output)
+    assert_close_enough(expr, output, precisions)
 
 
 def test_fixed_point_sub():
@@ -41,11 +30,10 @@ def test_fixed_point_sub():
 
     s = ScratchVar()
     expr = Seq(s.store(fp_sub(fp1, fp2)), Log(fp.to_ascii(s.load())))
-    output = [
-        logged_bytes(float_as_string(a, b, fp.precision, decimal.getcontext().subtract))
-    ]
+    output = [a - b]
+    precisions = [fp.precision]
 
-    assert_output(expr, output)
+    assert_close_enough(expr, output, precisions)
 
 
 def test_fixed_point_div():
@@ -57,11 +45,10 @@ def test_fixed_point_div():
 
     s = ScratchVar()
     expr = Seq(s.store(fp_div(fp1, fp2)), Log(fp.to_ascii(s.load())))
-    output = [
-        logged_bytes(float_as_string(a, b, fp.precision, decimal.getcontext().divide))
-    ]
+    output = [a / b]
+    precisions = [fp.precision]
 
-    assert_output(expr, output)
+    assert_close_enough(expr, output, precisions)
 
 
 def test_fixed_point_mul():
@@ -73,8 +60,7 @@ def test_fixed_point_mul():
 
     s = ScratchVar()
     expr = Seq(s.store(fp_mul(fp1, fp2)), Log(fp.to_ascii(s.load())))
-    output = [
-        logged_bytes(float_as_string(a, b, fp.precision, decimal.getcontext().multiply))
-    ]
+    output = [a * b]
+    precisions = [fp.precision]
 
-    assert_output(expr, output)
+    assert_close_enough(expr, output, precisions)

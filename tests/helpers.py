@@ -198,8 +198,28 @@ def assert_output(expr: Expr, output: List[str], **kwargs):
     assert len(compiled["hash"]) == 58
 
     logs, _ = execute_app(client, compiled["result"], **kwargs)
-    print(logs, output)
     assert logs == output
+
+
+def assert_close_enough(
+    expr: Expr, output: List[float], precisions: List[int], **kwargs
+):
+    """assert_close_enough takes some list of floats and corresponding precision and
+        asserts that the result from the logic output is close enough to the expected value
+    """
+    assert expr is not None
+
+    src = compile_app(expr)
+    assert len(src) > 0
+
+    compiled = assemble_bytecode(client, src)
+    assert len(compiled["hash"]) == 58
+
+    logs, _ = execute_app(client, compiled["result"], **kwargs)
+
+    for idx in range(len(output)):
+        val = float(bytes.fromhex(logs[idx]).decode("ascii"))
+        assert abs(output[idx] - val) < (2.0 / precisions[idx])
 
 
 def assert_fail(expr: Expr, output: List[str], **kwargs):

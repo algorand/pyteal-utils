@@ -9,7 +9,6 @@ from pyteal import (
     BytesMinus,
     BytesMul,
     Concat,
-    Exp,
     Expr,
     GetByte,
     Int,
@@ -60,7 +59,7 @@ class FixedPoint:
             raise ValueError
 
     def rescale(self, value: TealType.bytes):
-        old_precision = GetByte(value, Int(0))
+        old_precision = byte_precision(value)
         old_val = tail(value)
         return Seq(
             Concat(
@@ -69,8 +68,8 @@ class FixedPoint:
                 # Divide off the old precision
                 BytesDiv(
                     # Multiply by new precision first so we dont lose precision
-                    BytesMul(old_val, Itob(Exp(Int(10), Int(self.precision)))),
-                    Itob(Exp(Int(10), old_precision)),
+                    BytesMul(old_val, Itob(pow10(Int(self.precision)))),
+                    old_precision,
                 ),
             )
         )
@@ -89,6 +88,11 @@ class FixedPoint:
                 Substring(ascii.load(), Len(ascii.load()) - prec, Len(ascii.load())),
             ),
         )
+
+
+@Subroutine(TealType.bytes)
+def byte_precision(v: TealType.bytes):
+    return Itob(pow10(GetByte(v, Int(0))))
 
 
 @Subroutine(TealType.none)
@@ -113,10 +117,9 @@ def fp_mul(a: TealType.bytes, b: TealType.bytes):
         Concat(
             head(a),
             BytesDiv(
-                BytesMul(
-                    tail(a), tail(b)
-                ),  # mul first then divide by the square of the scale
-                Itob(Exp(Int(10), GetByte(a, Int(0)))),
+                # mul first then divide by the square of the scale
+                BytesMul(tail(a), tail(b)),
+                byte_precision(a),
             ),
         ),
     )
@@ -130,7 +133,7 @@ def fp_div(a: TealType.bytes, b: TealType.bytes):
             head(a),
             BytesDiv(
                 # Scale up the numerator so we keep the same precision
-                BytesMul(tail(a), Itob(pow10(GetByte(a, Int(0))))),
+                BytesMul(tail(a), byte_precision(a)),
                 tail(b),
             ),
         ),
