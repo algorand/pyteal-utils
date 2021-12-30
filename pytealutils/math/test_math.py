@@ -37,7 +37,6 @@ def test_odd():
 #    expr = Log(Itob(ln(Int(num), Int(2))))
 #    output = [logged_int(int(pymath.log(num)))]
 #    assert_output(expr, output, pad_budget=15)
-#
 
 # def test_log2():
 #    num = 17

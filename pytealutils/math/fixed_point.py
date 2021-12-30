@@ -10,20 +10,18 @@ from pyteal import (
     Concat,
     Exp,
     Expr,
-    For,
-    GetBit,
     GetByte,
-    If,
     Int,
     Itob,
     Len,
     ScratchVar,
     Seq,
     Subroutine,
+    Substring,
     TealType,
 )
 
-from ..strings import head, itoa, suffix, tail
+from ..strings import head, itoa, tail
 
 # From ABI: ufixed<N>x<M>: An N-bit unsigned fixed-point decimal number with precision M, where 8 <= N <= 512, N % 8 = 0, and 0 < M <= 160, which
 
@@ -49,12 +47,12 @@ class FixedPoint:
         if type(value) == int:
             return Bytes(
                 self.precision_as_bytes
-                + (value * (2 ** self.precision)).to_bytes(8, "big")
+                + (value * (10 ** self.precision)).to_bytes(8, "big")
             )
         elif type(value) == float:
             return Bytes(
                 self.precision_as_bytes
-                + int(value * (2 ** self.precision)).to_bytes(8, "big")
+                + int(value * (10 ** self.precision)).to_bytes(8, "big")
             )
         elif type(value) == bytes:
             return Bytes(self.precision_as_bytes + value)
@@ -71,8 +69,8 @@ class FixedPoint:
                 # Divide off the old precision
                 BytesDiv(
                     # Multiply by new precision first so we dont lose precision
-                    BytesMul(old_val, Itob(Exp(Int(2), Int(self.precision)))),
-                    Itob(Exp(Int(2), old_precision)),
+                    BytesMul(old_val, Itob(Exp(Int(10), Int(self.precision)))),
+                    Itob(Exp(Int(10), old_precision)),
                 ),
             )
         )
@@ -81,62 +79,55 @@ class FixedPoint:
         val = tail(value)
         prec = Int(self.precision)
 
-        integral = ScratchVar()
-        fractional = ScratchVar()
+        ascii = ScratchVar()
         return Seq(
-            # Integral, just divide by 2^precision as a fake "shift right" to get the integral component only
-            integral.store(BytesDiv(val, Itob(Exp(Int(2), prec)))),
-            # Fractional, more involvedi, handle in subroutine
-            fractional.store(fractional_bits(suffix(val, prec / Int(8)))),
+            ascii.store(itoa(Btoi(val) + Int(1))),
             # Combine with decimal
             Concat(
-                itoa(Btoi(integral.load())), Bytes("."), itoa(Btoi(fractional.load()))
+                Substring(ascii.load(), Int(0), Len(ascii.load()) - prec),
+                Bytes("."),
+                Substring(ascii.load(), Len(ascii.load()) - prec, Len(ascii.load())),
             ),
         )
 
 
-@Subroutine(TealType.bytes)
-def fractional_bits(b: TealType.bytes):
-    # fractional, more involved typically this is the sum of bit[n]*2^-n from 1 to precision
-    # recall algebraic identities:
-    #     2^-n == 1/2^n
-    #     1/x + 1/y == 1*y/x*y + 1*x/x*y == 1*x+1*y/x*y == x+y/x*y
-
-    # Just naming it so its obvious
-    num_bits = Len(b) * Int(8)
-    # Just pretending here but we know what the max is
-    least_common_denom = Exp(Int(2), num_bits)
-    lcd = ScratchVar()  # Store lcm so we dont have to recalc
-    numerator = ScratchVar()  # accumulate the numerator values
-
-    i = ScratchVar()
-    init = i.store(Int(0))
-    cond = i.load() < num_bits
-    iter = i.store(i.load() + Int(1))
-
-    return Seq(
-        lcd.store(least_common_denom),
-        numerator.store(Int(0)),
-        For(init, cond, iter).Do(
-            If(
-                GetBit(b, i.load()),
-                Seq(
-                    # Only add to numerator if the bit is set to 1
-                    numerator.store(
-                        numerator.load()
-                        + (lcd.load() / Exp(Int(2), (i.load() + Int(1))))
-                    )
-                ),
-            )
-        ),
-        # Using  *10 to force rounding
-        Itob(((numerator.load() * Int(10)) / least_common_denom) + Int(1)),
-    )
-
-
-@Subroutine(TealType.bytes)
-def fp_unwrap(a: TealType.bytes):
-    return head(a)
+# @Subroutine(TealType.bytes)
+# def binary_fractional_bits(b: TealType.bytes):
+#    # fractional, more involved typically this is the sum of bit[n]*2^-n from 1 to precision
+#    # recall algebraic identities:
+#    #     2^-n == 1/2^n
+#    #     1/x + 1/y == 1*y/x*y + 1*x/x*y == 1*x+1*y/x*y == x+y/x*y
+#
+#    # Just naming it so its obvious
+#    num_bits = Len(b) * Int(8)
+#    # We know what the max is
+#    least_common_denom = Exp(Int(2), num_bits)
+#    lcd = ScratchVar()          # Store lcd so we dont have to recalc
+#    numerator = ScratchVar()    # accumulate the numerator values
+#
+#    i = ScratchVar()
+#    init = i.store(Int(0))
+#    cond = i.load() < num_bits
+#    iter = i.store(i.load() + Int(1))
+#
+#    return Seq(
+#        lcd.store(least_common_denom),
+#        numerator.store(Int(0)),
+#        For(init, cond, iter).Do(
+#            If(
+#                GetBit(b, i.load()),
+#                Seq(
+#                    # Only add to numerator if the bit is set to 1
+#                    numerator.store(
+#                        numerator.load()
+#                        + (lcd.load() / Exp(Int(2), (i.load() + Int(1))))
+#                    )
+#                ),
+#            )
+#        ),
+#        # Using  *10 to force rounding to 1 decimal
+#        Itob(((numerator.load() * Int(10)) / least_common_denom) + Int(1)),
+#    )
 
 
 @Subroutine(TealType.bytes)

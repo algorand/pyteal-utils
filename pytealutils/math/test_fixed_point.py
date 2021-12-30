@@ -15,6 +15,6 @@ def test_fixed_point():
     s = ScratchVar()
     expr = Seq(s.store(fp_add(fp1, fp2)), Log(fp.to_ascii(s.load())))
 
-    output = [logged_bytes("5.6")]
+    output = [logged_bytes("5.6" + "0" * (fp.precision - 1))]
 
     assert_output(expr, output, pad_budget=2)
