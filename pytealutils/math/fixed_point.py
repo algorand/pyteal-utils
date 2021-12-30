@@ -1,7 +1,8 @@
-from typing import Union, Optional
+from typing import Optional, Union
 
-from ..strings import tail, head, itoa, suffix
-from pyteal import *
+from pyteal import Assert, Btoi, Bytes, BytesAdd, BytesDiv, BytesMul, Concat, Exp, Expr, For, GetBit, GetByte, If, Int, Itob, Len, ScratchVar, Seq, Subroutine, TealType
+
+from ..strings import head, itoa, suffix, tail
 
 # From ABI: ufixed<N>x<M>: An N-bit unsigned fixed-point decimal number with precision M, where 8 <= N <= 512, N % 8 = 0, and 0 < M <= 160, which
 
@@ -52,7 +53,7 @@ class FixedPoint:
                     BytesMul(old_val, Itob(Exp(Int(2), Int(self.precision)))),
                     Itob(Exp(Int(2), old_precision)),
                 ),
-            ),
+            )
         )
 
     def to_ascii(self, value: TealType.bytes):
@@ -103,7 +104,7 @@ def fractional_bits(b: TealType.bytes):
                     numerator.store(
                         numerator.load()
                         + (lcd.load() / Exp(Int(2), (i.load() + Int(1))))
-                    ),
+                    )
                 ),
             )
         ),

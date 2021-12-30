@@ -1,4 +1,3 @@
-
 from pyteal import BinaryExpr, Expr, Int, Op, TealType, UnaryExpr
 
 # Credit CiottiGiorgio

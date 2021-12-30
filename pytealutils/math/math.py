@@ -1,6 +1,26 @@
 import math
 
-from pyteal import BitLen, BytesAdd, BytesDiv, BytesMinus, BytesMul, BytesZero, Concat, Exp, Expr, ExtractUint64, If, Int, Itob, Len, Not, ScratchSlot, Seq, Subroutine, TealType
+from pyteal import (
+    BitLen,
+    BytesAdd,
+    BytesDiv,
+    BytesMinus,
+    BytesMul,
+    BytesZero,
+    Concat,
+    Exp,
+    Expr,
+    ExtractUint64,
+    If,
+    Int,
+    Itob,
+    Len,
+    Not,
+    ScratchSlot,
+    Seq,
+    Subroutine,
+    TealType,
+)
 
 from ..inline.inline_asm import InlineAssembly
 
