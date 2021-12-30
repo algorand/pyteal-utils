@@ -1,4 +1,5 @@
-from pyteal import BinaryExpr, BitwiseXor, Expr, Int, Op, TealType, UnaryExpr
+
+from pyteal import BinaryExpr, Expr, Int, Op, TealType, UnaryExpr
 
 # Credit CiottiGiorgio
 
@@ -6,7 +7,7 @@ from pyteal import BinaryExpr, BitwiseXor, Expr, Int, Op, TealType, UnaryExpr
 class SignedInt(Int):
     def __init__(self, value: int):
         assert (
-            -2 ** 63 <= value <= 2 ** 63 - 1
+            -(2 ** 63) <= value <= 2 ** 63 - 1
         ), "Value must be between -2^63 and 2^63-1"
 
         if value < 0:
@@ -17,6 +18,9 @@ class SignedInt(Int):
 
     def __sub__(self, other) -> Expr:
         return SignedInt.__add_modulo__(self, SignedInt.two_complement(other))
+
+    def __add__(self, other) -> Expr:
+        return SignedInt.__add_modulo__(self, other)
 
     @staticmethod
     def __add_modulo__(left, right) -> Expr:
@@ -36,6 +40,13 @@ class SignedInt(Int):
         return addition_without_overflow
 
     @staticmethod
+    def add(l: TealType.uint64, r: TealType.uint64) -> Expr:
+        return SignedInt.__add_modulo__(l, r)
+
+    @staticmethod
+    def subtract(l: TealType.uint64, r: TealType.uint64) -> Expr:
+        return SignedInt.__add_modulo__(l, SignedInt.two_complement(r))
+
+    @staticmethod
     def two_complement(n) -> Expr:
-        n_xor = BitwiseXor(n, Int(0xFFFFFFFFFFFFFFFF))
-        return SignedInt.__add_modulo__(n_xor, Int(1))
+        return SignedInt.__add_modulo__(~n, Int(1))

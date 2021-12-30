@@ -1,8 +1,14 @@
 from pyteal import Bytes, Int, Itob, Log
 
-from tests.helpers import assert_fail, assert_output, logged_bytes, logged_int
+from tests.helpers import (
+    LOGIC_EVAL_ERROR,
+    assert_fail,
+    assert_output,
+    logged_bytes,
+    logged_int,
+)
 
-from .string import atoi, encode_uvarint, head, itoa, tail
+from .string import atoi, encode_uvarint, head, itoa, suffix, tail
 
 
 def test_atoi():
@@ -13,7 +19,7 @@ def test_atoi():
 
 def test_atoi_invalid():
     expr = Log(Itob(atoi(Bytes("abc"))))
-    assert_fail(expr, ["logic eval error"])
+    assert_fail(expr, [LOGIC_EVAL_ERROR])
 
 
 def test_itoa():
@@ -30,7 +36,7 @@ def test_head():
 
 def test_head_empty():
     expr = Log(tail(Bytes("")))
-    assert_fail(expr, ["logic eval error"])
+    assert_fail(expr, [LOGIC_EVAL_ERROR])
 
 
 def test_tail():
@@ -41,7 +47,18 @@ def test_tail():
 
 def test_tail_empty():
     expr = Log(tail(Bytes("")))
-    assert_fail(expr, ["logic eval error"])
+    assert_fail(expr, [LOGIC_EVAL_ERROR])
+
+
+def test_suffix():
+    expr = Log(suffix(Bytes("deadbeef"), Int(2)))
+    output = [logged_bytes("ef")]
+    assert_output(expr, output)
+
+
+def test_suffix_past_length():
+    expr = Log(suffix(Bytes("deadbeef"), Int(9)))
+    assert_fail(expr, [LOGIC_EVAL_ERROR])
 
 
 def test_encode_uvarint():

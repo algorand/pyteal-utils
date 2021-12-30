@@ -1,6 +1,6 @@
 from pyteal import CompileOptions, Expr, LeafExpr, Mode, TealBlock, TealOp, TealType
 
-# Credit hernandp
+# Credit Julian (RandLabs)
 
 
 class CustomOp:

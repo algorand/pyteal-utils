@@ -1,27 +1,6 @@
 import math
 
-from pyteal import (
-    BitLen,
-    BytesAdd,
-    BytesDiv,
-    BytesMinus,
-    BytesMul,
-    BytesZero,
-    Concat,
-    Exp,
-    Expr,
-    ExtractUint64,
-    If,
-    Int,
-    Itob,
-    Len,
-    Not,
-    Seq,
-    Subroutine,
-    TealType,
-)
-from pyteal.ast.binaryexpr import ExtractUint64
-from pyteal.ast.scratch import ScratchSlot
+from pyteal import BitLen, BytesAdd, BytesDiv, BytesMinus, BytesMul, BytesZero, Concat, Exp, Expr, ExtractUint64, If, Int, Itob, Len, Not, ScratchSlot, Seq, Subroutine, TealType
 
 from ..inline.inline_asm import InlineAssembly
 
@@ -29,10 +8,15 @@ _scale = 1000000
 _log2_10 = math.log2(10)
 _log2_e = math.log2(math.e)
 
+_max_uint = (2 ** 64) - 1
+_half_uint = (2 ** 32) - 1
+
 log2_10 = Int(int(_log2_10 * _scale))
 log2_e = Int(int(_log2_e * _scale))
-
 scale = Int(_scale)
+
+max_uint = Int(_max_uint)
+half_uint = Int(_half_uint)
 
 
 @Subroutine(TealType.uint64)
@@ -45,26 +29,6 @@ def odd(x: TealType.uint64):
 def even(x: TealType.uint64):
     """even returns 1 if x is even"""
     return Not(odd(x))
-
-
-@Subroutine(TealType.uint64)
-def bytes_to_int(x: TealType.bytes):
-    return If(
-        Len(x) < Int(8),
-        ExtractUint64(Concat(BytesZero(Int(8) - Len(x)), x), Int(0)),
-        ExtractUint64(x, Len(x) - Int(8)),
-    )
-
-
-@Subroutine(TealType.bytes)
-def stack_to_wide():
-    h = ScratchSlot()
-    l = ScratchSlot()
-    return Seq(
-        l.store(),
-        h.store(),  # Take the low and high ints off the stack and combine them
-        Concat(Itob(h.load()), Itob(l.load())),
-    )
 
 
 @Subroutine(TealType.uint64)
@@ -83,6 +47,13 @@ def wide_factorial(x: TealType.bytes):
     )
 
 
+# @Subroutine(TealType.bytes)
+# def negative_power(x: TealType.uint64, n: TealType.uint64):
+#    """negative power returns x^-n"""
+#    return BytesDiv(Itob(Int(1)), wide_power(x, n))
+#
+
+
 @Subroutine(TealType.bytes)
 def wide_power(x: TealType.uint64, n: TealType.uint64):
     return Seq(InlineAssembly("expw", x, n), stack_to_wide())
@@ -96,7 +67,6 @@ def exponential(x: TealType.uint64, n: TealType.uint64):
         n: The number of iterations, more is better appx but costs ops
 
     """
-
     _scale = Itob(Int(1000))
 
     @Subroutine(TealType.bytes)
@@ -113,23 +83,15 @@ def exponential(x: TealType.uint64, n: TealType.uint64):
     return bytes_to_int(BytesDiv(_impl(Itob(x), wide_factorial(Itob(n)), n), _scale))
 
 
-def ln(x: TealType.uint64):
-    pass
-
-
-@Subroutine(TealType.bytes)
+@Subroutine(TealType.uint64)
 def log2(x: TealType.uint64):
-    return BytesMinus(Itob(BitLen(x)), Itob(Int(64)))
-    # msb = Itob(BitLen(x))
-    # int256 result = msb - 64 << 64;
-    # uint256 ux = uint256 (int256 (x)) << uint256 (127 - msb);
-    # for (int256 bit = 0x8000000000000000; bit > 0; bit >>= 1) {
-    #  ux *= ux;
-    #  uint256 b = ux >> 255;
-    #  ux >>= 127 + b;
-    #  result += bit * int256 (b);
-    # }
-    # return int128 (result);
+    return BitLen(x)  # Only returns integral component
+
+
+@Subroutine(TealType.uint64)
+def ln(x: TealType.uint64):
+    """Returns natural log of x for integer passed"""
+    return (log2(x) * scale) / log2_e
 
 
 @Subroutine(TealType.uint64)
@@ -164,3 +126,23 @@ def div_ceil(a: TealType.uint64, b: TealType.uint64) -> Expr:
     """Returns the result of division rounded up to the next integer"""
     q = a / b
     return If(a % b > Int(0), q + Int(1), q)
+
+
+@Subroutine(TealType.uint64)
+def bytes_to_int(x: TealType.bytes):
+    return If(
+        Len(x) < Int(8),
+        ExtractUint64(Concat(BytesZero(Int(8) - Len(x)), x), Int(0)),
+        ExtractUint64(x, Len(x) - Int(8)),
+    )
+
+
+@Subroutine(TealType.bytes)
+def stack_to_wide():
+    h = ScratchSlot()
+    l = ScratchSlot()
+    return Seq(
+        l.store(),
+        h.store(),  # Take the low and high ints off the stack and combine them
+        Concat(Itob(h.load()), Itob(l.load())),
+    )

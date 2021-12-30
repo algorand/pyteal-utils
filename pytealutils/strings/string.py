@@ -26,19 +26,19 @@ ascii_nine = Int(_ascii_nine)
 
 @Subroutine(TealType.uint64)
 def ascii_to_int(arg: TealType.uint64):
-    """Convert the integer representing a character in ascii to the actual integer it represents"""
+    """ascii_to_int converts the integer representing a character in ascii to the actual integer it represents"""
     return Seq(Assert(arg >= ascii_zero), Assert(arg <= ascii_nine), arg - ascii_zero)
 
 
 @Subroutine(TealType.bytes)
 def int_to_ascii(arg: TealType.uint64):
-    """Convert an integer to the ascii byte that represents it"""
+    """int_to_ascii converts an integer to the ascii byte that represents it"""
     return Extract(Bytes("0123456789"), arg, Int(1))
 
 
 @Subroutine(TealType.uint64)
 def atoi(a: TealType.bytes):
-    """Convert a byte string representing a number to the integer value it represents"""
+    """atoi converts a byte string representing a number to the integer value it represents"""
     return If(
         Len(a) > Int(0),
         (ascii_to_int(GetByte(a, Int(0))) * pow10(Len(a) - Int(1)))
@@ -49,7 +49,7 @@ def atoi(a: TealType.bytes):
 
 @Subroutine(TealType.bytes)
 def itoa(i: TealType.uint64):
-    """Convert an integer to the ascii byte string it represents"""
+    """itoa converts an integer to the ascii byte string it represents"""
     return If(
         i == Int(0),
         Bytes("0"),
@@ -62,14 +62,20 @@ def itoa(i: TealType.uint64):
 
 @Subroutine(TealType.bytes)
 def head(s: TealType.bytes):
-    """Get the first byte from a bytestring, returns a uint64"""
+    """head gets the first byte from a bytestring, returns as bytes"""
     return Extract(s, Int(0), Int(1))
 
 
 @Subroutine(TealType.bytes)
 def tail(s: TealType.bytes):
-    """Return the string with the first character removed"""
+    """tail returns the string with the first character removed"""
     return Substring(s, Int(1), Len(s))
+
+
+@Subroutine(TealType.bytes)
+def suffix(s: TealType.bytes, n: TealType.uint64):
+    """suffix returns the last n bytes of a given byte string"""
+    return Substring(s, Len(s) - n, Len(s))
 
 
 @Subroutine(TealType.bytes)

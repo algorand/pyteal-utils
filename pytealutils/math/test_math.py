@@ -1,8 +1,9 @@
-from pyteal import Int, Itob, Log
+
+from pyteal import Int, Itob, Log, Seq
 
 from tests.helpers import assert_output, logged_int
 
-from .math import Seq, div_ceil, even, odd, pow10
+from .math import div_ceil, even, odd, pow10
 
 
 def test_even():
@@ -38,12 +39,15 @@ def test_odd():
 #    output = [logged_int(int(pymath.log(num)))]
 #    assert_output(expr, output, pad_budget=15)
 #
+
 # def test_log2():
-#   num = 123123123
-#   expr = Log(log2(Int(num)))
-#   output = [logged_int(int(pymath.log2(num)))]
-#   print(pymath.log2(num))
-#   assert_output(expr, output)
+#    num = 17
+#    # expr = Log(Itob(log2(Int(num))))
+#    expr = Pop(log2(Int(num)))
+#    output = [logged_int(int(pymath.log2(num)))]
+#    print(pymath.log2(num))
+#    assert_output(expr, output, pad_budget=15)
+
 
 # def test_log10():
 #    num = 123123123
@@ -75,3 +79,9 @@ def test_div_ceil():
     expr = Log(Itob(div_ceil(Int(100), Int(3))))
     output = [logged_int(int(34))]
     assert_output(expr, output)
+
+
+# def test_negative_power():
+#    expr = Log(negative_power(Int(100), Int(3)))
+#    output = [logged_int(int(math.pow(100, -3)))]
+#    assert_output(expr, output)

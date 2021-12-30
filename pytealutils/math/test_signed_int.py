@@ -1,4 +1,4 @@
-from pyteal import Itob, Log, Seq
+from pyteal import Int, Itob, Log, Seq
 
 from tests.helpers import assert_output, logged_int
 
@@ -18,7 +18,14 @@ def test_signed_sub():
 
 def test_signed_sub_add():
     num = 100
-    expr = Seq(Log(Itob(SignedInt(num) - SignedInt(num + 1) - SignedInt(-1))))
+    expr = Seq(
+        Log(Itob(SignedInt.add(SignedInt(num) - SignedInt(num + 5), Int(num + 5))))
+    )
+    output = [logged_int(num)]
+    assert_output(expr, output)
 
-    output = [logged_int(0)]
+
+def test_signed_static():
+    expr = Log(Itob(SignedInt.subtract(Int(10), Int(11))))
+    output = ["ff" * 8]
     assert_output(expr, output)
