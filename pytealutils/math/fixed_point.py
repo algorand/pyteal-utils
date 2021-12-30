@@ -1,6 +1,27 @@
 from typing import Optional, Union
 
-from pyteal import Assert, Btoi, Bytes, BytesAdd, BytesDiv, BytesMul, Concat, Exp, Expr, For, GetBit, GetByte, If, Int, Itob, Len, ScratchVar, Seq, Subroutine, TealType
+from pyteal import (
+    Assert,
+    Btoi,
+    Bytes,
+    BytesAdd,
+    BytesDiv,
+    BytesMul,
+    Concat,
+    Exp,
+    Expr,
+    For,
+    GetBit,
+    GetByte,
+    If,
+    Int,
+    Itob,
+    Len,
+    ScratchVar,
+    Seq,
+    Subroutine,
+    TealType,
+)
 
 from ..strings import head, itoa, suffix, tail
 

@@ -131,13 +131,13 @@ def pow10(x: TealType.uint64) -> Expr:
 
 @Subroutine(TealType.uint64)
 def max(a: TealType.uint64, b: TealType.uint64) -> Expr:
-    """Returns the max of 2 integers"""
+    """max returns the max of 2 integers"""
     return If(a > b, a, b)
 
 
 @Subroutine(TealType.uint64)
 def min(a: TealType.uint64, b: TealType.uint64) -> Expr:
-    """Returns the min of 2 integers"""
+    """min returns the min of 2 integers"""
     return If(a < b, a, b)
 
 

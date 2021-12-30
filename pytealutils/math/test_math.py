@@ -2,7 +2,7 @@ from pyteal import Int, Itob, Log, Seq
 
 from tests.helpers import assert_output, logged_int
 
-from .math import div_ceil, even, odd, pow10
+from .math import div_ceil, even, max, odd, pow10
 
 
 def test_even():
