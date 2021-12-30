@@ -31,6 +31,9 @@ from .math import pow10
 # Hold the value in memory as bytes (may be larger than a single uint64)
 # Prepend the precision as a single byte (max precision 160 vs max_uint 255) the number of bits can be computed (Len(bytes) - 1) * 8
 
+# TODO: not doing _anything_ with bits at the moment, really not sure how to handle it. Right now we're doing everything with Byte* math so but that means it
+# wont cause an overflow if we push past the bit limit
+
 
 class FixedPoint:
     def __init__(self, bits: int, precision: int):

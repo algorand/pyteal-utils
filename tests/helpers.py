@@ -219,7 +219,7 @@ def assert_close_enough(
 
     for idx in range(len(output)):
         val = float(bytes.fromhex(logs[idx]).decode("ascii"))
-        assert abs(output[idx] - val) < (2.0 / precisions[idx])
+        assert abs(output[idx] - val) <= (2.0 / precisions[idx])
 
 
 def assert_fail(expr: Expr, output: List[str], **kwargs):
