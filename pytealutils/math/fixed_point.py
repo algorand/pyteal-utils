@@ -6,6 +6,7 @@ from pyteal import (
     Bytes,
     BytesAdd,
     BytesDiv,
+    BytesMinus,
     BytesMul,
     Concat,
     Exp,
@@ -22,6 +23,7 @@ from pyteal import (
 )
 
 from ..strings import head, itoa, tail
+from .math import pow10
 
 # From ABI: ufixed<N>x<M>: An N-bit unsigned fixed-point decimal number with precision M, where 8 <= N <= 512, N % 8 = 0, and 0 < M <= 160, which
 
@@ -32,8 +34,6 @@ from ..strings import head, itoa, tail
 
 
 class FixedPoint:
-
-    # TODO allow instantiation with other types? byte arrays?
     def __init__(self, bits: int, precision: int):
         assert 8 <= bits <= 512, "Number of bits must be between 8 and 512"
         assert bits % 8 == 0, "Bits must be a multiple of 8"
@@ -81,7 +81,7 @@ class FixedPoint:
 
         ascii = ScratchVar()
         return Seq(
-            ascii.store(itoa(Btoi(val) + Int(1))),
+            ascii.store(itoa(Btoi(val))),
             # Combine with decimal
             Concat(
                 Substring(ascii.load(), Int(0), Len(ascii.load()) - prec),
@@ -89,6 +89,52 @@ class FixedPoint:
                 Substring(ascii.load(), Len(ascii.load()) - prec, Len(ascii.load())),
             ),
         )
+
+
+@Subroutine(TealType.none)
+def assert_fp_match(a: TealType.bytes, b: TealType.bytes):
+    return Assert(head(a) == head(b))  # Check precision matches
+
+
+@Subroutine(TealType.bytes)
+def fp_add(a: TealType.bytes, b: TealType.bytes):
+    return Seq(assert_fp_match(a, b), Concat(head(a), BytesAdd(tail(a), tail(b))))
+
+
+@Subroutine(TealType.bytes)
+def fp_sub(a: TealType.bytes, b: TealType.bytes):
+    return Seq(assert_fp_match(a, b), Concat(head(a), BytesMinus(tail(a), tail(b))))
+
+
+@Subroutine(TealType.bytes)
+def fp_mul(a: TealType.bytes, b: TealType.bytes):
+    return Seq(
+        assert_fp_match(a, b),
+        Concat(
+            head(a),
+            BytesDiv(
+                BytesMul(
+                    tail(a), tail(b)
+                ),  # mul first then divide by the square of the scale
+                Itob(Exp(Int(10), GetByte(a, Int(0)))),
+            ),
+        ),
+    )
+
+
+@Subroutine(TealType.bytes)
+def fp_div(a: TealType.bytes, b: TealType.bytes):
+    return Seq(
+        assert_fp_match(a, b),
+        Concat(
+            head(a),
+            BytesDiv(
+                # Scale up the numerator so we keep the same precision
+                BytesMul(tail(a), Itob(pow10(GetByte(a, Int(0))))),
+                tail(b),
+            ),
+        ),
+    )
 
 
 # @Subroutine(TealType.bytes)
@@ -128,11 +174,3 @@ class FixedPoint:
 #        # Using  *10 to force rounding to 1 decimal
 #        Itob(((numerator.load() * Int(10)) / least_common_denom) + Int(1)),
 #    )
-
-
-@Subroutine(TealType.bytes)
-def fp_add(a: TealType.bytes, b: TealType.bytes):
-    return Seq(
-        Assert(head(a) == head(b)),  # Check precision matches
-        Concat(head(a), BytesAdd(tail(a), tail(b))),
-    )
