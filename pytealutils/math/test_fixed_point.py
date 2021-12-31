@@ -20,17 +20,12 @@ def generate_valid_operands():
     return FixedPoint(N, M, A), FixedPoint(N, M, B)
 
 
-# def generate_invalid_operands():
-#    """generate_invalid_operands generates operands and"""
-#    return 2.3, 3.3, FixedPoint(64, 8)
-
-
 def test_fixedpoint_add():
     exprs, outputs, precisions = [], [], []
     for _ in range(tests_per_contract):
         a, b = generate_valid_operands()
 
-        exprs.append(Log(fp_to_ascii(a + b)))
+        exprs.append(Seq(Log(fp_to_ascii(a + b))))
         outputs.append(a.raw + b.raw)
         precisions.append(a.precision)
 

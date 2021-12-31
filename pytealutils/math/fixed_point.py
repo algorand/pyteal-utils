@@ -25,7 +25,7 @@ from pyteal import (
 )
 from pyteal.ast.leafexpr import LeafExpr
 
-from ..strings import head, itoa, prefix, suffix, tail
+from ..strings import head, itoa, prefix, suffix, tail, witoa
 from .math import pow10
 
 
@@ -144,11 +144,10 @@ class FixedPoint(LeafExpr):
 def fp_to_ascii(v: TealType.bytes):
     val = tail(v)
     prec = GetByte(v, Int(0))
-
     ascii = ScratchVar()
+
     return Seq(
-        ascii.store(itoa(Btoi(val))),
-        # Combine with decimal
+        If(Len(val) > Int(8), ascii.store(witoa(val)), ascii.store(itoa(Btoi(val)))),
         Concat(
             prefix(ascii.load(), Len(ascii.load()) - prec),
             Bytes("."),

@@ -1,6 +1,11 @@
 from pyteal import (
     Assert,
+    BitLen,
+    Btoi,
     Bytes,
+    BytesDiv,
+    BytesGt,
+    BytesMod,
     Concat,
     Extract,
     GetByte,
@@ -56,6 +61,23 @@ def itoa(i: TealType.uint64):
         Concat(
             If(i / Int(10) > Int(0), itoa(i / Int(10)), Bytes("")),
             int_to_ascii(i % Int(10)),
+        ),
+    )
+
+
+@Subroutine(TealType.bytes)
+def witoa(i: TealType.bytes):
+    """witoa converts an byte string interpreted as an integer to the ascii byte string it represents"""
+    return If(
+        BitLen(i) == Int(0),
+        Bytes("0"),
+        Concat(
+            If(
+                BytesGt(BytesDiv(i, Bytes("base16", "A0")), Bytes("base16", "A0")),
+                witoa(BytesDiv(i, Bytes("base16", "A0"))),
+                Bytes(""),
+            ),
+            int_to_ascii(Btoi(BytesMod(i, Bytes("base16", "A0")))),
         ),
     )
 
