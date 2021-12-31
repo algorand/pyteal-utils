@@ -1,7 +1,8 @@
-from typing import Optional, Union
+from typing import Union
 
 from pyteal import (
     Assert,
+    BitLen,
     Btoi,
     Bytes,
     BytesAdd,
@@ -9,93 +10,27 @@ from pyteal import (
     BytesMinus,
     BytesMul,
     BytesZero,
+    CompileOptions,
     Concat,
+    Expr,
     GetByte,
+    If,
     Int,
     Itob,
     Len,
     ScratchVar,
     Seq,
     Subroutine,
-    Substring,
     TealType,
 )
+from pyteal.ast.leafexpr import LeafExpr
 
-from ..strings import head, itoa, tail
+from ..strings import head, itoa, prefix, suffix, tail
 from .math import pow10
 
 
-class FixedPoint:
-    """FixedPoint represents a numeric value with a fixed number of decimal places
-
-        From ABI: ufixed<N>x<M>: An N-bit unsigned fixed-point decimal number with precision M, where 8 <= N <= 512, N % 8 = 0, and 0 < M <= 160, which
-
-        Hold the value in memory as bytes (may be larger than a single uint64)
-        Prepend the precision as a single byte (max precision 160 vs max_uint 255) the number of bits can be computed (Len(bytestring) - 1) * 8
-        Every math operation asserts that the width in bytes of the result is <= to the expected width and repads with 0s if necessary
-    """
-
-    def __init__(self, bits: int, precision: int):
-        assert 8 <= bits <= 512, "Number of bits must be between 8 and 512"
-        assert bits % 8 == 0, "Bits must be a multiple of 8"
-        assert 0 < precision <= 160, "Precision must be between 0 and 160"
-
-        self.bits = bits
-        self.precision = precision
-        self.precision_as_bytes = precision.to_bytes(8, "big")[-1:]
-
-    def wrap(self, value: Optional[Union[int, float, bytes]]):
-        expected_bytes = int(self.bits / 8)
-        if type(value) in [int, float]:
-            intbytes = int(value * (10 ** self.precision)).to_bytes(
-                expected_bytes, "big"
-            )
-            return Bytes(
-                self.precision_as_bytes
-                + b"00" * (len(intbytes) - expected_bytes)
-                + intbytes
-            )
-        elif type(value) == bytes:
-            if len(value) != expected_bytes:
-                # Should be exactly encoded except for precision
-                raise ValueError
-            return Bytes(self.precision_as_bytes + value)
-        else:
-            raise ValueError
-
-    def rescale(self, value: TealType.bytes):
-        old_precision = byte_precision(value)
-        old_val = tail(value)
-        return Seq(
-            Concat(
-                # Prepend precision byte
-                Bytes(self.precision_as_bytes),
-                # Divide off the old precision
-                BytesDiv(
-                    # Multiply by new precision first so we dont lose precision
-                    BytesMul(old_val, Itob(pow10(Int(self.precision)))),
-                    old_precision,
-                ),
-            )
-        )
-
-    def to_ascii(self, value: TealType.bytes):
-        val = tail(value)
-        prec = Int(self.precision)
-
-        ascii = ScratchVar()
-        return Seq(
-            ascii.store(itoa(Btoi(val))),
-            # Combine with decimal
-            Concat(
-                Substring(ascii.load(), Int(0), Len(ascii.load()) - prec),
-                Bytes("."),
-                Substring(ascii.load(), Len(ascii.load()) - prec, Len(ascii.load())),
-            ),
-        )
-
-    def __str__(self) -> str:
-        return "FixedPoint({},{})".format(self.bits, self.precision)
+def precision_uint8(p: int):
+    return p.to_bytes(8, "big")[-1:]
 
 
 @Subroutine(TealType.bytes)
@@ -109,10 +44,129 @@ def assert_fp_match(a: TealType.bytes, b: TealType.bytes):
 
 
 @Subroutine(TealType.bytes)
-def pad_assert_overflow(prec: TealType.bytes, len: TealType.uint64, a: TealType.bytes):
+def pad_assert_overflow(
+    prec: TealType.bytes, bytelen: TealType.uint64, value: TealType.bytes
+):
+    """pad_assert_overflow checks to make sure we didnt overflow and sets the appropriate 0 padding if necessary
+
+        Args:
+            prec: the precision as bytes
+            bytelen: the number of bytes we expect
+            value: the underlying value, without the precision prefix
+
+        Returns:
+            appropriately padded bytestring or Asserts if we overflow (overflowed? overflew?)
+    """
+    first_set = ScratchVar()
     return Seq(
-        Assert(Len(a) <= len),  # Make sure we didn't overflow
-        Concat(prec, BytesZero(len - Int(1) - Len(a)), a),
+        first_set.store((BitLen(value) / Int(8))),
+        Assert(first_set.load() <= bytelen),
+        If(Len(value) >= bytelen)
+        .Then(Concat(prec, suffix(value, Len(value) - bytelen)))  # We can remove zeros
+        .Else(  # We need to pad with zeros
+            Concat(prec, BytesZero(bytelen - Len(value)), value)
+        ),
+    )
+
+
+class FixedPoint(LeafExpr):
+    """FixedPoint represents a numeric value with a fixed number of decimal places
+
+    From ABI: ufixed<N>x<M>: An N-bit unsigned fixed-point decimal number with precision M, where 8 <= N <= 512, N % 8 = 0, and 0 < M <= 160, which
+
+    Hold the value in memory as bytes (may be larger than a single uint64)
+    Prepend the precision as a single byte (max precision 160 vs max_uint 255) the number of bits can be computed (Len(bytestring) - 1) * 8
+    Every math operation asserts that the width in bytes of the result is <= to the expected width and repads with 0s if necessary
+    """
+
+    def __init__(
+        self, bits: int, precision: int, value: Union[int, float, bytes, Expr]
+    ):
+        assert 8 <= bits <= 512, "Number of bits must be between 8 and 512"
+        assert bits % 8 == 0, "Bits must be a multiple of 8"
+        assert 0 < precision <= 160, "Precision must be between 0 and 160"
+
+        self.bits = bits
+        self.precision = precision
+
+        precision_as_bytes = precision_uint8(precision)
+        expected_bytes = int(self.bits / 8)
+
+        self.raw = value
+
+        if type(value) in [int, float]:
+            self.value = Bytes(
+                precision_as_bytes
+                + int(value * (10 ** self.precision)).to_bytes(expected_bytes, "big")
+            )
+        elif type(value) == bytes:
+            if len(value) != expected_bytes:
+                # Should be exactly encoded except for precision
+                raise ValueError
+            self.value = Bytes(precision_as_bytes + value)
+        elif issubclass(type(value), Expr):
+            self.value = value  # Should already be in the right format
+        else:
+            print(type(value))
+            raise ValueError
+
+    def __teal__(self, options: "CompileOptions"):
+        return self.value.__teal__(options)
+
+    def type_of(self):
+        return TealType.bytes
+
+    def __add__(self, other: "FixedPoint"):
+        return fp_add(self.value, other.value)
+
+    def __sub__(self, other: "FixedPoint"):
+        return fp_sub(self.value, other.value)
+
+    def __mul__(self, other: "FixedPoint"):
+        return fp_mul(self.value, other.value)
+
+    def __truediv__(self, other: "FixedPoint"):
+        return fp_div(self.value, other.value)
+
+    def rescaled(self, p: int):
+        return FixedPoint(self.bits, p, fp_rescale(self.value, Int(p)))
+
+    def to_ascii(self):
+        return fp_to_ascii(self.value)
+
+    def __str__(self) -> str:
+        return "FixedPoint({},{},{})".format(self.bits, self.precision, self.value)
+
+
+@Subroutine(TealType.bytes)
+def fp_to_ascii(v: TealType.bytes):
+    val = tail(v)
+    prec = GetByte(v, Int(0))
+
+    ascii = ScratchVar()
+    return Seq(
+        ascii.store(itoa(Btoi(val))),
+        # Combine with decimal
+        Concat(
+            prefix(ascii.load(), Len(ascii.load()) - prec),
+            Bytes("."),
+            suffix(ascii.load(), prec),
+        ),
+    )
+
+
+@Subroutine(TealType.bytes)
+def fp_rescale(v: TealType.bytes, p: TealType.uint64):
+    return pad_assert_overflow(
+        # Prepend new precision byte
+        suffix(Itob(p), Int(1)),
+        Len(tail(v)),
+        # Divide off the old precision
+        BytesDiv(
+            # Multiply by new precision first so we dont lose precision
+            BytesMul(tail(v), Itob(pow10(p))),
+            byte_precision(v),
+        ),
     )
 
 
@@ -120,7 +174,7 @@ def pad_assert_overflow(prec: TealType.bytes, len: TealType.uint64, a: TealType.
 def fp_add(a: TealType.bytes, b: TealType.bytes):
     return Seq(
         assert_fp_match(a, b),
-        pad_assert_overflow(head(a), Len(a), BytesAdd(tail(a), tail(b))),
+        pad_assert_overflow(head(a), Len(b), BytesAdd(tail(a), tail(b))),
     )
 
 
@@ -154,7 +208,7 @@ def fp_div(a: TealType.bytes, b: TealType.bytes):
         assert_fp_match(a, b),
         pad_assert_overflow(
             head(a),
-            Len(a),
+            Len(tail(a)),
             BytesDiv(
                 # Scale up the numerator so we keep the same precision
                 BytesMul(tail(a), byte_precision(a)),

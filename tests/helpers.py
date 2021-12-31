@@ -217,9 +217,15 @@ def assert_close_enough(
     assert len(compiled["hash"]) == 58
 
     logs, _ = execute_app(client, compiled["result"], **kwargs)
+    print(logs)
     for idx in range(len(output)):
         val = float(bytes.fromhex(logs[idx]).decode("ascii"))
-        assert abs(output[idx] - val) <= (2.0 / precisions[idx])
+        max_delta = 2.0 / (10 ** (precisions[idx] + 1))
+        assert (
+            abs(output[idx] - val) <= max_delta
+        ), "Difference greater than max_delta: {} vs {}".format(
+            output[idx] - val, max_delta
+        )
 
 
 def assert_fail(expr: Expr, output: List[str], **kwargs):

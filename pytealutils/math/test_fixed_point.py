@@ -12,24 +12,28 @@ tests_per_contract = 15
 def generate_valid_operands():
     """generate_valid_operands generates operands and"""
     # random.seed()
+    # N = random.randrange(8, 64, 8)
+    N = 64
+    M = random.randrange(1, 2, 1)
     # TODO
-    return 3.3, 2.3, FixedPoint(random.randrange(8, 64, 8), random.randrange(1, 2, 1))
+    A = 3.3
+    B = 2.3
+    return FixedPoint(N, M, A), FixedPoint(N, M, B)
 
 
-def generate_invalid_operands():
-    """generate_invalid_operands generates operands and"""
-    return 2.3, 3.3, FixedPoint(64, 8)
+# def generate_invalid_operands():
+#    """generate_invalid_operands generates operands and"""
+#    return 2.3, 3.3, FixedPoint(64, 8)
 
 
 def test_fixedpoint_add():
     exprs, outputs, precisions = [], [], []
     for _ in range(tests_per_contract):
-        a, b, fp = generate_valid_operands()
+        a, b = generate_valid_operands()
 
-        exprs.append(Log(fp.to_ascii(fp_add(fp.wrap(a), fp.wrap(b)))))
-
-        outputs.append(a + b)
-        precisions.append(fp.precision)
+        exprs.append(Log(fp_to_ascii(a + b)))
+        outputs.append(a.raw + b.raw)
+        precisions.append(a.precision)
 
     assert_close_enough(Seq(*exprs), outputs, precisions, pad_budget=15)
 
@@ -37,12 +41,11 @@ def test_fixedpoint_add():
 def test_fixedpoint_sub():
     exprs, outputs, precisions = [], [], []
     for _ in range(tests_per_contract):
-        a, b, fp = generate_valid_operands()
+        a, b = generate_valid_operands()
 
-        exprs.append(Log(fp.to_ascii(fp_sub(fp.wrap(a), fp.wrap(b)))))
-
-        outputs.append(a - b)
-        precisions.append(fp.precision)
+        exprs.append(Log(fp_to_ascii(a - b)))
+        outputs.append(a.raw - b.raw)
+        precisions.append(a.precision)
 
     assert_close_enough(Seq(*exprs), outputs, precisions, pad_budget=15)
 
@@ -50,12 +53,11 @@ def test_fixedpoint_sub():
 def test_fixedpoint_div():
     exprs, outputs, precisions = [], [], []
     for _ in range(tests_per_contract):
-        a, b, fp = generate_valid_operands()
+        a, b = generate_valid_operands()
 
-        exprs.append(Log(fp.to_ascii(fp_div(fp.wrap(a), fp.wrap(b)))))
-
-        outputs.append(a / b)
-        precisions.append(fp.precision)
+        exprs.append(Log(fp_to_ascii(a / b)))
+        outputs.append(a.raw / b.raw)
+        precisions.append(a.precision)
 
     assert_close_enough(Seq(*exprs), outputs, precisions, pad_budget=15)
 
@@ -63,11 +65,22 @@ def test_fixedpoint_div():
 def test_fixedpoint_mul():
     exprs, outputs, precisions = [], [], []
     for _ in range(tests_per_contract):
-        a, b, fp = generate_valid_operands()
+        a, b = generate_valid_operands()
 
-        exprs.append(Log(fp.to_ascii(fp_mul(fp.wrap(a), fp.wrap(b)))))
+        exprs.append(Log(fp_to_ascii(a * b)))
+        outputs.append(a.raw * b.raw)
+        precisions.append(a.precision)
 
-        outputs.append(a * b)
-        precisions.append(fp.precision)
+    assert_close_enough(Seq(*exprs), outputs, precisions, pad_budget=15)
+
+
+def test_fixedpoint_rescale():
+    exprs, outputs, precisions = [], [], []
+
+    a = FixedPoint(64, 2, 15234.32)
+
+    exprs.append(Log(fp_to_ascii(a.rescaled(3))))
+    outputs.append(a.raw)
+    precisions.append(a.precision)
 
     assert_close_enough(Seq(*exprs), outputs, precisions, pad_budget=15)
