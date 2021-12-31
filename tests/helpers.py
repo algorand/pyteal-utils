@@ -205,7 +205,7 @@ def assert_close_enough(
     expr: Expr, output: List[float], precisions: List[int], **kwargs
 ):
     """assert_close_enough takes some list of floats and corresponding precision and
-        asserts that the result from the logic output is close enough to the expected value
+    asserts that the result from the logic output is close enough to the expected value
     """
     assert expr is not None
 
@@ -216,7 +216,6 @@ def assert_close_enough(
     assert len(compiled["hash"]) == 58
 
     logs, _ = execute_app(client, compiled["result"], **kwargs)
-
     for idx in range(len(output)):
         val = float(bytes.fromhex(logs[idx]).decode("ascii"))
         assert abs(output[idx] - val) <= (2.0 / precisions[idx])

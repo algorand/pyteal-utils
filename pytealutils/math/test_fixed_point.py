@@ -1,66 +1,73 @@
+import random
+
 from pyteal import *
 
 from tests.helpers import assert_close_enough
 
 from .fixed_point import *
 
-
-def test_fixed_point_add():
-    a, b = 2.3, 3.3
-    fp = FixedPoint(64, 8)
-
-    FixedPoint(64, 16)
-    fp1 = fp.wrap(a)
-    fp2 = fp.wrap(b)
-
-    s = ScratchVar()
-    expr = Seq(s.store(fp_add(fp1, fp2)), Log(fp.to_ascii(s.load())))
-    output = [a + b]
-    precisions = [fp.precision]
-
-    assert_close_enough(expr, output, precisions)
+tests_per_contract = 15
 
 
-def test_fixed_point_sub():
-    b, a = 2.3, 3.3
-
-    fp = FixedPoint(64, 8)
-    fp1 = fp.wrap(a)
-    fp2 = fp.wrap(b)
-
-    s = ScratchVar()
-    expr = Seq(s.store(fp_sub(fp1, fp2)), Log(fp.to_ascii(s.load())))
-    output = [a - b]
-    precisions = [fp.precision]
-
-    assert_close_enough(expr, output, precisions)
+def generate_valid_operands():
+    """generate_valid_operands generates operands and"""
+    # random.seed()
+    # TODO
+    return 3.3, 2.3, FixedPoint(random.randrange(8, 64, 8), random.randrange(1, 2, 1))
 
 
-def test_fixed_point_div():
-    b, a = 2.3, 3.3
-
-    fp = FixedPoint(64, 8)
-    fp1 = fp.wrap(a)
-    fp2 = fp.wrap(b)
-
-    s = ScratchVar()
-    expr = Seq(s.store(fp_div(fp1, fp2)), Log(fp.to_ascii(s.load())))
-    output = [a / b]
-    precisions = [fp.precision]
-
-    assert_close_enough(expr, output, precisions)
+def generate_invalid_operands():
+    """generate_invalid_operands generates operands and"""
+    return 2.3, 3.3, FixedPoint(64, 8)
 
 
-def test_fixed_point_mul():
-    a, b = 2.3, 3.3
+def test_fixedpoint_add():
+    exprs, outputs, precisions = [], [], []
+    for _ in range(tests_per_contract):
+        a, b, fp = generate_valid_operands()
 
-    fp = FixedPoint(64, 8)
-    fp1 = fp.wrap(a)
-    fp2 = fp.wrap(b)
+        exprs.append(Log(fp.to_ascii(fp_add(fp.wrap(a), fp.wrap(b)))))
 
-    s = ScratchVar()
-    expr = Seq(s.store(fp_mul(fp1, fp2)), Log(fp.to_ascii(s.load())))
-    output = [a * b]
-    precisions = [fp.precision]
+        outputs.append(a + b)
+        precisions.append(fp.precision)
 
-    assert_close_enough(expr, output, precisions)
+    assert_close_enough(Seq(*exprs), outputs, precisions, pad_budget=15)
+
+
+def test_fixedpoint_sub():
+    exprs, outputs, precisions = [], [], []
+    for _ in range(tests_per_contract):
+        a, b, fp = generate_valid_operands()
+
+        exprs.append(Log(fp.to_ascii(fp_sub(fp.wrap(a), fp.wrap(b)))))
+
+        outputs.append(a - b)
+        precisions.append(fp.precision)
+
+    assert_close_enough(Seq(*exprs), outputs, precisions, pad_budget=15)
+
+
+def test_fixedpoint_div():
+    exprs, outputs, precisions = [], [], []
+    for _ in range(tests_per_contract):
+        a, b, fp = generate_valid_operands()
+
+        exprs.append(Log(fp.to_ascii(fp_div(fp.wrap(a), fp.wrap(b)))))
+
+        outputs.append(a / b)
+        precisions.append(fp.precision)
+
+    assert_close_enough(Seq(*exprs), outputs, precisions, pad_budget=15)
+
+
+def test_fixedpoint_mul():
+    exprs, outputs, precisions = [], [], []
+    for _ in range(tests_per_contract):
+        a, b, fp = generate_valid_operands()
+
+        exprs.append(Log(fp.to_ascii(fp_mul(fp.wrap(a), fp.wrap(b)))))
+
+        outputs.append(a * b)
+        precisions.append(fp.precision)
+
+    assert_close_enough(Seq(*exprs), outputs, precisions, pad_budget=15)

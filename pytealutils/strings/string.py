@@ -79,6 +79,12 @@ def suffix(s: TealType.bytes, n: TealType.uint64):
 
 
 @Subroutine(TealType.bytes)
+def prefix(s: TealType.bytes, n: TealType.uint64):
+    """suffix returns the last n bytes of a given byte string"""
+    return Substring(s, Int(0), n)
+
+
+@Subroutine(TealType.bytes)
 def encode_uvarint(val: TealType.uint64, b: TealType.bytes):
     """
     Returns the uvarint encoding of an integer

@@ -8,7 +8,7 @@ from tests.helpers import (
     logged_int,
 )
 
-from .string import atoi, encode_uvarint, head, itoa, suffix, tail
+from .string import atoi, encode_uvarint, head, itoa, prefix, suffix, tail
 
 
 def test_atoi():
@@ -58,6 +58,17 @@ def test_suffix():
 
 def test_suffix_past_length():
     expr = Log(suffix(Bytes("deadbeef"), Int(9)))
+    assert_fail(expr, [LOGIC_EVAL_ERROR])
+
+
+def test_prefix():
+    expr = Log(prefix(Bytes("deadbeef"), Int(2)))
+    output = [logged_bytes("de")]
+    assert_output(expr, output)
+
+
+def test_prefix_past_length():
+    expr = Log(prefix(Bytes("deadbeef"), Int(9)))
     assert_fail(expr, [LOGIC_EVAL_ERROR])
 
 
