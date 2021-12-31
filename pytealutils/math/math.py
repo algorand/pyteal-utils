@@ -71,7 +71,6 @@ def wide_factorial(x: TealType.bytes):
 # def negative_power(x: TealType.uint64, n: TealType.uint64):
 #    """negative power returns x^-n"""
 #    return BytesDiv(Itob(Int(1)), wide_power(x, n))
-#
 
 
 @Subroutine(TealType.bytes)

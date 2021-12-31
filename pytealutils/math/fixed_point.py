@@ -24,13 +24,17 @@ from pyteal import (
 from ..strings import head, itoa, tail
 from .math import pow10
 
-# Fixed Point Class
-# From ABI: ufixed<N>x<M>: An N-bit unsigned fixed-point decimal number with precision M, where 8 <= N <= 512, N % 8 = 0, and 0 < M <= 160, which
 
-# Hold the value in memory as bytes (may be larger than a single uint64)
-# Prepend the precision as a single byte (max precision 160 vs max_uint 255) the number of bits can be computed (Len(bytes) - 1) * 8
-# Every math operation asserts that the result is <= to the expected width and repads with 0s if necessary
 class FixedPoint:
+    """FixedPoint represents a numeric value with a fixed number of decimal places
+
+        From ABI: ufixed<N>x<M>: An N-bit unsigned fixed-point decimal number with precision M, where 8 <= N <= 512, N % 8 = 0, and 0 < M <= 160, which
+
+        Hold the value in memory as bytes (may be larger than a single uint64)
+        Prepend the precision as a single byte (max precision 160 vs max_uint 255) the number of bits can be computed (Len(bytestring) - 1) * 8
+        Every math operation asserts that the width in bytes of the result is <= to the expected width and repads with 0s if necessary
+    """
+
     def __init__(self, bits: int, precision: int):
         assert 8 <= bits <= 512, "Number of bits must be between 8 and 512"
         assert bits % 8 == 0, "Bits must be a multiple of 8"

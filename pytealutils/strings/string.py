@@ -80,7 +80,7 @@ def suffix(s: TealType.bytes, n: TealType.uint64):
 
 @Subroutine(TealType.bytes)
 def prefix(s: TealType.bytes, n: TealType.uint64):
-    """suffix returns the last n bytes of a given byte string"""
+    """prefix returns the first n bytes of a given byte string"""
     return Substring(s, Int(0), n)
 
 
