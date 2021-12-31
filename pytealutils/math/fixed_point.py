@@ -44,27 +44,29 @@ def assert_fp_match(a: TealType.bytes, b: TealType.bytes):
 
 
 @Subroutine(TealType.bytes)
-def pad_assert_overflow(
+def check_overflow(
     prec: TealType.bytes, bytelen: TealType.uint64, value: TealType.bytes
 ):
-    """pad_assert_overflow checks to make sure we didnt overflow and sets the appropriate 0 padding if necessary
+    """check_overflow checks to make sure we didnt overflow and sets the appropriate 0 padding if necessary
 
-        Args:
-            prec: the precision as bytes
-            bytelen: the number of bytes we expect
-            value: the underlying value, without the precision prefix
+    Args:
+        prec: the precision as bytes
+        bytelen: the number of bytes we expect
+        value: the underlying value, without the precision prefix
 
-        Returns:
-            appropriately padded bytestring or Asserts if we overflow (overflowed? overflew?)
+    Returns:
+        appropriately padded bytestring or Asserts if we overflow (overflowed? overflew?)
     """
-    first_set = ScratchVar()
     return Seq(
-        first_set.store((BitLen(value) / Int(8))),
-        Assert(first_set.load() <= bytelen),
-        If(Len(value) >= bytelen)
-        .Then(Concat(prec, suffix(value, Len(value) - bytelen)))  # We can remove zeros
-        .Else(  # We need to pad with zeros
-            Concat(prec, BytesZero(bytelen - Len(value)), value)
+        Assert(BitLen(value) / Int(8) <= bytelen),
+        If(
+            Len(value) > bytelen,
+            Concat(
+                prec, suffix(value, Len(value) - (bytelen - Int(1)))
+            ),  # We can remove zeros
+            Concat(
+                prec, BytesZero(bytelen - Int(1) - Len(value)), value
+            ),  # We need to pad with zeros
         ),
     )
 
@@ -157,10 +159,10 @@ def fp_to_ascii(v: TealType.bytes):
 
 @Subroutine(TealType.bytes)
 def fp_rescale(v: TealType.bytes, p: TealType.uint64):
-    return pad_assert_overflow(
+    return check_overflow(
         # Prepend new precision byte
         suffix(Itob(p), Int(1)),
-        Len(tail(v)),
+        Len(v),
         # Divide off the old precision
         BytesDiv(
             # Multiply by new precision first so we dont lose precision
@@ -174,7 +176,7 @@ def fp_rescale(v: TealType.bytes, p: TealType.uint64):
 def fp_add(a: TealType.bytes, b: TealType.bytes):
     return Seq(
         assert_fp_match(a, b),
-        pad_assert_overflow(head(a), Len(b), BytesAdd(tail(a), tail(b))),
+        check_overflow(head(a), Len(b), BytesAdd(tail(a), tail(b))),
     )
 
 
@@ -182,7 +184,7 @@ def fp_add(a: TealType.bytes, b: TealType.bytes):
 def fp_sub(a: TealType.bytes, b: TealType.bytes):
     return Seq(
         assert_fp_match(a, b),
-        pad_assert_overflow(head(a), Len(a), BytesMinus(tail(a), tail(b))),
+        check_overflow(head(a), Len(a), BytesMinus(tail(a), tail(b))),
     )
 
 
@@ -190,7 +192,7 @@ def fp_sub(a: TealType.bytes, b: TealType.bytes):
 def fp_mul(a: TealType.bytes, b: TealType.bytes):
     return Seq(
         assert_fp_match(a, b),
-        pad_assert_overflow(
+        check_overflow(
             head(a),
             Len(a),
             BytesDiv(
@@ -206,9 +208,9 @@ def fp_mul(a: TealType.bytes, b: TealType.bytes):
 def fp_div(a: TealType.bytes, b: TealType.bytes):
     return Seq(
         assert_fp_match(a, b),
-        pad_assert_overflow(
+        check_overflow(
             head(a),
-            Len(tail(a)),
+            Len(a),
             BytesDiv(
                 # Scale up the numerator so we keep the same precision
                 BytesMul(tail(a), byte_precision(a)),

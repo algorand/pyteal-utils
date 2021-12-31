@@ -1,5 +1,3 @@
-import random
-
 from pyteal import *
 
 from tests.helpers import assert_close_enough
@@ -13,8 +11,9 @@ def generate_valid_operands():
     """generate_valid_operands generates operands and"""
     # random.seed()
     # N = random.randrange(8, 64, 8)
+    # M = random.randrange(1, 2, 1)
     N = 64
-    M = random.randrange(1, 2, 1)
+    M = 3
     # TODO
     A = 3.3
     B = 2.3

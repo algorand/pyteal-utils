@@ -220,7 +220,8 @@ def assert_close_enough(
     print(logs)
     for idx in range(len(output)):
         val = float(bytes.fromhex(logs[idx]).decode("ascii"))
-        max_delta = 2.0 / (10 ** (precisions[idx] + 1))
+        max_delta = 2.0 / (10 ** precisions[idx])
+        print(output[idx])
         assert (
             abs(output[idx] - val) <= max_delta
         ), "Difference greater than max_delta: {} vs {}".format(
