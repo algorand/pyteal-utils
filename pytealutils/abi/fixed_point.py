@@ -25,8 +25,8 @@ from pyteal import (
 )
 from pyteal.ast.leafexpr import LeafExpr
 
+from ..math import pow10
 from ..strings import head, itoa, prefix, suffix, tail, witoa
-from .math import pow10
 
 
 def precision_uint8(p: int):
