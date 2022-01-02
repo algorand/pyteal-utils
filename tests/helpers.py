@@ -200,7 +200,6 @@ def assert_output(expr: Expr, output: List[str], **kwargs):
     assert len(compiled["hash"]) == 58
 
     logs, _ = execute_app(client, compiled["result"], **kwargs)
-    print(logs)
     assert logs == output
 
 

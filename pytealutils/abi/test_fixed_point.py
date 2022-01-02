@@ -78,14 +78,15 @@ def test_fixedpoint_mul():
     assert_close_enough(Seq(*exprs), outputs, precisions, pad_budget=15)
 
 
-# def test_fixedpoint_rescale():
-#   exprs, outputs, precisions = [], [], []
-#
-#   a = UFixed(64, 2, 15234.32)
-#
-#   exprs.append(Log(fp_to_ascii(a.rescaled(3))))
-#   outputs.append(a.raw)
-#   precisions.append(a.precision)
-#
-#   assert_close_enough(Seq(*exprs), outputs, precisions, pad_budget=15)
-#
+def test_fixedpoint_rescale():
+    exprs, outputs, precisions = [], [], []
+
+    fp = UFixed(64, 2)
+    t = sdkabi.UfixedType(fp.bits, fp.precision)
+    val = 123123.12
+
+    exprs.append(Log(fp.encode(fp(sdk_encode(t, val)))))
+    outputs.append(val)
+    precisions.append(t)
+
+    assert_close_enough(Seq(*exprs), outputs, precisions, pad_budget=15)
