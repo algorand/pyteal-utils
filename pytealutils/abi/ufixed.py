@@ -1,5 +1,3 @@
-from typing import Union, TypeVar
-
 from pyteal import (
     Assert,
     BitLen,
@@ -10,9 +8,7 @@ from pyteal import (
     BytesMinus,
     BytesMul,
     BytesZero,
-    CompileOptions,
     Concat,
-    Expr,
     GetByte,
     If,
     Int,
@@ -23,7 +19,6 @@ from pyteal import (
     Subroutine,
     TealType,
 )
-from pyteal.ast.leafexpr import LeafExpr
 
 from pytealutils.abi.abi_type import ABIType
 
