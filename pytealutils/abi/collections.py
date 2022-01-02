@@ -200,15 +200,18 @@ class DynamicArray(Generic[T]):
             return tuple_get_int(self.bytes.load(), Int(64), idx)
 
     def append(self, b: TealType.bytes):
-        if self.__orig_class__.__args__[0] is String:
+        if self.element_type is String:
             return Seq(
                 self.bytes.store(Concat(self.bytes.load(), Uint16.encode(Len(b)), b)),
                 self.lengths.store(Concat(self.lengths.load(), Uint16.encode(Len(b)))),
                 self.size.store(self.size.load() + Int(1)),
             )
-
-        elif self.__orig_class__.__args__[0] is Address:
-            return Assert(Int(0))
+        elif self.element_type is Address:
+            return Seq(
+                self.bytes.store(Concat(self.bytes.load(), Uint16.encode(Int(32)), b)),
+                self.lengths.store(Concat(self.lengths.load(), Uint16.encode(Int(32)))),
+                self.size.store(self.size.load() + Int(1)),
+            )
         else:
             return Assert(Int(0))
 

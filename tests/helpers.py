@@ -137,8 +137,8 @@ def logged_bytes(b: str):
     return bytes(b, "ascii").hex()
 
 
-def logged_int(i: int, bits: int):
-    return i.to_bytes(int(bits / 8), "big").hex()
+def logged_int(i: int, bits: int = 64):
+    return i.to_bytes(bits // 8, "big").hex()
 
 
 def assert_stateful_output(expr: Expr, output: List[str]):
