@@ -1,8 +1,10 @@
+import algosdk.abi as sdkabi
+from algosdk.abi.ufixed_type import UfixedType
 from pyteal import *
 
 from tests.helpers import assert_close_enough
 
-from .fixed_point import *
+from .ufixed import *
 
 tests_per_contract = 15
 
@@ -17,64 +19,73 @@ def generate_valid_operands():
     # TODO
     A = 3.3
     B = 2.3
-    return FixedPoint(N, M, A), FixedPoint(N, M, B)
+    return A, B, UFixed(N, M)
+
+
+def sdk_encode(t: UfixedType, v: float):
+    return Bytes(t.encode(int(v * (10 ** t.precision))))
 
 
 def test_fixedpoint_add():
     exprs, outputs, precisions = [], [], []
-    for _ in range(tests_per_contract):
-        a, b = generate_valid_operands()
+    for _ in range(1):
+        a, b, fp = generate_valid_operands()
+        t = sdkabi.UfixedType(fp.bits, fp.precision)
 
-        exprs.append(Seq(Log(fp_to_ascii(a + b))))
-        outputs.append(a.raw + b.raw)
-        precisions.append(a.precision)
+        exprs.append(Log(fp.encode(fp(sdk_encode(t, a)) + fp(sdk_encode(t, b)))))
+        outputs.append(a + b)
+        precisions.append(t)
 
     assert_close_enough(Seq(*exprs), outputs, precisions, pad_budget=15)
 
 
 def test_fixedpoint_sub():
     exprs, outputs, precisions = [], [], []
-    for _ in range(tests_per_contract):
-        a, b = generate_valid_operands()
+    for _ in range(1):
+        a, b, fp = generate_valid_operands()
+        t = sdkabi.UfixedType(fp.bits, fp.precision)
 
-        exprs.append(Log(fp_to_ascii(a - b)))
-        outputs.append(a.raw - b.raw)
-        precisions.append(a.precision)
+        exprs.append(Log(fp.encode(fp(sdk_encode(t, a)) - fp(sdk_encode(t, b)))))
+        outputs.append((a - b))
+        precisions.append(t)
 
     assert_close_enough(Seq(*exprs), outputs, precisions, pad_budget=15)
 
 
 def test_fixedpoint_div():
     exprs, outputs, precisions = [], [], []
-    for _ in range(tests_per_contract):
-        a, b = generate_valid_operands()
+    for _ in range(1):
+        a, b, fp = generate_valid_operands()
+        t = sdkabi.UfixedType(fp.bits, fp.precision)
 
-        exprs.append(Log(fp_to_ascii(a / b)))
-        outputs.append(a.raw / b.raw)
-        precisions.append(a.precision)
+        exprs.append(Log(fp.encode(fp(sdk_encode(t, a)) / fp(sdk_encode(t, b)))))
+        outputs.append(a / b)
+        precisions.append(t)
 
     assert_close_enough(Seq(*exprs), outputs, precisions, pad_budget=15)
 
 
 def test_fixedpoint_mul():
     exprs, outputs, precisions = [], [], []
-    for _ in range(tests_per_contract):
-        a, b = generate_valid_operands()
+    for _ in range(1):
+        a, b, fp = generate_valid_operands()
+        t = sdkabi.UfixedType(fp.bits, fp.precision)
 
-        exprs.append(Log(fp_to_ascii(a * b)))
-        outputs.append(a.raw * b.raw)
-        precisions.append(a.precision)
-
-    assert_close_enough(Seq(*exprs), outputs, precisions, pad_budget=15)
-
-
-def test_fixedpoint_rescale():
-    exprs, outputs, precisions = [], [], []
-
-    a = FixedPoint(64, 2, 15234.32)
-
-    exprs.append(Log(fp_to_ascii(a.rescaled(3))))
-    outputs.append(a.raw)
-    precisions.append(a.precision)
+        exprs.append(Log(fp.encode(fp(sdk_encode(t, a)) * fp(sdk_encode(t, b)))))
+        outputs.append(a * b)
+        precisions.append(t)
 
     assert_close_enough(Seq(*exprs), outputs, precisions, pad_budget=15)
+
+
+# def test_fixedpoint_rescale():
+#   exprs, outputs, precisions = [], [], []
+#
+#   a = UFixed(64, 2, 15234.32)
+#
+#   exprs.append(Log(fp_to_ascii(a.rescaled(3))))
+#   outputs.append(a.raw)
+#   precisions.append(a.precision)
+#
+#   assert_close_enough(Seq(*exprs), outputs, precisions, pad_budget=15)
+#

@@ -3,6 +3,7 @@
 from base64 import b64decode
 from typing import List, Optional
 
+import algosdk.abi as sdkabi
 from algosdk import account, encoding, kmd, mnemonic
 from algosdk.future import transaction
 from algosdk.v2client import algod, indexer
@@ -204,7 +205,7 @@ def assert_output(expr: Expr, output: List[str], **kwargs):
 
 
 def assert_close_enough(
-    expr: Expr, output: List[float], precisions: List[int], **kwargs
+    expr: Expr, output: List[float], precisions: List[sdkabi.UfixedType], **kwargs
 ):
     """assert_close_enough takes some list of floats and corresponding precision and
     asserts that the result from the logic output is close enough to the expected value
@@ -218,16 +219,17 @@ def assert_close_enough(
     assert len(compiled["hash"]) == 58
 
     logs, _ = execute_app(client, compiled["result"], **kwargs)
-    print(logs)
     for idx in range(len(output)):
-        val = float(bytes.fromhex(logs[idx]).decode("ascii"))
-        print(val)
-        max_delta = 2.0 / (10 ** precisions[idx])
-        print(output[idx])
+        scale = 10 ** precisions[idx].precision
+
+        incoming = precisions[idx].decode(bytes.fromhex(logs[idx]))
+        expected = output[idx] * scale
+        max_delta = 2.0  # since we scale the others _up_, we can leave this scaled as 2
+
         assert (
-            abs(output[idx] - val) <= max_delta
+            abs(expected - incoming) <= max_delta
         ), "Difference greater than max_delta: {} vs {}".format(
-            output[idx] - val, max_delta
+            abs(expected - incoming), max_delta
         )
 
 
