@@ -26,7 +26,7 @@ class Uint512(ABIType):
     @staticmethod
     @Subroutine(TealType.bytes)
     def encode(value: Int) -> Expr:
-        return Extract(value, Int(0), Int(64))
+        return Extract(Concat(BytesZero(Int(64) - Len(value)), value), Int(0), Int(64))
 
 
 class Uint256(ABIType):
@@ -38,7 +38,7 @@ class Uint256(ABIType):
     @staticmethod
     @Subroutine(TealType.bytes)
     def encode(value: Int) -> Expr:
-        return Extract(value, Int(0), Int(32))
+        return Extract(Concat(BytesZero(Int(32) - Len(value)), value), Int(0), Int(32))
 
 
 class Uint128(ABIType):
