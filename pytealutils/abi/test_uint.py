@@ -15,15 +15,35 @@ def test_uint256():
 
 
 def test_uint128():
-    pass
+    expr = Log(
+        Uint128.encode(
+            BytesMinus(
+                Uint128(Bytes("base16", "00" * 14 + "dead")),
+                Uint128(Bytes("base16", "00" * 14 + "beef")),
+            )
+        )
+    )
+    output = [bytes.fromhex("00000000000000000000000000001fbe").hex()]
+    assert_output(expr, output)
 
 
 def test_uint64():
-    pass
+    expr = Log(
+        Itob(
+            Uint64(Bytes("base16", "00000000dead"))
+            - Uint64(Bytes("base16", "00000000beef"))
+        )
+    )
+    output = [logged_int(8126)]
+    assert_output(expr, output)
 
 
 def test_uint32():
-    pass
+    expr = Log(
+        Itob(Uint32(Bytes("base16", "0000dead")) - Uint32(Bytes("base16", "0000beef")))
+    )
+    output = [logged_int(8126)]
+    assert_output(expr, output)
 
 
 def test_uint16():
