@@ -6,6 +6,7 @@ from .codec_util import discard_length, prepend_length
 
 class String(ABIType):
     stack_type = TealType.bytes
+    dynamic = True
 
     def __init__(self, value: Bytes):
         self.value = discard_length(value)

@@ -3,15 +3,18 @@ ABI Types
 
 Each PyTEAL ABIType, it must implement encode/decode to convert to and from over the wire formats and stack types
 
- Decode:
-- Uint8-64 => ExtractUintN => TealType.uint64
-- Uint64-512 => N/64 ExtractUint64 => TealType.uint64
-- Address => TealType.bytes
-- String/Bytes[] => Remove uint16 encoded byte length => TealType.bytes
-- T[] => Remove uint16 encoded element length, Remove positions? => TealType.bytes
-- T[N]/Tuple(T...) => Remove the positions encodings? => TealType.bytes
+| ABIType | StackType |
+|---------|-----------|
+|Uint8-64 |  uint64 |
+|Uint64-512 | bytes  |
+|Address | bytes|
+|String/Byte[] |  TealType.bytes |
+| T[]  | bytes (store size, bytes, )|
+|T[N]/Tuple(T...) => Remove the positions encodings? => TealType.bytes
 
-# Details
+
+
+# Type Details
 
 ## Boolean
     A boolean value that is restricted to either 0 or 1.  When encoded, up to 8 consecutive bool values will be packed into a single byte.

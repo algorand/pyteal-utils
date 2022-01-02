@@ -1,142 +1,15 @@
-from typing import Generic, List, Tuple, TypeVar, Union
+from typing import List, Tuple, TypeVar, Union
 
 from pyteal import *
 
+from ..strings import prefix, rest
 from .abi_type import ABIType
 from .bytes import *
+from .codec_util import *
 from .uint import *
 
-T = TypeVar("T", bound=ABIType)
 
-
-@Subroutine(TealType.bytes)
-def tuple_get_bytes(b: TealType.bytes, idx: TealType.uint64) -> Expr:
-    return Extract(b, idx + Int(2), ExtractUint16(b, idx))
-
-
-@Subroutine(TealType.bytes)
-def tuple_get_address(b: TealType.bytes, idx: TealType.uint64) -> Expr:
-    pos = ScratchVar()
-    return Seq(
-        pos.store(ExtractUint16(b, idx * Int(2))),  # Get the position in the byte array
-        Extract(b, pos.load(), Int(32)),
-    )
-
-
-@Subroutine(TealType.bytes)
-def tuple_get_int(
-    b: TealType.bytes, size: TealType.uint64, idx: TealType.uint64
-) -> Expr:
-    pos = ScratchVar()
-    return Seq(
-        pos.store(ExtractUint16(b, idx * Int(2))),  # Get the position in the byte array
-        Extract(b, pos.load(), Extract(b, pos.load(), size / Int(8))),
-    )
-
-
-@Subroutine(TealType.bytes)
-def tuple_add_bytes(
-    data: TealType.bytes, length: TealType.uint64, b: TealType.bytes
-) -> Expr:
-    return Seq(
-        Concat(
-            # Update positions to add 2, accounting for newly added position
-            binary_add_list(Extract(data, Int(0), Int(2) * length), length, Int(2)),
-            # Set position of new data
-            Uint16.encode(Len(data) + Int(2)),
-            # Add existing bytes back
-            Substring(data, length * Int(2), Len(data)),
-            # Prefixed bytes with length
-            Uint16.encode(Len(b)),
-            b,
-        )
-    )
-
-
-@Subroutine(TealType.bytes)
-def tuple_add_address(a: TealType.bytes, b: TealType.bytes):
-    pass
-
-
-@Subroutine(TealType.bytes)
-def tuple_add_int(a: TealType.bytes, b: TealType.bytes):
-    pass
-
-
-@Subroutine(TealType.bytes)
-def binary_add_list(
-    data: TealType.bytes, len: TealType.uint64, val: TealType.uint64
-) -> Expr:
-    return (
-        If(len > Int(0))
-        .Then(
-            Concat(
-                binary_add_list(Extract(data, Int(0), len * Int(2)), len - Int(1), val),
-                Uint16.encode(
-                    binary_add(ExtractUint16(data, (len * Int(2)) - Int(2)), val)
-                ),
-            )
-        )
-        .Else(Bytes(""))
-    )
-
-
-@Subroutine(TealType.uint64)
-def binary_add(a: TealType.uint64, b: TealType.uint64) -> Expr:
-    return If(b == Int(0)).Then(a).Else(binary_add(a))
-
-
-@Subroutine(TealType.bytes)
-def encode_string_lengths(b: TealType.bytes, lengths: TealType.bytes) -> Expr:
-    return (
-        If(Len(b) == Int(0))
-        .Then(lengths)
-        .Else(
-            encode_string_lengths(
-                Substring(b, Uint16(b) + Int(2), Len(b)),
-                Concat(lengths, Extract(b, Int(0), Int(2))),
-            )
-        )
-    )
-
-
-@Subroutine(TealType.bytes)
-def encode_string_positions(
-    lengths: TealType.bytes, positions: TealType.bytes, start: TealType.uint64
-) -> Expr:
-    return (
-        If(Len(lengths) == Int(0))
-        .Then(positions)
-        .Else(
-            encode_string_positions(
-                Substring(lengths, Int(2), Len(lengths)),
-                Concat(positions, Uint16.encode(start)),
-                start + Uint16(lengths) + Int(2),
-            )
-        )
-    )
-
-
-@Subroutine(TealType.bytes)
-def sum_string_lengths(
-    lengths: TealType.bytes, idx: TealType.uint64, sum: TealType.uint64
-) -> Expr:
-    return (
-        If(idx == Int(0))
-        .Then(sum)
-        .Else(
-            sum_string_lengths(
-                Substring(
-                    lengths, Int(2), Len(lengths)
-                ),  # Chop off uint16 we just read
-                idx - Int(1),  # Decrement index
-                sum + Uint16(lengths) + Int(2),  # Add length + 2 for uint16 length
-            )
-        )
-    )
-
-
-class DynamicArray(Generic[T]):
+class DynamicArray(ABIType):
 
     stack_type = TealType.bytes
 
@@ -146,12 +19,11 @@ class DynamicArray(Generic[T]):
     lengths: ScratchVar
     value: Expr
 
-    def __init__(self, type: T):
+    def __init__(self, type: ABIType):
         self.element_type = type
         self.size = ScratchVar(TealType.uint64)
         self.bytes = ScratchVar(TealType.bytes)
         self.lengths = ScratchVar(TealType.bytes)
-        self.value = None
 
     def __call__(self, data: Bytes) -> "DynamicArray":
         da = DynamicArray(self.element_type)
@@ -159,6 +31,19 @@ class DynamicArray(Generic[T]):
         return da
 
     def init(self) -> Expr:
+        if self.element_type == String:
+            ops = [
+                self.size.store(ExtractUint16(self.value, Int(0))),
+                self.bytes.store(
+                    Substring(
+                        self.value,
+                        (Int(2) * self.size.load()) + Int(2),
+                        Len(self.value),
+                    )
+                ),
+                self.lengths.store(encode_string_lengths(self.bytes.load(), Bytes(""))),
+            ]
+
         return (
             If(Len(self.value) == Int(0))
             .Then(
@@ -168,25 +53,10 @@ class DynamicArray(Generic[T]):
                     self.lengths.store(Bytes("")),
                 )
             )
-            .Else(
-                Seq(
-                    self.size.store(ExtractUint16(self.value, Int(0))),
-                    self.bytes.store(
-                        Substring(
-                            self.value,
-                            (Int(2) * self.size.load()) + Int(2),
-                            Len(self.value),
-                        )
-                    ),
-                    self.lengths.store(
-                        encode_string_lengths(self.bytes.load(), Bytes(""))
-                    ),
-                )
-            )
+            .Else(Seq(*ops))
         )
 
-    def __getitem__(self, idx: Union[Int, int]) -> T:
-
+    def __getitem__(self, idx: Union[Int, int]) -> ABIType:
         if isinstance(idx, int):
             idx = Int(idx)
 
@@ -215,7 +85,10 @@ class DynamicArray(Generic[T]):
         else:
             return Assert(Int(0))
 
-    def serialize(self) -> Bytes:
+    def __teal__(self, options: CompileOptions):
+        return self.value.__teal__(options)
+
+    def encode(self) -> Expr:
         return Concat(
             Uint16.encode(self.size.load()),
             encode_string_positions(
@@ -224,36 +97,82 @@ class DynamicArray(Generic[T]):
             self.bytes.load(),
         )
 
-    def __teal__(self, options: CompileOptions):
-        return self.value.__teal__(options)
 
-    @staticmethod
-    @Subroutine(TealType.bytes)
-    def encode(value: TealType.bytes) -> Expr:
-        return value
-
-
-class FixedArray(Generic[T]):
+class FixedArray(ABIType):
     stack_type = TealType.bytes
 
-    @staticmethod
-    @Subroutine(TealType.bytes)
-    def decode(value: Bytes) -> Expr:
-        return value
+    value: Expr
 
-    @staticmethod
-    @Subroutine(TealType.bytes)
+    def __init__(self, type: ABIType):
+        self.type = type
+
+    def __call__(self, value: Bytes) -> "FixedArray":
+        pass
+
+    def __getitem__(self, i: int) -> Expr:
+        pass
+
     def encode(value: Bytes) -> Expr:
         return value
 
 
-class Tuple(Generic[T]):
+class Tuple(ABIType):
     stack_type = TealType.bytes
+
+    types: List[ABIType]
+    value: Expr
 
     def __init__(self, types: List[ABIType]):
-        pass
+        self.types = types
 
-    @staticmethod
-    @Subroutine(TealType.bytes)
-    def encode(value: Bytes) -> Expr:
-        pass
+    def __call__(self, value: Bytes) -> "Tuple":
+        clone = Tuple(self.types)
+        clone.value = value
+        return clone
+
+    def __getitem__(self, i: int) -> Expr:
+        target_type = self.types[i]
+        return target_type(rest(self.value, self.element_position(i)))
+
+    def __setitem__(self, i: int, e: Expr):
+        # TODO: Rewrite all the lengths for dynamic elements _after_ the one we're updating
+
+        position_update_ops = []
+        for t in self.types[i:]:
+            if t.dynamic:
+                position_update_ops.append()
+            else:
+                position_update_ops.append()
+
+        elem_pos = ScratchVar()
+        return Seq(
+            elem_pos.store(self.element_position(i)),
+            Concat(
+                prefix(self.value, elem_pos.load()),
+                String.encode(e),
+                rest(
+                    self.value,
+                    elem_pos.load() + ExtractUint16(elem_pos.load() + Int(2)),
+                ),
+            ),
+        )
+
+    def element_position(self, i: int) -> Expr:
+        pos = ScratchVar()
+        ops = [pos.store(Int(0))]
+
+        for t in self.types[:i]:
+            if t.dynamic:
+                # Just add uint16 length
+                ops.append(pos.store(pos.load() + Int(2)))
+            else:
+                # Add length of static type
+                ops.append(pos.store(pos.load() + Int(t.byte_len)))
+
+        if self.types[i].dynamic:
+            ops.append(pos.store(ExtractUint16(self.value, pos.load())))
+
+        return Seq(*ops, pos.load())
+
+    def encode(self) -> Expr:
+        return self.value

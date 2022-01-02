@@ -107,6 +107,12 @@ def prefix(s: TealType.bytes, n: TealType.uint64):
 
 
 @Subroutine(TealType.bytes)
+def rest(s: TealType.bytes, n: TealType.uint64):
+    """prefix returns the first n bytes of a given byte string"""
+    return Substring(s, n, Len(s))
+
+
+@Subroutine(TealType.bytes)
 def encode_uvarint(val: TealType.uint64, b: TealType.bytes):
     """
     Returns the uvarint encoding of an integer

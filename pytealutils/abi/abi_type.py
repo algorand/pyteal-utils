@@ -5,6 +5,8 @@ from pyteal import CompileOptions, Expr, TealType
 
 class ABIType(Expr):
     stack_type = TealType.anytype
+    byte_len = 0
+    dynamic = False
 
     @abstractmethod
     def encode() -> Expr:
