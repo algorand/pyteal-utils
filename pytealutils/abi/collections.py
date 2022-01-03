@@ -5,7 +5,6 @@ from pyteal import *
 from ..strings import rest
 from .abi_type import ABIType
 from .bytes import *
-from .codec_util import *
 from .uint import *
 
 
@@ -21,34 +20,31 @@ class Tuple(ABIType):
     def __call__(self, *elements: ABIType) -> "Tuple":
         """__call__ provides an method to construct a tuple for a list of types"""
 
-        head_pos_ops = []
-        head_ops = []
-        tail_ops = []
-
+        head_pos_ops, head_ops, tail_ops = [], [], []
         v, head_pos = ScratchVar(), ScratchVar()
 
-        for idx, x in enumerate(elements):
-            if x.dynamic:
+        for elem in elements:
+            if elem.dynamic:
 
                 head_pos_ops.append(
-                    head_pos.store(head_pos.load() + x.byte_len + Int(2))
+                    head_pos.store(head_pos.load() + elem.byte_len + Int(2))
                 )
 
                 head_ops.append(
                     Seq(
                         # Move the header position back
-                        head_pos.store(head_pos.load() - x.byte_len),
+                        head_pos.store(head_pos.load() - elem.byte_len),
                         # Write the pos bytes
                         v.store(Concat(Uint16(head_pos.load()).encode(), v.load())),
                     )
                 )
 
-                tail_ops.append(x.encode())
+                tail_ops.append(elem.encode())
             else:
-                head_pos_ops.append(head_pos.store(head_pos.load() + x.byte_len))
-                head_ops.append(v.store(Concat(x.encode(), v.load())))
+                head_pos_ops.append(head_pos.store(head_pos.load() + elem.byte_len))
+                head_ops.append(v.store(Concat(elem.encode(), v.load())))
 
-        # Write them backwards
+        # Write them in reverse
         head_ops.reverse()
 
         return Seq(

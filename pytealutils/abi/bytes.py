@@ -1,7 +1,7 @@
-from pyteal import Bytes, Expr, Int, Len, Seq, TealType
+from pyteal import Bytes, Concat, Expr, Extract, Int, Len, Seq, TealType
 
 from .abi_type import ABIType
-from .codec_util import discard_length, prepend_length
+from .uint import Uint16
 
 
 class String(ABIType):
@@ -14,10 +14,10 @@ class String(ABIType):
 
     @classmethod
     def decode(cls, value: Bytes) -> "String":
-        return String(discard_length(value))
+        return String(Extract(value, Int(2), Uint16.decode(value)))
 
     def encode(self) -> Expr:
-        return prepend_length(self.value)
+        return Concat(Uint16(Len(self.value)).encode(), self.value)
 
 
 class Address(ABIType):
@@ -27,8 +27,9 @@ class Address(ABIType):
     def __init__(self, value: Bytes):
         self.value = value
 
-    def decode(self, value: Bytes):
-        self.value = discard_length(value)
+    @classmethod
+    def decode(cls, value: Bytes):
+        return Address(value)
 
     def encode(self) -> Expr:
         return self.value

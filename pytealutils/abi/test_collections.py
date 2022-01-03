@@ -19,7 +19,6 @@ def test_abi_collection_dynamic_array_string():
 
     expr = Seq(Log(ptarray.encode()))
 
-    print(encoded.hex())
     expected = [encoded.hex()]
     assert_output(expr, expected, pad_budget=15)
 
