@@ -7,9 +7,6 @@ from .bytes import String
 from .collections import DynamicArray, FixedArray, Tuple
 from .uint import Uint64
 
-0x00040008000E0012001500047468697300026973000161000474657374
-0x00040008000C000F001500047468697300026973000161000474657374
-
 
 def test_abi_collection_dynamic_array_string():
     StringArray = DynamicArray(String)
