@@ -8,7 +8,7 @@ ABI Types
     {ABIType.encode()} to return the byte string to be sent over the wire
 
     For Uints/String/Address, these can be called directly
-    For FixedPoint and container types (tuple,fixed array,dynamic array) the init method takes parameters further describing the type and the result can be called directly as above. 
+    For FixedPoint and container types (tuple,fixed array,dynamic array) the init method takes parameters further describing the type and the result can be called directly as above.
 
 
 

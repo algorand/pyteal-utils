@@ -50,7 +50,7 @@ class Tuple(ABIType):
         return Seq(
             v.store(Bytes("")),
             head_pos.store(Int(0)),
-            *head_pos_ops, 
+            *head_pos_ops,
             *head_ops,
             Concat(v.load(), *tail_ops),
         )
