@@ -2,7 +2,7 @@ from typing import List, Tuple, TypeVar, Union
 
 from pyteal import *
 
-from ..strings import prefix, rest
+from ..strings import rest
 from .abi_type import ABIType
 from .bytes import *
 from .codec_util import *
@@ -122,40 +122,27 @@ class Tuple(ABIType):
     types: List[ABIType]
     value: Expr
 
-    def __init__(self, types: List[ABIType]):
-        self.types = types
+    def __init__(self, t: List[ABIType]):
+        self.types = t
 
-    def __call__(self, value: Bytes) -> "Tuple":
-        clone = Tuple(self.types)
-        clone.value = value
-        return clone
+    def __call__(self, *elements: ABIType) -> "Tuple":
+        ops = []
+        v = ScratchVar()
+        for x in elements:
+            if x.dynamic:
+                ops.append(v.store(Concat(v.load(), Uint16(Len(v.load())).encode())))
+            # ops.append(v.store(Concat(v.load(), x.encode())))
+
+        return self.decode(Seq(v.store(Bytes("")), *ops, v.load()))
+
+    def decode(self, value: Bytes) -> "Tuple":
+        inst = Tuple(self.types)
+        inst.value = value
+        return inst
 
     def __getitem__(self, i: int) -> Expr:
         target_type = self.types[i]
         return target_type(rest(self.value, self.element_position(i)))
-
-    def __setitem__(self, i: int, e: Expr):
-        # TODO: Rewrite all the lengths for dynamic elements _after_ the one we're updating
-
-        position_update_ops = []
-        for t in self.types[i:]:
-            if t.dynamic:
-                position_update_ops.append()
-            else:
-                position_update_ops.append()
-
-        elem_pos = ScratchVar()
-        return Seq(
-            elem_pos.store(self.element_position(i)),
-            Concat(
-                prefix(self.value, elem_pos.load()),
-                String.encode(e),
-                rest(
-                    self.value,
-                    elem_pos.load() + ExtractUint16(elem_pos.load() + Int(2)),
-                ),
-            ),
-        )
 
     def element_position(self, i: int) -> Expr:
         pos = ScratchVar()
@@ -176,3 +163,8 @@ class Tuple(ABIType):
 
     def encode(self) -> Expr:
         return self.value
+
+    def __str__(self):
+        return ("tuple(" + ",".join(["{}"] * len(self.types)) + ")").format(
+            *[t.__name__.lower() for t in self.types]
+        )

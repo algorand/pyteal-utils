@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from pyteal import CompileOptions, Expr, TealType
+from pyteal import Bytes, CompileOptions, Expr, TealType
 
 
 class ABIType(Expr):
@@ -9,7 +9,11 @@ class ABIType(Expr):
     dynamic = False
 
     @abstractmethod
-    def encode() -> Expr:
+    def encode(self) -> Expr:
+        pass
+
+    @abstractmethod
+    def decode(self, value: Bytes) -> "ABIType":
         pass
 
     def type_of(self) -> TealType:

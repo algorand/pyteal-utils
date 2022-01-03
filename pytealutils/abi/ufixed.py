@@ -1,3 +1,5 @@
+from typing import Union
+
 from pyteal import (
     Assert,
     BitLen,
@@ -20,10 +22,9 @@ from pyteal import (
     TealType,
 )
 
-from pytealutils.abi.abi_type import ABIType
-
 from ..math import pow10
 from ..strings import head, itoa, prefix, suffix, tail, witoa
+from .abi_type import ABIType
 
 
 def precision_uint8(p: int):
@@ -82,28 +83,35 @@ class UFixed(ABIType):
 
     stack_type = TealType.bytes
 
+    value: Bytes
+
     def __init__(self, N: int, M: int):
         self.bits = N
         self.precision = M
-        self.value = Bytes("")
 
-    def __call__(self, value: Bytes) -> "UFixed":
-        precision_as_bytes = precision_uint8(self.precision)
+    def __call__(self, value: Union[int, float]) -> "UFixed":
+        if type(value) not in [int, float]:
+            raise ValueError
+
+        expected_bytes = self.bits // 8
+        return self.decode(
+            Bytes(int(value * (10 ** self.precision)).to_bytes(expected_bytes, "big"))
+        )
+
+    def decode(self, value: Bytes) -> "UFixed":
         f = UFixed(self.bits, self.precision)
-        f.value = Concat(Bytes(precision_as_bytes), value)
-
+        f.value = Concat(Bytes(precision_uint8(self.precision)), value)
         return f
+
+    @staticmethod
+    def encode(value: Bytes):
+        return tail(value)
 
     def rescaled(self, p: int):
         return UFixed(self.bits, p, fp_rescale(self.value, Int(p)))
 
     def to_ascii(self):
         return fp_to_ascii(self.value)
-
-    @staticmethod
-    @Subroutine(TealType.bytes)
-    def encode(value: Bytes):
-        return tail(value)
 
     def __add__(self, other: "UFixed"):
         return fp_add(self.value, other.value)
