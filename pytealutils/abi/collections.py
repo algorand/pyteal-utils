@@ -50,10 +50,9 @@ class Tuple(ABIType):
         return Seq(
             v.store(Bytes("")),
             head_pos.store(Int(0)),
-            *head_pos_ops,  # Accumulate to the lengths of all the heads
+            *head_pos_ops, 
             *head_ops,
-            v.store(Concat(v.load(), *tail_ops)),
-            v.load()
+            Concat(v.load(), *tail_ops),
         )
 
     def decode(self, value: Bytes) -> "Tuple":
@@ -112,7 +111,6 @@ class DynamicArray(Tuple):
         self.element_type = type
 
     def __call__(self, data: List[ABIType]) -> "DynamicArray":
-        super().__call__(*data)
         return self.decode(
             Concat(Uint16(Int(len(data))).encode(), super().__call__(*data))
         )

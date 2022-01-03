@@ -1,6 +1,17 @@
 ABI Types
 --------
 
+# Use
+
+    {ABIType}.decode(bytes) to return an object with methods from an over the wire encoding
+    {ABIType(raw stack val)} to return an object with methods from inside a teal program
+    {ABIType.encode()} to return the byte string to be sent over the wire
+
+    For Uints/String/Address, these can be called directly
+    For FixedPoint and container types (tuple,fixed array,dynamic array) the init method takes parameters further describing the type and the result can be called directly as above. 
+
+
+
 Each PyTEAL ABIType, it must implement encode/decode to convert to and from over the wire formats and stack types
 
 | ABIType | StackType |
