@@ -4,55 +4,61 @@ from pyteal import *
 from tests.helpers import *
 
 from .bytes import String
-from .collections import Tuple
+from .collections import DynamicArray, FixedArray, Tuple
 from .uint import Uint64
 
-# def test_abi_dynamic_array_string():
-#    StringArray = DynamicArray(String)
-#    t = sdkabi.ArrayDynamicType(sdkabi.StringType())
-#
-#    encoded = t.encode(["this", "is", "a", "test"])
-#
-#    ptarray = StringArray(Bytes(encoded))
-#
-#    expr = Seq(ptarray.init(), Log(ptarray.encode()))
-#
-#    expected = [encoded.hex()]
-#    assert_output(expr, expected)
-#
-#
-# def test_abi_dynamic_array_uint():
-#    UintArray = DynamicArray(Uint64)
-#    t = sdkabi.ArrayDynamicType(sdkabi.UintType(64))
-#
-#    encoded = t.encode([10, 20, 30, 40])
-#
-#    print(encoded.hex())
-#    return
-#    ptarray = UintArray(Bytes(encoded))
-#
-#    expr = Seq(ptarray.init(), Log(ptarray.serialize()))
-#
-#    expected = [encoded.hex()]
-#    assert_output(expr, expected)
-#
-#
-# def test_abi_fixed_array_bytes():
-#    t = sdkabi.ArrayStaticType(sdkabi.StringType(), 2)
-#    b = t.encode(["asdf", "asdf"])
-#    print(b.hex())
-#
+0x00040008000E0012001500047468697300026973000161000474657374
+0x00040008000C000F001500047468697300026973000161000474657374
 
 
-def test_abi_fixed_array_uint():
-    pass
+def test_abi_collection_dynamic_array_string():
+    StringArray = DynamicArray(String)
+    t = sdkabi.ArrayDynamicType(sdkabi.StringType())
+
+    arr = ["dead", "beef", "dead", "beef"]
+    encoded = t.encode(arr)
+
+    ptarray = StringArray([String(Bytes(s)) for s in arr])
+
+    expr = Seq(Log(ptarray.encode()))
+
+    print(encoded.hex())
+    expected = [encoded.hex()]
+    assert_output(expr, expected, pad_budget=15)
 
 
-def test_abi_tuple():
+def test_abi_collection_fixed_array_string():
+    fixedarr = FixedArray(String, 3)
+    sdk_tuple = sdkabi.ArrayStaticType(sdkabi.StringType(), 3)
 
+    input = ["dead", "beef", "dead"]
+    b = sdk_tuple.encode(input)
+    t = fixedarr.decode(Bytes(b))
+    idx = 2
+
+    if type(input[idx]) == int:
+        output = [logged_int(input[idx])]
+        expr = Seq(Log(Itob(t[idx])))
+    else:
+        output = [logged_bytes(input[idx])]
+        expr = Seq(Log(t[idx]))
+
+    assert_output(expr, output)
+
+    assert_output(
+        Log(
+            fixedarr(
+                String(Bytes(input[0])),
+                String(Bytes(input[1])),
+                String(Bytes(input[2])),
+            )
+        ),
+        [b.hex()],
+    )
+
+
+def test_abi_collection_tuple():
     teal_tuple = Tuple([String, Uint64, String, String, String, String])
-    print(teal_tuple)
-
     sdk_tuple = sdkabi.TupleType(
         [
             sdkabi.StringType(),
@@ -64,19 +70,17 @@ def test_abi_tuple():
         ]
     )
 
-    input = ["A", 234231, "Z", "B", "C", "D"]
+    input = ["A", 234231, "Z", "B", "C", "Dadsf"]
     idx = 4
     b = sdk_tuple.encode(input)
     t = teal_tuple.decode(Bytes(b))
 
-    print(b.hex())
-
     if type(input[idx]) == int:
-       output = [logged_int(input[idx])]
-       expr = Seq(Log(Itob(t[idx])))
+        output = [logged_int(input[idx])]
+        expr = Seq(Log(Itob(t[idx])))
     else:
-       output = [logged_bytes(input[idx])]
-       expr = Seq(Log(t[idx]))
+        output = [logged_bytes(input[idx])]
+        expr = Seq(Log(t[idx]))
 
     assert_output(expr, output)
 
