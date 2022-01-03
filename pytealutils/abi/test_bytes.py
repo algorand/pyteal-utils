@@ -9,7 +9,8 @@ from .bytes import *
 
 def test_abi_string():
     b = sdkabi.StringType().encode("stringvar")
-    expr = Log(String(Bytes(b)).encode())
+    print(b.hex())
+    expr = Log(String.decode(Bytes(b)).encode())
     output = [b.hex()]
     assert_output(expr, output)
 

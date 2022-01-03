@@ -50,26 +50,46 @@ def test_abi_fixed_array_uint():
 
 def test_abi_tuple():
 
-    teal_tuple = Tuple([String, Uint64, String])
+    teal_tuple = Tuple([String, Uint64, String, String, String, String])
     print(teal_tuple)
 
     sdk_tuple = sdkabi.TupleType(
-        [sdkabi.StringType(), sdkabi.UintType(64), sdkabi.StringType()]
+        [
+            sdkabi.StringType(),
+            sdkabi.UintType(64),
+            sdkabi.StringType(),
+            sdkabi.StringType(),
+            sdkabi.StringType(),
+            sdkabi.StringType(),
+        ]
     )
 
-    input = ["A", 1, "Z"]
-    idx = 0
+    input = ["A", 234231, "Z", "B", "C", "D"]
 
     b = sdk_tuple.encode(input)
-    t = teal_tuple.decode(Bytes(b))
+    teal_tuple.decode(Bytes(b))
 
-    if type(input[idx]) == int:
-        output = [logged_int(input[idx])]
-        expr = Seq(Log(Itob(t[idx])))
-    else:
-        output = [logged_bytes(input[idx])]
-        expr = Seq(Log(t[idx]))
+    print(b.hex())
 
-    assert_output(expr, output)
+    # if type(input[idx]) == int:
+    #    output = [logged_int(input[idx])]
+    #    expr = Seq(Log(Itob(t[idx])))
+    # else:
+    #    output = [logged_bytes(input[idx])]
+    #    expr = Seq(Log(t[idx]))
 
-    # assert_output(Log(teal_tuple(String(Bytes(input[0])), Uint64(Int(input[1])), String(Bytes(input[2]))).encode()), [b.hex()])
+    # assert_output(expr, output)
+
+    assert_output(
+        Log(
+            teal_tuple(
+                String(Bytes(input[0])),
+                Uint64(Int(input[1])),
+                String(Bytes(input[2])),
+                String(Bytes(input[3])),
+                String(Bytes(input[4])),
+                String(Bytes(input[5])),
+            )
+        ),
+        [b.hex()],
+    )

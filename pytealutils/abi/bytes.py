@@ -1,4 +1,4 @@
-from pyteal import Bytes, Expr, TealType
+from pyteal import Bytes, Expr, Int, Len, Seq, TealType
 
 from .abi_type import ABIType
 from .codec_util import discard_length, prepend_length
@@ -9,10 +9,12 @@ class String(ABIType):
     dynamic = True
 
     def __init__(self, value: Bytes):
-        self.decode(value)
+        self.value = value
+        self.byte_len = Seq(Len(value) + Int(2))
 
-    def decode(self, value: Bytes):
-        self.value = discard_length(value)
+    @staticmethod
+    def decode(value: Bytes) -> "String":
+        return String(discard_length(value))
 
     def encode(self) -> Expr:
         return prepend_length(self.value)
@@ -20,6 +22,7 @@ class String(ABIType):
 
 class Address(ABIType):
     stack_type = TealType.bytes
+    byte_len = Int(32)
 
     def __init__(self, value: Bytes):
         self.value = value

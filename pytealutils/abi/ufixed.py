@@ -130,37 +130,6 @@ class UFixed(ABIType):
 
 
 @Subroutine(TealType.bytes)
-def fp_to_ascii(v: TealType.bytes):
-    val = tail(v)
-    prec = GetByte(v, Int(0))
-    ascii = ScratchVar()
-
-    return Seq(
-        If(Len(val) > Int(8), ascii.store(witoa(val)), ascii.store(itoa(Btoi(val)))),
-        Concat(
-            prefix(ascii.load(), Len(ascii.load()) - prec),
-            Bytes("."),
-            suffix(ascii.load(), prec),
-        ),
-    )
-
-
-@Subroutine(TealType.bytes)
-def fp_rescale(v: TealType.bytes, p: TealType.uint64):
-    return check_overflow(
-        # Prepend new precision byte
-        suffix(Itob(p), Int(1)),
-        Len(v),
-        # Divide off the old precision
-        BytesDiv(
-            # Multiply by new precision first so we dont lose precision
-            BytesMul(tail(v), Itob(pow10(p))),
-            byte_precision(v),
-        ),
-    )
-
-
-@Subroutine(TealType.bytes)
 def fp_add(a: TealType.bytes, b: TealType.bytes):
     return Seq(
         assert_fp_match(a, b),
@@ -204,5 +173,36 @@ def fp_div(a: TealType.bytes, b: TealType.bytes):
                 BytesMul(tail(a), byte_precision(a)),
                 tail(b),
             ),
+        ),
+    )
+
+
+@Subroutine(TealType.bytes)
+def fp_rescale(v: TealType.bytes, p: TealType.uint64):
+    return check_overflow(
+        # Prepend new precision byte
+        suffix(Itob(p), Int(1)),
+        Len(v),
+        # Divide off the old precision
+        BytesDiv(
+            # Multiply by new precision first so we dont lose precision
+            BytesMul(tail(v), Itob(pow10(p))),
+            byte_precision(v),
+        ),
+    )
+
+
+@Subroutine(TealType.bytes)
+def fp_to_ascii(v: TealType.bytes):
+    val = tail(v)
+    prec = GetByte(v, Int(-2))
+    ascii = ScratchVar()
+
+    return Seq(
+        If(Len(val) > Int(6), ascii.store(witoa(val)), ascii.store(itoa(Btoi(val)))),
+        Concat(
+            prefix(ascii.load(), Len(ascii.load()) - prec),
+            Bytes("."),
+            suffix(ascii.load(), prec),
         ),
     )
