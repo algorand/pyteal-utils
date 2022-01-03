@@ -12,8 +12,8 @@ class String(ABIType):
         self.value = value
         self.byte_len = Seq(Len(value) + Int(2))
 
-    @staticmethod
-    def decode(value: Bytes) -> "String":
+    @classmethod
+    def decode(cls, value: Bytes) -> "String":
         return String(discard_length(value))
 
     def encode(self) -> Expr:

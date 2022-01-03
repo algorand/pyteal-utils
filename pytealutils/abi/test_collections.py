@@ -65,20 +65,20 @@ def test_abi_tuple():
     )
 
     input = ["A", 234231, "Z", "B", "C", "D"]
-
+    idx = 4
     b = sdk_tuple.encode(input)
-    teal_tuple.decode(Bytes(b))
+    t = teal_tuple.decode(Bytes(b))
 
     print(b.hex())
 
-    # if type(input[idx]) == int:
-    #    output = [logged_int(input[idx])]
-    #    expr = Seq(Log(Itob(t[idx])))
-    # else:
-    #    output = [logged_bytes(input[idx])]
-    #    expr = Seq(Log(t[idx]))
+    if type(input[idx]) == int:
+       output = [logged_int(input[idx])]
+       expr = Seq(Log(Itob(t[idx])))
+    else:
+       output = [logged_bytes(input[idx])]
+       expr = Seq(Log(t[idx]))
 
-    # assert_output(expr, output)
+    assert_output(expr, output)
 
     assert_output(
         Log(

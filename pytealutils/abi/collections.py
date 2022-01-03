@@ -178,7 +178,7 @@ class Tuple(ABIType):
 
     def __getitem__(self, i: int) -> Expr:
         target_type = self.types[i]
-        return target_type(rest(self.value, self.element_position(i)))
+        return target_type.decode(rest(self.value, self.element_position(i)))
 
     def element_position(self, i: int) -> Expr:
         pos = ScratchVar()
@@ -190,7 +190,7 @@ class Tuple(ABIType):
                 ops.append(pos.store(pos.load() + Int(2)))
             else:
                 # Add length of static type
-                ops.append(pos.store(pos.load() + Int(t.byte_len)))
+                ops.append(pos.store(pos.load() + t.byte_len))
 
         if self.types[i].dynamic:
             ops.append(pos.store(ExtractUint16(self.value, pos.load())))
