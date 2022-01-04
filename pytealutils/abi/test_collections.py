@@ -93,3 +93,47 @@ def test_abi_collection_tuple():
         ),
         [b.hex()],
     )
+
+
+def test_abi_collection_mixed_tuple():
+    teal_tuple = Tuple([String, String, Uint64, String, Uint64, String, String])
+    sdk_tuple = sdkabi.TupleType(
+        [
+            sdkabi.StringType(),
+            sdkabi.StringType(),
+            sdkabi.UintType(64),
+            sdkabi.StringType(),
+            sdkabi.UintType(64),
+            sdkabi.StringType(),
+            sdkabi.StringType(),
+        ]
+    )
+
+    input = ["A", "B", 234231, "Z", 2342343, "C", "Dadsf"]
+    idx = 4
+    b = sdk_tuple.encode(input)
+    t = teal_tuple.decode(Bytes(b))
+
+    if type(input[idx]) == int:
+        output = [logged_int(input[idx])]
+        expr = Seq(Log(Itob(t[idx])))
+    else:
+        output = [logged_bytes(input[idx])]
+        expr = Seq(Log(t[idx]))
+
+    assert_output(expr, output)
+
+    assert_output(
+        Log(
+            teal_tuple(
+                String(Bytes(input[0])),
+                String(Bytes(input[1])),
+                Uint64(Int(input[2])),
+                String(Bytes(input[3])),
+                Uint64(Int(input[4])),
+                String(Bytes(input[5])),
+                String(Bytes(input[6])),
+            )
+        ),
+        [b.hex()],
+    )

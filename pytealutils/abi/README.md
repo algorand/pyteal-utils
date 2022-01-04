@@ -4,8 +4,8 @@ ABI Types
 # Use
 
     ABIType.decode(bytes) returns an object from the serialized encoding
-    ABIType(PyTEAL Expr(s)) returns an object from the expressions given to represent the ABIType 
-    ABIType.encode() return the serialized type byte string 
+    ABIType(PyTEAL Expr(s)) returns an object from the expressions given to represent the ABIType
+    ABIType.encode() return the serialized type byte string
 
 For Uints/String/Address, these can be called directly
 
@@ -19,7 +19,7 @@ ex:
     # ...
     Log(
         string_int_tuple(
-            abi.String(string_scratch.load()), 
+            abi.String(string_scratch.load()),
             abi.Uint64(int_scratch.load())
         ).enode()
     )

@@ -53,3 +53,11 @@ def test_uint16():
     expr = Log(Uint16(Uint16.decode(Bytes(a)) - Uint16.decode(Bytes(b))).encode())
     output = [t.encode(400).hex()]
     assert_output(expr, output)
+
+
+def test_uint8():
+    t = sdkabi.UintType(8)
+    a, b = t.encode(10), t.encode(4)
+    expr = Log(Uint8(Uint8.decode(Bytes(a)) - Uint8.decode(Bytes(b))).encode())
+    output = [t.encode(6).hex()]
+    assert_output(expr, output)
