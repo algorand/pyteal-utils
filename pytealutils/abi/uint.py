@@ -17,7 +17,7 @@ from pyteal import (
 from ..strings import suffix
 from .abi_type import ABIType
 
-
+#TODO: override +-/* and bitshifting?
 class Uint512(ABIType):
     stack_type = TealType.bytes
     byte_len = Int(512 // 8)

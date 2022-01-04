@@ -3,25 +3,41 @@ ABI Types
 
 # Use
 
-    {ABIType}.decode(bytes) to return an object with methods from an over the wire encoding
-    {ABIType(raw stack val)} to return an object with methods from inside a teal program
-    {ABIType.encode()} to return the byte string to be sent over the wire
+    ABIType.decode(bytes) returns an object from the serialized encoding
+    ABIType(PyTEAL Expr(s)) returns an object from the expressions given to represent the ABIType 
+    ABIType.encode() return the serialized type byte string 
 
-    For Uints/String/Address, these can be called directly
-    For FixedPoint and container types (tuple,fixed array,dynamic array) the init method takes parameters further describing the type and the result can be called directly as above.
+For Uints/String/Address, these can be called directly
 
+For FixedPoint and container types (Tuple, FixedArray, DynamicArray) the Python class init method takes some arguments that fully specify the ABIType. They provide a __call__ method that takes expressions to provide the underlying values for the type.
 
+ex:
+```py
 
-Each PyTEAL ABIType, it must implement encode/decode to convert to and from over the wire formats and stack types
+    string_int_tuple = abi.Tuple([abi.String, abi.Uint64])
+
+    # ...
+    Log(
+        string_int_tuple(
+            abi.String(string_scratch.load()), 
+            abi.Uint64(int_scratch.load())
+        ).enode()
+    )
+
+```
+
+Each PyTEAL ABIType, it must implement encode/decode to convert to and from over-the-wire formats and stack types
 
 | ABIType | StackType |
 |---------|-----------|
+|Bool     | uint64  |
 |Uint8-64 |  uint64 |
 |Uint64-512 | bytes  |
+|UFixedNxM | bytes |
 |Address | bytes|
-|String/Byte[] |  TealType.bytes |
-| T[]  | bytes (store size, bytes, )|
-|T[N]/Tuple(T...) => Remove the positions encodings? => TealType.bytes
+|String/Byte[] | bytes |
+|T[]  | bytes |
+|T[N]/(T...) | bytes |
 
 
 
