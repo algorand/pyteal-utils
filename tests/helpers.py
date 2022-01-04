@@ -267,7 +267,12 @@ def compile_stateful_app(method: Expr, version: int = TEAL_VERSION):
 
 
 def compile_sig(method: Expr, version: int = TEAL_VERSION):
-    return compileTeal(Seq(method, Int(1)), mode=Mode.Signature, version=version)
+    return compileTeal(
+        Seq(method, Int(1)),
+        mode=Mode.Signature,
+        version=version,
+        assembleConstants=True,
+    )
 
 
 def assemble_bytecode(client: algod.AlgodClient, src: str):

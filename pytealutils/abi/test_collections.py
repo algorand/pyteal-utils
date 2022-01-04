@@ -109,7 +109,7 @@ def test_abi_collection_mixed_tuple():
         ]
     )
 
-    input = ["A", "B", 234231, "Z", 2342343, "C", "Dadsf"]
+    input = ["A", "B", 234231, "C", 2342343, "D", "E"]
     idx = 4
     b = sdk_tuple.encode(input)
     t = teal_tuple.decode(Bytes(b))
@@ -123,17 +123,17 @@ def test_abi_collection_mixed_tuple():
 
     assert_output(expr, output)
 
-    assert_output(
-        Log(
-            teal_tuple(
-                String(Bytes(input[0])),
-                String(Bytes(input[1])),
-                Uint64(Int(input[2])),
-                String(Bytes(input[3])),
-                Uint64(Int(input[4])),
-                String(Bytes(input[5])),
-                String(Bytes(input[6])),
-            )
-        ),
-        [b.hex()],
+    expr = teal_tuple(
+        String(Bytes(input[0])),
+        String(Bytes(input[1])),
+        Uint64(Int(input[2])),
+        String(Bytes(input[3])),
+        Uint64(Int(input[4])),
+        String(Bytes(input[5])),
+        String(Bytes(input[6])),
     )
+
+    with open("tuple.teal", "w") as f:
+        f.write(compile_app(Log(expr)))
+
+    assert_output(Log(expr), [b.hex()])

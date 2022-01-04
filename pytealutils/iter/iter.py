@@ -1,9 +1,24 @@
-from pyteal import Expr, For, Int, ScratchVar, Subroutine, TealType
+from typing import List
+
+from pyteal import BinaryExpr, Expr, For, Int, Op, ScratchVar, Seq, Subroutine, TealType
 
 
-def accumulate(sub: Expr, n: Int, acc: ScratchVar) -> Expr:
-    # TODO
-    pass
+def accumulate(vals: List[Expr], op: Op) -> Expr:
+    ops = []
+
+    for n in range(0, len(vals) - 1, 2):
+        ops.append(
+            BinaryExpr(op, TealType.uint64, TealType.uint64, vals[n], vals[n + 1])
+        )
+
+    # If its an odd number, we cant match it, just add the last one
+    if len(vals) % 2 == 1:
+        ops.append(vals[-1])
+
+    if len(ops) > 1:
+        return accumulate(ops, op)
+    else:
+        return Seq(ops)
 
 
 def iterate(sub: Expr, n: Int, i: ScratchVar = None) -> Expr:

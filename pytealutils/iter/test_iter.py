@@ -3,6 +3,7 @@ from pyteal import (
     Int,
     Itob,
     Log,
+    Op,
     ScratchVar,
     Subroutine,
     SubroutineCall,
@@ -11,7 +12,7 @@ from pyteal import (
 
 from tests.helpers import assert_output, logged_bytes, logged_int
 
-from .iter import iterate
+from .iter import accumulate, iterate
 
 
 def test_iterate():
@@ -33,4 +34,10 @@ def test_iterate_with_closure():
     assert type(expr) is SubroutineCall
 
     output = [logged_int(x) for x in range(10)]
+    assert_output(expr, output)
+
+
+def test_accumulate():
+    expr = Log(Itob(accumulate([Int(1) for _ in range(10)], Op.add)))
+    output = [logged_int(10)]
     assert_output(expr, output)
