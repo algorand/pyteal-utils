@@ -133,7 +133,4 @@ def test_abi_collection_mixed_tuple():
         String(Bytes(input[6])),
     )
 
-    with open("tuple.teal", "w") as f:
-        f.write(compile_app(Log(expr)))
-
     assert_output(Log(expr), [b.hex()])

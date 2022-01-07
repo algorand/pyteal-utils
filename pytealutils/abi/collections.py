@@ -2,6 +2,7 @@ from typing import List, Tuple
 
 from pyteal import *
 
+from ..iter import accumulate
 from ..strings import rest
 from .abi_type import ABIType
 from .bytes import *
@@ -20,15 +21,14 @@ class Tuple(ABIType):
     def __call__(self, *elements: ABIType) -> "Tuple":
         """__call__ provides an method to construct a tuple for a list of types"""
 
-        head_pos_ops, head_ops, tail_ops = [], [], []
+        head_pos_lengths = []
+        head_ops, tail_ops = [], []
         v, head_pos = ScratchVar(), ScratchVar()
 
         for elem in elements:
             if elem.dynamic:
 
-                head_pos_ops.append(
-                    head_pos.store(head_pos.load() + elem.byte_len + Int(2))
-                )
+                head_pos_lengths.append(elem.byte_len + Int(2))
 
                 head_ops.append(
                     Seq(
@@ -41,7 +41,7 @@ class Tuple(ABIType):
 
                 tail_ops.append(elem.encode())
             else:
-                head_pos_ops.append(head_pos.store(head_pos.load() + elem.byte_len))
+                head_pos_lengths.append(elem.byte_len)
                 head_ops.append(v.store(Concat(elem.encode(), v.load())))
 
         # Write them in reverse
@@ -49,8 +49,7 @@ class Tuple(ABIType):
 
         return Seq(
             v.store(Bytes("")),
-            head_pos.store(Int(0)),
-            *head_pos_ops,
+            head_pos.store(accumulate(head_pos_lengths, Op.add)),
             *head_ops,
             Concat(v.load(), *tail_ops),
         )
