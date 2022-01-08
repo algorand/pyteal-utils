@@ -1,0 +1,4 @@
+pyteal_utils.egg-info/
+__pycache__/
+.venv/
+.vscode/
