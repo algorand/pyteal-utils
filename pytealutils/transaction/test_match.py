@@ -15,4 +15,4 @@ def test_match():
     expr = Cond([Match(payMe, giveThing), Approve()])
 
     # No actual testing being done here yet
-    print(compile_sig(expr))
+    print(compile_app(expr))
