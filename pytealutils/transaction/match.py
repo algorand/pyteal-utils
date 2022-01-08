@@ -1,21 +1,31 @@
-from typing import Dict, Union, Tuple
-from pyteal import *
+from typing import Dict, Tuple, Union
+
+from pyteal import (
+    And,
+    CompileOptions,
+    Expr,
+    Global,
+    GtxnExpr,
+    Int,
+    TealBlock,
+    TealSimpleBlock,
+    TealType,
+    TxnField,
+    TxnType,
+)
 
 
 class Match(Expr):
-
     def __init__(self, *txns: Dict[TxnField, Expr]):
 
         filters = []
         for idx, txn in enumerate(txns):
-            filters.append(And(*[
-                GtxnExpr(idx, k) == v for k,v in txn.items()
-            ]))
+            filters.append(And(*[GtxnExpr(idx, k) == v for k, v in txn.items()]))
 
         self.value = And(*filters)
 
     def type_of(self) -> TealType:
-        return self.value.type_of() 
+        return self.value.type_of()
 
     def has_return(self) -> bool:
         return self.value.has_return()
@@ -40,6 +50,12 @@ ToMe = {TxnField.receiver: Global.current_application_address()}
 FromMe = {TxnField.sender: Global.current_application_address()}
 
 
+def PaymentAmount(amount: Union[int, Int]) -> Dict[TxnField, Expr]:
+    if type(amount) == int:
+        amount = Int(amount)
+    return {**Payment, TxnField.amount: amount}
+
+
 def AssetIdAndAmount(
     id: Union[int, Int], amount: Union[int, Int]
 ) -> Dict[TxnField, Expr]:
@@ -49,8 +65,4 @@ def AssetIdAndAmount(
     if type(amount) == int:
         amount = Int(amount)
 
-    return {
-        **AssetTransfer,
-        TxnField.xfer_asset: id,
-        TxnField.asset_amount: amount,
-    }
+    return {**AssetTransfer, TxnField.xfer_asset: id, TxnField.asset_amount: amount}
