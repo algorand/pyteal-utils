@@ -1,0 +1,5 @@
+Strings
+========
+
+
+.. autofunction:: pytealutils.strings.itoa

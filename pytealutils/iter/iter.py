@@ -4,8 +4,22 @@ from pyteal import BinaryExpr, Expr, For, Int, Op, ScratchVar, Seq, Subroutine, 
 
 
 def accumulate(vals: List[Expr], op: Op) -> Expr:
-    ops = []
+    """accumulate provides a convenient way to efficiently combine elements in a list.
 
+    Pairs elements of the vals list recursively to save on ops and reduce the need for intermediate scratch var storing/loading
+
+    Typical Usage Example:
+        accumulate([Int(1), Int(2), Int(3), Int(4)], Op.Add) # comes out to (1+2)+(3+4) == 10
+
+    Args:
+        vals: A List of Expr objects to evaluate, these should evaluate to a Bytes or Int
+        op: A teal operation to perform on the list
+
+    Returns:
+        A single expression representing the accumulated value after applying the op for all elements
+
+    """
+    ops: List[Expr] = []
     for n in range(0, len(vals) - 1, 2):
         ops.append(
             BinaryExpr(op, TealType.uint64, TealType.uint64, vals[n], vals[n + 1])
@@ -17,8 +31,8 @@ def accumulate(vals: List[Expr], op: Op) -> Expr:
 
     if len(ops) > 1:
         return accumulate(ops, op)
-    else:
-        return Seq(ops)
+
+    return Seq(ops)
 
 
 def iterate(sub: Expr, n: Int, i: ScratchVar = None) -> Expr:

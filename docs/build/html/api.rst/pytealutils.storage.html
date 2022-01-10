@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pytealutils.storage package &mdash; pyteal-utils  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+</head>
+
+<body class="wy-body-for-nav">
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> pyteal-utils
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../strings.html">Strings</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyteal-utils</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>pytealutils.storage package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api.rst/pytealutils.storage.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+
+  <section id="pytealutils-storage-package">
+<h1>pytealutils.storage package<a class="headerlink" href="#pytealutils-storage-package" title="Permalink to this headline"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+</section>
+<section id="module-pytealutils.storage.global_blob">
+<span id="pytealutils-storage-global-blob-module"></span><h2>pytealutils.storage.global_blob module<a class="headerlink" href="#module-pytealutils.storage.global_blob" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pytealutils.storage.global_blob.GlobalBlob">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytealutils.storage.global_blob.</span></span><span class="sig-name descname"><span class="pre">GlobalBlob</span></span><a class="headerlink" href="#pytealutils.storage.global_blob.GlobalBlob" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Blob is a class holding static methods to work with the global storage of an application as a binary large object</p>
+<p>The <cite>zero</cite> method must be called on an application on opt in and the schema of the global storage should be 16 bytes</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pytealutils.storage.global_blob.GlobalBlob.get_byte">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_byte</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.global_blob.GlobalBlob.get_byte" title="Permalink to this definition"></a></dt>
+<dd><p>Get a single byte from global storage of an application by index</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytealutils.storage.global_blob.GlobalBlob.read">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bstart:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bstop:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pyteal.Expr</span></span></span><a class="headerlink" href="#pytealutils.storage.global_blob.GlobalBlob.read" title="Permalink to this definition"></a></dt>
+<dd><p>read bytes between bstart and bend from global storage of an application by index</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytealutils.storage.global_blob.GlobalBlob.set_byte">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_byte</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">byte:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.global_blob.GlobalBlob.set_byte" title="Permalink to this definition"></a></dt>
+<dd><p>Set a single byte from global storage of an application by index</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytealutils.storage.global_blob.GlobalBlob.write">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bstart:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buff:</span> <span class="pre">&lt;TealType.bytes:</span> <span class="pre">1&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pyteal.Expr</span></span></span><a class="headerlink" href="#pytealutils.storage.global_blob.GlobalBlob.write" title="Permalink to this definition"></a></dt>
+<dd><p>write bytes between bstart and len(buff) to global storage of an application</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytealutils.storage.global_blob.GlobalBlob.zero">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">zero</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pyteal.Expr</span></span></span><a class="headerlink" href="#pytealutils.storage.global_blob.GlobalBlob.zero" title="Permalink to this definition"></a></dt>
+<dd><p>initializes global state of an application to all zero bytes</p>
+<p>This allows us to be lazy later and _assume_ all the strings are the same size</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.global_blob.intkey">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.global_blob.</span></span><span class="sig-name descname"><span class="pre">intkey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pyteal.Expr</span></span></span><a class="headerlink" href="#pytealutils.storage.global_blob.intkey" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-pytealutils.storage.local_blob">
+<span id="pytealutils-storage-local-blob-module"></span><h2>pytealutils.storage.local_blob module<a class="headerlink" href="#module-pytealutils.storage.local_blob" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pytealutils.storage.local_blob.LocalBlob">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytealutils.storage.local_blob.</span></span><span class="sig-name descname"><span class="pre">LocalBlob</span></span><a class="headerlink" href="#pytealutils.storage.local_blob.LocalBlob" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Blob is a class holding static methods to work with the local storage of an account as a binary large object</p>
+<p>The <cite>zero</cite> method must be called on an account on opt in and the schema of the local storage should be 16 bytes</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pytealutils.storage.local_blob.LocalBlob.get_byte">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_byte</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acct:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.local_blob.LocalBlob.get_byte" title="Permalink to this definition"></a></dt>
+<dd><p>Get a single byte from local storage of an account by index</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytealutils.storage.local_blob.LocalBlob.read">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acct:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bstart:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bend:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pyteal.Expr</span></span></span><a class="headerlink" href="#pytealutils.storage.local_blob.LocalBlob.read" title="Permalink to this definition"></a></dt>
+<dd><p>read bytes between bstart and bend from local storage of an account by index</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytealutils.storage.local_blob.LocalBlob.set_byte">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_byte</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acct:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">byte:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.local_blob.LocalBlob.set_byte" title="Permalink to this definition"></a></dt>
+<dd><p>Set a single byte from local storage of an account by index</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytealutils.storage.local_blob.LocalBlob.write">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acct:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bstart:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buff:</span> <span class="pre">&lt;TealType.bytes:</span> <span class="pre">1&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pyteal.Expr</span></span></span><a class="headerlink" href="#pytealutils.storage.local_blob.LocalBlob.write" title="Permalink to this definition"></a></dt>
+<dd><p>write bytes between bstart and len(buff) to local storage of an account</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytealutils.storage.local_blob.LocalBlob.zero">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">zero</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acct:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pyteal.Expr</span></span></span><a class="headerlink" href="#pytealutils.storage.local_blob.LocalBlob.zero" title="Permalink to this definition"></a></dt>
+<dd><p>initializes local state of an account to all zero bytes</p>
+<p>This allows us to be lazy later and _assume_ all the strings are the same size</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.local_blob.intkey">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.local_blob.</span></span><span class="sig-name descname"><span class="pre">intkey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pyteal.Expr</span></span></span><a class="headerlink" href="#pytealutils.storage.local_blob.intkey" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-pytealutils.storage.storage">
+<span id="pytealutils-storage-storage-module"></span><h2>pytealutils.storage.storage module<a class="headerlink" href="#module-pytealutils.storage.storage" title="Permalink to this headline"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.storage.global_get_else">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.storage.</span></span><span class="sig-name descname"><span class="pre">global_get_else</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key:</span> <span class="pre">&lt;TealType.bytes:</span> <span class="pre">1&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default:</span> <span class="pre">pyteal.Expr</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pyteal.Expr</span></span></span><a class="headerlink" href="#pytealutils.storage.storage.global_get_else" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the result of a global storage MaybeValue if it exists, else return a default value</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.storage.global_must_get">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.storage.</span></span><span class="sig-name descname"><span class="pre">global_must_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key:</span> <span class="pre">&lt;TealType.bytes:</span> <span class="pre">1&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pyteal.Expr</span></span></span><a class="headerlink" href="#pytealutils.storage.storage.global_must_get" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the result of a global storage MaybeValue if it exists, else Assert and fail the program</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.storage.local_get_else">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.storage.</span></span><span class="sig-name descname"><span class="pre">local_get_else</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acct:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key:</span> <span class="pre">&lt;TealType.bytes:</span> <span class="pre">1&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default:</span> <span class="pre">pyteal.Expr</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pyteal.Expr</span></span></span><a class="headerlink" href="#pytealutils.storage.storage.local_get_else" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the result of a local storage MaybeValue if it exists, else return a default value</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.storage.local_must_get">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.storage.</span></span><span class="sig-name descname"><span class="pre">local_must_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acct:</span> <span class="pre">&lt;TealType.uint64:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key:</span> <span class="pre">&lt;TealType.bytes:</span> <span class="pre">1&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pyteal.Expr</span></span></span><a class="headerlink" href="#pytealutils.storage.storage.local_must_get" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the result of a loccal storage MaybeValue if it exists, else Assert and fail the program</p>
+</dd></dl>
+
+</section>
+<section id="module-pytealutils.storage.test_global_blob">
+<span id="pytealutils-storage-test-global-blob-module"></span><h2>pytealutils.storage.test_global_blob module<a class="headerlink" href="#module-pytealutils.storage.test_global_blob" title="Permalink to this headline"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_global_blob.test_global_blob_set_get">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_global_blob.</span></span><span class="sig-name descname"><span class="pre">test_global_blob_set_get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_global_blob.test_global_blob_set_get" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_global_blob.test_global_blob_set_past_end">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_global_blob.</span></span><span class="sig-name descname"><span class="pre">test_global_blob_set_past_end</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_global_blob.test_global_blob_set_past_end" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_global_blob.test_global_blob_write_read">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_global_blob.</span></span><span class="sig-name descname"><span class="pre">test_global_blob_write_read</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_global_blob.test_global_blob_write_read" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_global_blob.test_global_blob_write_read_no_zero">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_global_blob.</span></span><span class="sig-name descname"><span class="pre">test_global_blob_write_read_no_zero</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_global_blob.test_global_blob_write_read_no_zero" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_global_blob.test_global_blob_write_read_past_end">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_global_blob.</span></span><span class="sig-name descname"><span class="pre">test_global_blob_write_read_past_end</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_global_blob.test_global_blob_write_read_past_end" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_global_blob.test_global_blob_zero">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_global_blob.</span></span><span class="sig-name descname"><span class="pre">test_global_blob_zero</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_global_blob.test_global_blob_zero" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_global_blob.test_global_blob_zero_no_schema">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_global_blob.</span></span><span class="sig-name descname"><span class="pre">test_global_blob_zero_no_schema</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_global_blob.test_global_blob_zero_no_schema" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-pytealutils.storage.test_local_blob">
+<span id="pytealutils-storage-test-local-blob-module"></span><h2>pytealutils.storage.test_local_blob module<a class="headerlink" href="#module-pytealutils.storage.test_local_blob" title="Permalink to this headline"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_local_blob.test_local_blob_no_schema">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_local_blob.</span></span><span class="sig-name descname"><span class="pre">test_local_blob_no_schema</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_local_blob.test_local_blob_no_schema" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_local_blob.test_local_blob_set_get">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_local_blob.</span></span><span class="sig-name descname"><span class="pre">test_local_blob_set_get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_local_blob.test_local_blob_set_get" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_local_blob.test_local_blob_set_past_end">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_local_blob.</span></span><span class="sig-name descname"><span class="pre">test_local_blob_set_past_end</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_local_blob.test_local_blob_set_past_end" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_local_blob.test_local_blob_write_read">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_local_blob.</span></span><span class="sig-name descname"><span class="pre">test_local_blob_write_read</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_local_blob.test_local_blob_write_read" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_local_blob.test_local_blob_write_read_no_zero">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_local_blob.</span></span><span class="sig-name descname"><span class="pre">test_local_blob_write_read_no_zero</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_local_blob.test_local_blob_write_read_no_zero" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_local_blob.test_local_blob_write_read_past_end">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_local_blob.</span></span><span class="sig-name descname"><span class="pre">test_local_blob_write_read_past_end</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_local_blob.test_local_blob_write_read_past_end" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_local_blob.test_local_blob_zero">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_local_blob.</span></span><span class="sig-name descname"><span class="pre">test_local_blob_zero</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_local_blob.test_local_blob_zero" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-pytealutils.storage.test_storage">
+<span id="pytealutils-storage-test-storage-module"></span><h2>pytealutils.storage.test_storage module<a class="headerlink" href="#module-pytealutils.storage.test_storage" title="Permalink to this headline"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_storage.test_global_get_else">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_storage.</span></span><span class="sig-name descname"><span class="pre">test_global_get_else</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_storage.test_global_get_else" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_storage.test_global_must_get">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_storage.</span></span><span class="sig-name descname"><span class="pre">test_global_must_get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_storage.test_global_must_get" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_storage.test_global_must_get_missing">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_storage.</span></span><span class="sig-name descname"><span class="pre">test_global_must_get_missing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_storage.test_global_must_get_missing" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_storage.test_local_get_else">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_storage.</span></span><span class="sig-name descname"><span class="pre">test_local_get_else</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_storage.test_local_get_else" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_storage.test_local_must_get">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_storage.</span></span><span class="sig-name descname"><span class="pre">test_local_must_get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_storage.test_local_must_get" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytealutils.storage.test_storage.test_local_must_get_missing">
+<span class="sig-prename descclassname"><span class="pre">pytealutils.storage.test_storage.</span></span><span class="sig-name descname"><span class="pre">test_local_must_get_missing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.storage.test_storage.test_local_must_get_missing" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-pytealutils.storage">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pytealutils.storage" title="Permalink to this headline"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Algorand.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+</body>
+</html>
