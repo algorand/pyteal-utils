@@ -12,7 +12,7 @@ def test_struct():
     my_struct_codec = Struct(
         StructField("id", Uint64),
         StructField("user", String),
-        StructField("options", String),
+        StructField("options", String)
     )
     instance = my_struct_codec(Uint64(123), String(Bytes("abc")), String(Bytes("def")))
 
