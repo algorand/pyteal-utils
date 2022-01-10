@@ -1,0 +1,4 @@
+.. automodule:: pytealutils.strings.string
+   :members:
+   :undoc-members:
+   :show-inheritance:

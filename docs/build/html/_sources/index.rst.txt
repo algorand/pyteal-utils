@@ -11,7 +11,7 @@ Welcome to pyteal-utils's documentation!
    :caption: Contents:
 
 .. toctree::
-   modules
+   api 
 
 
 Indices and tables

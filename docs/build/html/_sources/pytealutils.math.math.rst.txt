@@ -1,0 +1,7 @@
+pytealutils.math.math module
+============================
+
+.. automodule:: pytealutils.math.math
+   :members:
+   :undoc-members:
+   :show-inheritance:

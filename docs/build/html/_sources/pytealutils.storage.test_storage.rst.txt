@@ -1,0 +1,7 @@
+pytealutils.storage.test\_storage module
+========================================
+
+.. automodule:: pytealutils.storage.test_storage
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+pytealutils.strings.test\_string module
+=======================================
+
+.. automodule:: pytealutils.strings.test_string
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pytealutils.inline package &mdash; pyteal-utils  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pytealutils.iter package" href="pytealutils.iter.html" />
+    <link rel="prev" title="API Documentation" href="../api.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> pyteal-utils
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pytealutils.inline package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-pytealutils.inline.inline_asm">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pytealutils.iter.html">pytealutils.iter package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pytealutils.math.html">pytealutils.math package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pytealutils.storage.html">pytealutils.storage package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pytealutils.strings.html">pytealutils.strings package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pytealutils.transaction.html">pytealutils.transaction package</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyteal-utils</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../api.html">API Documentation</a> &raquo;</li>
+      <li>pytealutils.inline package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/pytealutils.inline.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pytealutils.inline">
+<span id="pytealutils-inline-package"></span><h1>pytealutils.inline package<a class="headerlink" href="#module-pytealutils.inline" title="Permalink to this headline"></a></h1>
+<section id="module-pytealutils.inline.inline_asm">
+<span id="submodules"></span><h2>Submodules<a class="headerlink" href="#module-pytealutils.inline.inline_asm" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pytealutils.inline.inline_asm.CustomOp">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytealutils.inline.inline_asm.</span></span><span class="sig-name descname"><span class="pre">CustomOp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opcode</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.inline.inline_asm.CustomOp" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytealutils.inline.inline_asm.CustomOp.__dict__">
+<span class="sig-name descname"><span class="pre">__dict__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">mappingproxy({'__module__':</span> <span class="pre">'pytealutils.inline.inline_asm',</span> <span class="pre">'__init__':</span> <span class="pre">&lt;function</span> <span class="pre">CustomOp.__init__&gt;,</span> <span class="pre">'__str__':</span> <span class="pre">&lt;function</span> <span class="pre">CustomOp.__str__&gt;,</span> <span class="pre">'__dict__':</span> <span class="pre">&lt;attribute</span> <span class="pre">'__dict__'</span> <span class="pre">of</span> <span class="pre">'CustomOp'</span> <span class="pre">objects&gt;,</span> <span class="pre">'__weakref__':</span> <span class="pre">&lt;attribute</span> <span class="pre">'__weakref__'</span> <span class="pre">of</span> <span class="pre">'CustomOp'</span> <span class="pre">objects&gt;,</span> <span class="pre">'__doc__':</span> <span class="pre">None,</span> <span class="pre">'__annotations__':</span> <span class="pre">{}})</span></em><a class="headerlink" href="#pytealutils.inline.inline_asm.CustomOp.__dict__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytealutils.inline.inline_asm.CustomOp.__doc__">
+<span class="sig-name descname"><span class="pre">__doc__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pytealutils.inline.inline_asm.CustomOp.__doc__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytealutils.inline.inline_asm.CustomOp.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opcode</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.inline.inline_asm.CustomOp.__init__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytealutils.inline.inline_asm.CustomOp.__module__">
+<span class="sig-name descname"><span class="pre">__module__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pytealutils.inline.inline_asm'</span></em><a class="headerlink" href="#pytealutils.inline.inline_asm.CustomOp.__module__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytealutils.inline.inline_asm.CustomOp.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pytealutils.inline.inline_asm.CustomOp.__str__" title="Permalink to this definition"></a></dt>
+<dd><p>Return str(self).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytealutils.inline.inline_asm.CustomOp.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#pytealutils.inline.inline_asm.CustomOp.__weakref__" title="Permalink to this definition"></a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytealutils.inline.inline_asm.InlineAssembly">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytealutils.inline.inline_asm.</span></span><span class="sig-name descname"><span class="pre">InlineAssembly</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opcode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pyteal.Expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pyteal.TealType</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">TealType.none</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.inline.inline_asm.InlineAssembly" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pyteal.LeafExpr</span></code></p>
+<p>InlineAssembly can be used to inject TEAL source directly into a PyTEAL program</p>
+<p>Often the generated PyTEAL is not as efficient as it can be. This class offers a way to
+write the most efficient TEAL for code paths that would otherwise be impossible because
+of opcode budget constraints.</p>
+<p>It can also be used to implement methods that are not yet available in the PyTEAL repository</p>
+<dl class="simple">
+<dt>Args</dt><dd><p>opcode: string containing the teal to inject
+args: any number of PyTEAL expressions to place before this opcode
+type: The type this Expression returns, to help during PyTEAL compilation</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytealutils.inline.inline_asm.InlineAssembly.__abstractmethods__">
+<span class="sig-name descname"><span class="pre">__abstractmethods__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({})</span></em><a class="headerlink" href="#pytealutils.inline.inline_asm.InlineAssembly.__abstractmethods__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytealutils.inline.inline_asm.InlineAssembly.__doc__">
+<span class="sig-name descname"><span class="pre">__doc__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'InlineAssembly</span> <span class="pre">can</span> <span class="pre">be</span> <span class="pre">used</span> <span class="pre">to</span> <span class="pre">inject</span> <span class="pre">TEAL</span> <span class="pre">source</span> <span class="pre">directly</span> <span class="pre">into</span> <span class="pre">a</span> <span class="pre">PyTEAL</span> <span class="pre">program\n\n</span>&#160;&#160;&#160; <span class="pre">Often</span> <span class="pre">the</span> <span class="pre">generated</span> <span class="pre">PyTEAL</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">as</span> <span class="pre">efficient</span> <span class="pre">as</span> <span class="pre">it</span> <span class="pre">can</span> <span class="pre">be.</span> <span class="pre">This</span> <span class="pre">class</span> <span class="pre">offers</span> <span class="pre">a</span> <span class="pre">way</span> <span class="pre">to\n</span>&#160;&#160;&#160; <span class="pre">write</span> <span class="pre">the</span> <span class="pre">most</span> <span class="pre">efficient</span> <span class="pre">TEAL</span> <span class="pre">for</span> <span class="pre">code</span> <span class="pre">paths</span> <span class="pre">that</span> <span class="pre">would</span> <span class="pre">otherwise</span> <span class="pre">be</span> <span class="pre">impossible</span> <span class="pre">because\n</span>&#160;&#160;&#160; <span class="pre">of</span> <span class="pre">opcode</span> <span class="pre">budget</span> <span class="pre">constraints.\n\n</span>&#160;&#160;&#160; <span class="pre">It</span> <span class="pre">can</span> <span class="pre">also</span> <span class="pre">be</span> <span class="pre">used</span> <span class="pre">to</span> <span class="pre">implement</span> <span class="pre">methods</span> <span class="pre">that</span> <span class="pre">are</span> <span class="pre">not</span> <span class="pre">yet</span> <span class="pre">available</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">PyTEAL</span> <span class="pre">repository\n\n</span>&#160;&#160;&#160; <span class="pre">Args\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">opcode:</span> <span class="pre">string</span> <span class="pre">containing</span> <span class="pre">the</span> <span class="pre">teal</span> <span class="pre">to</span> <span class="pre">inject\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">args:</span> <span class="pre">any</span> <span class="pre">number</span> <span class="pre">of</span> <span class="pre">PyTEAL</span> <span class="pre">expressions</span> <span class="pre">to</span> <span class="pre">place</span> <span class="pre">before</span> <span class="pre">this</span> <span class="pre">opcode\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">type:</span> <span class="pre">The</span> <span class="pre">type</span> <span class="pre">this</span> <span class="pre">Expression</span> <span class="pre">returns,</span> <span class="pre">to</span> <span class="pre">help</span> <span class="pre">during</span> <span class="pre">PyTEAL</span> <span class="pre">compilation\n\n</span>&#160;&#160;&#160; <span class="pre">'</span></em><a class="headerlink" href="#pytealutils.inline.inline_asm.InlineAssembly.__doc__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytealutils.inline.inline_asm.InlineAssembly.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opcode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pyteal.Expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pyteal.TealType</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">TealType.none</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pytealutils.inline.inline_asm.InlineAssembly.__init__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytealutils.inline.inline_asm.InlineAssembly.__module__">
+<span class="sig-name descname"><span class="pre">__module__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pytealutils.inline.inline_asm'</span></em><a class="headerlink" href="#pytealutils.inline.inline_asm.InlineAssembly.__module__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytealutils.inline.inline_asm.InlineAssembly.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.inline.inline_asm.InlineAssembly.__str__" title="Permalink to this definition"></a></dt>
+<dd><p>Get a string representation of this experssion.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytealutils.inline.inline_asm.InlineAssembly.__teal__">
+<span class="sig-name descname"><span class="pre">__teal__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pyteal.compiler.compiler.CompileOptions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.inline.inline_asm.InlineAssembly.__teal__" title="Permalink to this definition"></a></dt>
+<dd><p>Assemble TEAL IR for this component and its arguments.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pytealutils.inline.inline_asm.InlineAssembly._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pytealutils.inline.inline_asm.InlineAssembly._abc_impl" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytealutils.inline.inline_asm.InlineAssembly.type_of">
+<span class="sig-name descname"><span class="pre">type_of</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytealutils.inline.inline_asm.InlineAssembly.type_of" title="Permalink to this definition"></a></dt>
+<dd><p>Get the return type of this expression.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-pytealutils.inline.test_inline_asm"></span></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../api.html" class="btn btn-neutral float-left" title="API Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pytealutils.iter.html" class="btn btn-neutral float-right" title="pytealutils.iter package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Algorand.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -43,7 +43,8 @@ napoleon_include_init_with_doc = True
 
 templates_path = ["_templates"]
 
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", 'api/pytealutils.rst']
+
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -57,3 +58,12 @@ html_theme = "sphinx_rtd_theme"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
+
+
+# This is the expected signature of the handler for this event, cf doc
+def autodoc_skip_member_handler(app, what, name, obj, skip, options):
+    return name.startswith("test_")
+
+# Automatically called by sphinx at startup
+def setup(app):
+    app.connect('autodoc-skip-member', autodoc_skip_member_handler)

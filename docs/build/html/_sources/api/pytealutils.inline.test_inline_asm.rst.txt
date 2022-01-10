@@ -1,0 +1,4 @@
+.. automodule:: pytealutils.inline.test_inline_asm
+   :members:
+   :undoc-members:
+   :show-inheritance:

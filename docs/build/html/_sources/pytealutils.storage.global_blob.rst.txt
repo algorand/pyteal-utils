@@ -1,0 +1,7 @@
+pytealutils.storage.global\_blob module
+=======================================
+
+.. automodule:: pytealutils.storage.global_blob
+   :members:
+   :undoc-members:
+   :show-inheritance:

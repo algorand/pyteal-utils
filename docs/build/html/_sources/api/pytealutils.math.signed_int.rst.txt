@@ -1,0 +1,4 @@
+.. automodule:: pytealutils.math.signed_int
+   :members:
+   :undoc-members:
+   :show-inheritance:
