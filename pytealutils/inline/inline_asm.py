@@ -22,7 +22,7 @@ class InlineAssembly(LeafExpr):
 
     It can also be used to implement methods that are not yet available in the PyTEAL repository
 
-    Args
+    Args:
         opcode: string containing the teal to inject
         args: any number of PyTEAL expressions to place before this opcode
         type: The type this Expression returns, to help during PyTEAL compilation
