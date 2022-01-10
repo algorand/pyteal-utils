@@ -34,6 +34,7 @@ def accumulate(vals: List[Expr], op: Op) -> Expr:
 
     return Seq(ops)
 
+
 def iterate(sub: Expr, n: Int, i: ScratchVar = None) -> Expr:
     """Iterate provides a convenience method for calling a method n times
 

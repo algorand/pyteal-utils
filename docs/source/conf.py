@@ -43,8 +43,7 @@ napoleon_include_init_with_doc = True
 
 templates_path = ["_templates"]
 
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", 'api/pytealutils.rst']
-
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "api/pytealutils.rst"]
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -64,6 +63,7 @@ html_static_path = ["_static"]
 def autodoc_skip_member_handler(app, what, name, obj, skip, options):
     return name.startswith("test_")
 
+
 # Automatically called by sphinx at startup
 def setup(app):
-    app.connect('autodoc-skip-member', autodoc_skip_member_handler)
+    app.connect("autodoc-skip-member", autodoc_skip_member_handler)
