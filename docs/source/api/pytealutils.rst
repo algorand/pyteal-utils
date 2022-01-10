@@ -1,11 +1,6 @@
 pytealutils package
 ===================
 
-.. automodule:: pytealutils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Subpackages
 -----------
 
@@ -18,3 +13,11 @@ Subpackages
    pytealutils.storage
    pytealutils.strings
    pytealutils.transaction
+
+Module contents
+---------------
+
+.. automodule:: pytealutils
+   :members:
+   :undoc-members:
+   :show-inheritance:

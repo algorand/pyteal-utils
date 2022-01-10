@@ -1,11 +1,6 @@
 pytealutils.iter package
 ========================
 
-.. automodule:: pytealutils.iter
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 ----------
 
@@ -17,6 +12,14 @@ Submodules
 
 
 .. automodule:: pytealutils.iter.test_iter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: pytealutils.iter
    :members:
    :undoc-members:
    :show-inheritance:

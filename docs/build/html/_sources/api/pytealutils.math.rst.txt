@@ -1,11 +1,6 @@
 pytealutils.math package
 ========================
 
-.. automodule:: pytealutils.math
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 ----------
 
@@ -29,6 +24,14 @@ Submodules
 
 
 .. automodule:: pytealutils.math.test_signed_int
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: pytealutils.math
    :members:
    :undoc-members:
    :show-inheritance:
