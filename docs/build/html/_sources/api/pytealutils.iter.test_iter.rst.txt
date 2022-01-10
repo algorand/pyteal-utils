@@ -1,4 +1,0 @@
-.. automodule:: pytealutils.iter.test_iter
-   :members:
-   :undoc-members:
-   :show-inheritance:

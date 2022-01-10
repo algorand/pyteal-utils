@@ -1,7 +1,0 @@
-pytealutils.storage.storage module
-==================================
-
-.. automodule:: pytealutils.storage.storage
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -1,4 +1,0 @@
-.. automodule:: pytealutils.storage.local_blob
-   :members:
-   :undoc-members:
-   :show-inheritance:

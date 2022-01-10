@@ -1,7 +1,0 @@
-pytealutils.math.test\_math module
-==================================
-
-.. automodule:: pytealutils.math.test_math
-   :members:
-   :undoc-members:
-   :show-inheritance:

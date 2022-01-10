@@ -1,7 +1,0 @@
-pytealutils.transaction.transaction module
-==========================================
-
-.. automodule:: pytealutils.transaction.transaction
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -1,7 +1,0 @@
-pytealutils.iter.iter module
-============================
-
-.. automodule:: pytealutils.iter.iter
-   :members:
-   :undoc-members:
-   :show-inheritance:

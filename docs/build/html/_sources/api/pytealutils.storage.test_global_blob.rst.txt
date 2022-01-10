@@ -1,4 +1,0 @@
-.. automodule:: pytealutils.storage.test_global_blob
-   :members:
-   :undoc-members:
-   :show-inheritance:
