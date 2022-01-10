@@ -1,6 +1,11 @@
 pytealutils.inline package
 ==========================
 
+.. automodule:: pytealutils.inline
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Submodules
 ----------
 
@@ -12,14 +17,6 @@ Submodules
 
 
 .. automodule:: pytealutils.inline.test_inline_asm
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: pytealutils.inline
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,6 +1,11 @@
 pytealutils.strings package
 ===========================
 
+.. automodule:: pytealutils.strings
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Submodules
 ----------
 
@@ -12,14 +17,6 @@ Submodules
 
 
 .. automodule:: pytealutils.strings.test_string
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: pytealutils.strings
    :members:
    :undoc-members:
    :show-inheritance:

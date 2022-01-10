@@ -20,6 +20,6 @@ help:
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 buildapi:
-	sphinx-apidoc -fET ../pytealutils -o source/api
+	sphinx-apidoc -fMET ../pytealutils -o source/api
 	@echo "Auto-generation of API documentation finished. " \
           "The generated files are in 'api/'"

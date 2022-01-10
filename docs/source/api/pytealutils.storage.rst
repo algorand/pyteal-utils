@@ -1,6 +1,11 @@
 pytealutils.storage package
 ===========================
 
+.. automodule:: pytealutils.storage
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Submodules
 ----------
 
@@ -36,14 +41,6 @@ Submodules
 
 
 .. automodule:: pytealutils.storage.test_storage
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: pytealutils.storage
    :members:
    :undoc-members:
    :show-inheritance:

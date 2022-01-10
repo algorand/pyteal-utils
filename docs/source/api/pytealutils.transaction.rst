@@ -1,6 +1,11 @@
 pytealutils.transaction package
 ===============================
 
+.. automodule:: pytealutils.transaction
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Submodules
 ----------
 
@@ -12,14 +17,6 @@ Submodules
 
 
 .. automodule:: pytealutils.transaction.transaction
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: pytealutils.transaction
    :members:
    :undoc-members:
    :show-inheritance:
