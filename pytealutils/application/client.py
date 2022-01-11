@@ -25,8 +25,12 @@ class ContractClient:
 
         for m in contract.methods:
             print(m.name)
-            setattr(self, m.name, lambda args, budget=1: self.call(m, args, budget))
-
+            caller = self._get_caller(m, args, budget)
+            setattr(self, m.name, caller)
+    def _get_caller(self, m, args, budget):
+        def call(args, budget=1):
+            self.call(m, args, budget)
+        return call
     def compose(self, method: Method, args: List[any], ctx: AtomicTransactionComposer):
         sp = self.client.suggested_params()
         ctx.add_method_call(
