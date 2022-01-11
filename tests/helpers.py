@@ -193,6 +193,20 @@ def assert_stateful_fail(expr: Expr, output: List[str]):
 def assert_output(expr: Expr, output: List[str], **kwargs):
     assert expr is not None
 
+    src = compile_method(expr)
+    assert len(src) > 0
+
+    compiled = assemble_bytecode(client, src)
+    assert len(compiled["hash"]) == 58
+
+    logs, _ = execute_app(client, compiled["result"], **kwargs)
+    print(logs)
+    assert logs == output
+
+
+def assert_application_output(expr: Expr, output: List[str], **kwargs):
+    assert expr is not None
+
     src = compile_app(expr)
     assert len(src) > 0
 
@@ -212,7 +226,7 @@ def assert_close_enough(
     """
     assert expr is not None
 
-    src = compile_app(expr)
+    src = compile_method(expr)
     assert len(src) > 0
 
     compiled = assemble_bytecode(client, src)
@@ -239,7 +253,7 @@ def assert_fail(expr: Expr, output: List[str], **kwargs):
     emsg = None
 
     try:
-        src = compile_app(expr)
+        src = compile_method(expr)
         assert len(src) > 0
 
         compiled = assemble_bytecode(client, src)
@@ -253,8 +267,12 @@ def assert_fail(expr: Expr, output: List[str], **kwargs):
     assert output.pop() in emsg
 
 
-def compile_app(method: Expr, version: int = TEAL_VERSION):
+def compile_method(method: Expr, version: int = TEAL_VERSION):
     return compileTeal(Seq(method, Int(1)), mode=Mode.Application, version=version)
+
+
+def compile_app(application: Expr, version: int = TEAL_VERSION):
+    return compileTeal(application, mode=Mode.Application, version=version)
 
 
 def compile_stateful_app(method: Expr, version: int = TEAL_VERSION):
