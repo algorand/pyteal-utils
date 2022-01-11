@@ -9,14 +9,14 @@ def test_even():
     num = 5
     expr = Seq(Log(Itob(even(Int(num)))), Log(Itob(even(Int(num - 1)))))
     output = [logged_int(0), logged_int(1)]
-    assert_output(expr, output, pad_budget=15)
+    assert_output(expr, output)
 
 
 def test_odd():
     num = 6
     expr = Seq(Log(Itob(odd(Int(num)))), Log(Itob(odd(Int(num - 1)))))
     output = [logged_int(0), logged_int(1)]
-    assert_output(expr, output, pad_budget=15)
+    assert_output(expr, output)
 
 
 # def test_factorial():
@@ -31,7 +31,7 @@ def test_odd():
 #    expr = Log(Itob(bytes_to_int(exponential(Int(num), Int(30)))))
 #    output = [logged_int(int(pymath.exp(num)))]
 #    assert_output(expr, output, pad_budget=15)
-#
+
 # def test_ln():
 #    num = 10
 #    expr = Log(Itob(ln(Int(num), Int(2))))

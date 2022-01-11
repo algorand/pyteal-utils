@@ -199,7 +199,7 @@ def assert_output(expr: Expr, output: List[str], **kwargs):
     compiled = assemble_bytecode(client, src)
     assert len(compiled["hash"]) == 58
 
-    logs, _ = execute_app(client, compiled["result"], **kwargs)
+    logs = execute_app(client, compiled["result"], **kwargs)
     print(logs)
     assert logs == output
 
@@ -213,7 +213,7 @@ def assert_application_output(expr: Expr, output: List[str], **kwargs):
     compiled = assemble_bytecode(client, src)
     assert len(compiled["hash"]) == 58
 
-    logs, _ = execute_app(client, compiled["result"], **kwargs)
+    logs = execute_app(client, compiled["result"], **kwargs)
     print(logs)
     assert logs == output
 
@@ -232,7 +232,7 @@ def assert_close_enough(
     compiled = assemble_bytecode(client, src)
     assert len(compiled["hash"]) == 58
 
-    logs, _ = execute_app(client, compiled["result"], **kwargs)
+    logs = execute_app(client, compiled["result"], **kwargs)
     for idx in range(len(output)):
         scale = 10 ** precisions[idx].precision
 
@@ -320,6 +320,7 @@ def execute_app(client: algod.AlgodClient, bytecode: str, **kwargs):
             CLEAR_PROG,
         )
     ]
+
     if "pad_budget" in kwargs:
         for i in range(kwargs["pad_budget"]):
             txns.append(
@@ -328,8 +329,8 @@ def execute_app(client: algod.AlgodClient, bytecode: str, **kwargs):
                     sp,
                     0,
                     transaction.OnComplete.DeleteApplicationOC,
-                    transaction.StateSchema(0, 0),
-                    transaction.StateSchema(0, 0),
+                    kwargs["local_schema"],
+                    kwargs["global_schema"],
                     CLEAR_PROG,
                     CLEAR_PROG,
                     note=str(i).encode(),
@@ -337,19 +338,26 @@ def execute_app(client: algod.AlgodClient, bytecode: str, **kwargs):
             )
 
     txns = [txn.sign(acct.private_key) for txn in transaction.assign_group_id(txns)]
+    drr = transaction.create_dryrun(client, txns)
 
-    result = client.dryrun(transaction.create_dryrun(client, txns))
+    result = client.dryrun(drr)
 
+    return get_logs_from_dryrun(result)
+
+
+def get_logs_from_dryrun(dryrun_result):
     logs = []
-    for txn in result["txns"]:
-        if "logs" in txn:
-            logs.extend([b64decode(l).hex() for l in txn["logs"]])
+    txn = dryrun_result["txns"][0]
+    raise_rejected(txn)
+    if "logs" in txn:
+        logs.extend([b64decode(l).hex() for l in txn["logs"]])
+    return logs
 
-        if "app-call-messages" in txn:
-            if "REJECT" in txn["app-call-messages"]:
-                raise Exception(txn["app-call-messages"][-1])
 
-    return logs, result
+def raise_rejected(txn):
+    if "app-call-messages" in txn:
+        if "REJECT" in txn["app-call-messages"]:
+            raise Exception(txn["app-call-messages"][-1])
 
 
 def create_app(

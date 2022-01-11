@@ -15,7 +15,7 @@ from .global_blob import GlobalBlob, max_bytes
 b = GlobalBlob()
 
 
-def test_global_blob_zero():
+def test_global_blob_zero_with_schema():
     expr = Seq(b.zero(), Log(b.read(Int(0), Int(64))))
     expected = [logged_int(0) * 8]
     assert_output(expr, expected, global_schema=StateSchema(0, 64))
@@ -28,14 +28,14 @@ def test_global_blob_zero_no_schema():
     assert_fail(expr, expected)
 
 
-def test_global_blob_write_read():
+def test_global_blob_write_read_succeed():
     expr = Seq(
         b.zero(),
         Pop(b.write(Int(0), Bytes("deadbeef" * 2))),
         Log(b.read(Int(0), Int(8))),
     )
     expected = [logged_bytes("deadbeef")]
-    assert_output(expr, expected, global_schema=StateSchema(0, 64), pad_budget=3)
+    assert_output(expr, expected, global_schema=StateSchema(0, 64), pad_budget=2)
 
 
 def test_global_blob_write_read_no_zero():
