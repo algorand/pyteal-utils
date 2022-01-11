@@ -32,7 +32,9 @@ def test_application():
     # Create client to make calls with
     cc = ContractClient(client, contract, signer)
     try:
+        #print(cc.echo.name)
         print_results(cc.echo(["echo me"]))
+
     except Exception as e:
         print("Fail: {}".format(e))
     finally:

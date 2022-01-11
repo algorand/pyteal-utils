@@ -24,13 +24,14 @@ class ContractClient:
         self.addr = address_from_private_key(self.signer.private_key)
 
         for m in contract.methods:
-            print(m.name)
-            caller = self._get_caller(m, args, budget)
+            caller = self._get_caller(m)
             setattr(self, m.name, caller)
-    def _get_caller(self, m, args, budget):
+
+    def _get_caller(self, m):
         def call(args, budget=1):
-            self.call(m, args, budget)
+            return self.call(m, args, budget)
         return call
+
     def compose(self, method: Method, args: List[any], ctx: AtomicTransactionComposer):
         sp = self.client.suggested_params()
         ctx.add_method_call(
