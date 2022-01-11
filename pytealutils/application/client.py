@@ -10,8 +10,6 @@ from algosdk.atomic_transaction_composer import (
 from algosdk.v2client.algod import AlgodClient
 
 # TODO: Cache suggested params
-
-
 class ContractClient:
     def __init__(
         self, client: AlgodClient, contract: Contract, signer: TransactionSigner = None
@@ -30,6 +28,7 @@ class ContractClient:
     def _get_caller(self, m):
         def call(args, budget=1):
             return self.call(m, args, budget)
+
         return call
 
     def compose(self, method: Method, args: List[any], ctx: AtomicTransactionComposer):

@@ -336,10 +336,20 @@ def execute_app(client: algod.AlgodClient, bytecode: str, **kwargs):
                 )
             )
 
-    txns = transaction.assign_group_id(txns)
-    txid = client.send_transactions([txn.sign(acct.private_key) for txn in txns])
-    result = transaction.wait_for_confirmation(client, txid, 3)
-    return [b64decode(l).hex() for l in result["logs"]], result
+    txns = [txn.sign(acct.private_key) for txn in transaction.assign_group_id(txns)]
+
+    result = client.dryrun(transaction.create_dryrun(client, txns))
+
+    logs = []
+    for txn in result["txns"]:
+        if "logs" in txn:
+            logs.extend([b64decode(l).hex() for l in txn["logs"]])
+
+        if "app-call-messages" in txn:
+            if "REJECT" in txn["app-call-messages"]:
+                raise Exception(txn["app-call-messages"][-1])
+
+    return logs, result
 
 
 def create_app(
