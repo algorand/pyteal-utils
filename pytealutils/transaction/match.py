@@ -13,6 +13,7 @@ from pyteal import (
     TxnField,
     TxnType,
 )
+
 # Common field checks
 
 NoRekey = {TxnField.rekey_to: Global.zero_address()}
@@ -26,6 +27,7 @@ AssetConfig = {TxnField.type_enum: TxnType.AssetConfig}
 
 ToMe = {TxnField.receiver: Global.current_application_address()}
 FromMe = {TxnField.sender: Global.current_application_address()}
+
 
 def PaymentAmount(amount: Union[int, Int]) -> Dict[TxnField, Expr]:
     if type(amount) == int:
@@ -49,6 +51,7 @@ class Match(Expr):
     """Match checks a transaction group against a set of transaction field to expression mapping.
 
     """
+
     def __init__(self, *txns: Dict[TxnField, Expr]):
         filters = []
         for idx, txn in enumerate(txns):
@@ -67,4 +70,3 @@ class Match(Expr):
 
     def __str__(self):
         return "Matcher TODO..."
-
