@@ -21,6 +21,8 @@ def test_application():
 
     acct = get_kmd_accounts().pop()
 
+    print(app.handler())
+
     signer = AccountTransactionSigner(acct.private_key)
 
     # Create app on chain
@@ -29,9 +31,8 @@ def test_application():
 
     # Create client to make calls with
     cc = ContractClient(client, contract, signer)
-
     try:
-        print_results(cc.call(cc.echo, ["echo me"]))
+        print_results(cc.echo(["echo me"]))
     except Exception as e:
         print("Fail: {}".format(e))
     finally:

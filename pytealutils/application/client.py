@@ -23,8 +23,9 @@ class ContractClient:
 
         self.addr = address_from_private_key(self.signer.private_key)
 
-        for m in self.contract.methods:
-            setattr(self, m.name, m)
+        for m in contract.methods:
+            print(m.name)
+            setattr(self, m.name, lambda args, budget=1: self.call(m, args, budget))
 
     def compose(self, method: Method, args: List[any], ctx: AtomicTransactionComposer):
         sp = self.client.suggested_params()
@@ -39,6 +40,8 @@ class ContractClient:
 
     def call(self, method: Method, args: List[any], budget=1):
         ctx = AtomicTransactionComposer()
+
+        print(method.args, args)
 
         sp = self.client.suggested_params()
         ctx.add_method_call(
