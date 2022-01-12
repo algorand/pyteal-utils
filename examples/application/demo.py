@@ -16,7 +16,7 @@ def demo():
     # Instantiate App Object that is also our pyteal
     app = KitchenSink()
 
-    # Create client to make calls with
+    # Create client to make calls with, default is the default network we're connected to in the client
     cc = ContractClient(client, app, "default", signer)
 
     # Create app on chain

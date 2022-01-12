@@ -1,5 +1,6 @@
+from algosdk.atomic_transaction_composer import AccountTransactionSigner
 from pyteal import *
-from pyteal.ast.abi_bytes import String
+from pyteal import String
 
 from tests.helpers import _algod_client, get_kmd_accounts
 
@@ -9,6 +10,11 @@ from .defaults import *
 
 
 def test_application():
+    client = _algod_client()
+
+    acct = get_kmd_accounts().pop()
+    signer = AccountTransactionSigner(acct.private_key)
+
     class testapp(DefaultApprove):
         @staticmethod
         @ABIMethod
@@ -17,20 +23,11 @@ def test_application():
 
     app = testapp()
 
-    client = _algod_client()
-
-    acct = get_kmd_accounts().pop()
-
-    print(app.handler())
-
-    signer = AccountTransactionSigner(acct.private_key)
-
-    # Create app on chain
-    contract = app.create_app(client, signer)
-    print("Created {}".format(contract.networks["default"].app_id))
-
     # Create client to make calls with
-    cc = ContractClient(client, contract, signer)
+    cc = ContractClient(client, app, "default", signer)
+    cc.create_app()
+    print("Created {}".format(cc.app_id))
+
     try:
         # print(cc.echo.name)
         print_results(cc.echo(["echo me"]))
@@ -38,8 +35,8 @@ def test_application():
     except Exception as e:
         print("Fail: {}".format(e))
     finally:
-        app.delete_app(client, contract.networks["default"].app_id, signer)
-        print("Deleted {}".format(contract.networks["default"].app_id))
+        cc.delete_app()
+        print("Deleted {}".format(cc.app_id))
 
 
 def print_results(results):

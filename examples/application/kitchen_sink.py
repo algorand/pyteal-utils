@@ -9,12 +9,12 @@ from pyteal import (
     Int,
     Len,
     Mode,
+    String,
     Subroutine,
     TealType,
+    Uint32,
     compileTeal,
 )
-from pyteal.ast.abi_bytes import String
-from pyteal.ast.abi_uint import Uint32
 
 from pytealutils.application import ABIMethod, DefaultApprove
 
