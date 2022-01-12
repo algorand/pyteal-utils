@@ -9,6 +9,7 @@ from algosdk.atomic_transaction_composer import (
 )
 from algosdk.v2client.algod import AlgodClient
 
+
 # TODO: Cache suggested params
 class ContractClient:
     def __init__(

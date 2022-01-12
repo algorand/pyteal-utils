@@ -61,12 +61,7 @@ def ABIMethod(func):
             for idx in range(len(abi_codec))
         ]
 
-        return Seq(
-            # Initialize scratch space for complex types
-            *[d.init() for d in decoded if hasattr(d, "init")],
-            ABIReturn(returns.encode(func(*decoded))),
-            Int(1),
-        )
+        return Seq(ABIReturn(returns(func(*decoded)).encode()), Int(1))
 
     return wrapper
 
