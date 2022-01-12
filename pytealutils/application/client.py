@@ -61,7 +61,7 @@ class ContractClient:
         for _ in range(budget - 1):
             ctx.add_method_call(
                 self.networks["default"].app_id,
-                self.pad,
+                self.contract.methods[-1], # pad
                 self.addr,
                 sp,
                 self.signer,

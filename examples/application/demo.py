@@ -34,7 +34,7 @@ print("Created {}".format(contract.networks["default"].app_id))
 cc = ContractClient(client, contract, signer)
 
 try:
-    #print_results(cc.reverse(["desrever yllufsseccus"], budget=10))
+    print_results(cc.reverse(["desrever yllufsseccus"], budget=2))
     #print_results(cc.concat([["this", "string", "is", "joined"]]))
     ### Single call, increase budget with dummy calls
     #print_results(cc.split(["this string is split"], budget=2))
