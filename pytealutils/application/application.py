@@ -57,7 +57,7 @@ def ABIMethod(func):
     @Subroutine(TealType.uint64)
     def wrapper() -> Expr:
         decoded = [
-            abi_codec[idx](Txn.application_args[idx + 1])
+            abi_codec[idx].decode(Txn.application_args[idx + 1])
             for idx in range(len(abi_codec))
         ]
 

@@ -14,6 +14,7 @@ from pyteal import (
     compileTeal,
 )
 from pyteal.ast.abi_bytes import String
+from pyteal.ast.abi_collections import ABIDynamicArray
 from pyteal.ast.abi_uint import Uint32
 
 from pytealutils.application import ABIMethod, DefaultApprove
@@ -38,29 +39,33 @@ class KitchenSink(DefaultApprove):
 
         return reverse(a)
 
-    # @staticmethod
-    # @ABIMethod
-    # def split(a: String) -> ABIDynamicArray[String]:
-    #    l = ABIDynamicArray[String](Bytes(""))
+    #@staticmethod
+    #@ABIMethod
+    #def echo_array(a: ABIDynamicArray(String)) -> ABIDynamicArray(String):
+    #    return a
+    
+    #@staticmethod
+    #@ABIMethod
+    #def split(a: String) -> ABIDynamicArray:
+    #   l = ABIDynamicArray(Bytes(""))
 
-    #    @Subroutine(TealType.none)
-    #    def rsplit(
-    #        data: TealType.bytes, idx: TealType.uint64, lastIdx: TealType.uint64
-    #    ) -> Expr:
-    #        return If(
-    #            Len(data) == idx,  # we're finished, append the last one
-    #            l.append(Substring(data, lastIdx, idx)),
-    #            If(
-    #                GetByte(data, idx) == Int(32),
-    #                Seq(
-    #                    l.append(Substring(data, lastIdx, idx)),
-    #                    rsplit(data, idx + Int(1), idx),
-    #                ),
-    #                rsplit(data, idx + Int(1), lastIdx),
-    #            ),
-    #        )
-
-    #    return Seq(l.init(), rsplit(a, Int(0), Int(0)), l.serialize())
+    #   @Subroutine(TealType.none)
+    #   def rsplit(
+    #       data: TealType.bytes, idx: TealType.uint64, lastIdx: TealType.uint64
+    #   ) -> Expr:
+    #       return If(
+    #           Len(data) == idx,  # we're finished, append the last one
+    #           l.append(Substring(data, lastIdx, idx)),
+    #           If(
+    #               GetByte(data, idx) == Int(32),
+    #               Seq(
+    #                   l.append(Substring(data, lastIdx, idx)),
+    #                   rsplit(data, idx + Int(1), idx),
+    #               ),
+    #               rsplit(data, idx + Int(1), lastIdx),
+    #           ),
+    #       )
+    #   return Seq(l.init(), rsplit(a, Int(0), Int(0)), l.serialize())
 
     # @staticmethod
     # @ABIMethod

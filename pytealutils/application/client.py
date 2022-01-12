@@ -10,7 +10,6 @@ from algosdk.atomic_transaction_composer import (
 from algosdk.v2client.algod import AlgodClient
 
 
-# TODO: Cache suggested params
 class ContractClient:
     def __init__(
         self, client: AlgodClient, contract: Contract, signer: TransactionSigner = None
@@ -33,7 +32,9 @@ class ContractClient:
         return call
 
     def compose(self, method: Method, args: List[any], ctx: AtomicTransactionComposer):
+        # TODO: Cache suggested params?
         sp = self.client.suggested_params()
+
         ctx.add_method_call(
             self.networks["default"].app_id,
             method,
@@ -46,9 +47,8 @@ class ContractClient:
     def call(self, method: Method, args: List[any], budget=1):
         ctx = AtomicTransactionComposer()
 
-        print(method.args, args)
-
         sp = self.client.suggested_params()
+
         ctx.add_method_call(
             self.networks["default"].app_id,
             method,
