@@ -1,11 +1,9 @@
-from algosdk import mnemonic
 from algosdk.atomic_transaction_composer import AccountTransactionSigner
-from algosdk.mnemonic import to_private_key
 from algosdk.v2client.algod import AlgodClient
 from kitchen_sink import KitchenSink
-from tests.helpers import get_kmd_accounts
 
 from pytealutils.application.client import ContractClient
+from tests.helpers import get_kmd_accounts
 
 
 def print_results(results):
@@ -26,18 +24,19 @@ client = AlgodClient("a" * 64, "http://localhost:4001")
 # Instantiate App Object that is also our pyteal
 app = KitchenSink()
 
-# Create app on chain
-contract = app.create_app(client, signer)
-print("Created {}".format(contract.networks["default"].app_id))
-
 # Create client to make calls with
-cc = ContractClient(client, contract, signer)
+cc = ContractClient(client, app, "default", signer)
+
+# Create app on chain
+cc.create_app()
+print("Created {}".format(cc.app_id))
+
 
 try:
     print_results(cc.reverse(["desrever yllufsseccus"], budget=2))
-    #print_results(cc.concat([["this", "string", "is", "joined"]]))
+    # print_results(cc.concat([["this", "string", "is", "joined"]]))
     ### Single call, increase budget with dummy calls
-    #print_results(cc.split(["this string is split"], budget=2))
+    # print_results(cc.split(["this string is split"], budget=2))
 
     print_results(cc.add([1, 1]))
     print_results(cc.sub([3, 1]))
@@ -54,5 +53,5 @@ try:
 except Exception as e:
     print("Fail: {}".format(e))
 finally:
-    app.delete_app(client, contract.networks["default"].app_id, signer)
-    print("Deleted {}".format(contract.networks["default"].app_id))
+    cc.delete_app()
+    print("Deleted {}".format(cc.app_id))

@@ -14,7 +14,6 @@ from pyteal import (
     compileTeal,
 )
 from pyteal.ast.abi_bytes import String
-from pyteal.ast.abi_collections import ABIDynamicArray
 from pyteal.ast.abi_uint import Uint32
 
 from pytealutils.application import ABIMethod, DefaultApprove
@@ -39,14 +38,14 @@ class KitchenSink(DefaultApprove):
 
         return reverse(a)
 
-    #@staticmethod
-    #@ABIMethod
-    #def echo_array(a: ABIDynamicArray(String)) -> ABIDynamicArray(String):
+    # @staticmethod
+    # @ABIMethod
+    # def echo_array(a: ABIDynamicArray(String)) -> ABIDynamicArray(String):
     #    return a
-    
-    #@staticmethod
-    #@ABIMethod
-    #def split(a: String) -> ABIDynamicArray:
+
+    # @staticmethod
+    # @ABIMethod
+    # def split(a: String) -> ABIDynamicArray:
     #   l = ABIDynamicArray(Bytes(""))
 
     #   @Subroutine(TealType.none)

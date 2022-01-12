@@ -1,25 +1,10 @@
-import base64
 from abc import ABC, abstractmethod
 from functools import wraps
 from inspect import signature
 from typing import List
 
 from algosdk import abi
-from algosdk.abi.contract import NetworkInfo
-from algosdk.account import address_from_private_key
-from algosdk.atomic_transaction_composer import (
-    AccountTransactionSigner,
-    AtomicTransactionComposer,
-    TransactionWithSigner,
-)
-from algosdk.future.transaction import (
-    ApplicationCreateTxn,
-    ApplicationDeleteTxn,
-    ApplicationUpdateTxn,
-)
-from algosdk.future.transaction import OnComplete as oc
-from algosdk.future.transaction import StateSchema, wait_for_confirmation
-from algosdk.v2client import algod
+from algosdk.future.transaction import StateSchema
 from Cryptodome.Hash import SHA512
 from pyteal import *
 from pyteal.ast.abi_collections import *
@@ -134,84 +119,6 @@ class Application(ABC):
         abiMethods.append(abi.Method("pad", [], abi.Returns("void")))
 
         return abi.Interface(self.__class__.__name__, abiMethods)
-
-    def get_contract(self, app_id: int) -> abi.Contract:
-        interface = self.get_interface()
-        return abi.Contract(
-            interface.name, interface.methods, "", {"default": NetworkInfo(app_id)}
-        )
-
-    def create_app(
-        self, client: algod.AlgodClient, signer: AccountTransactionSigner
-    ) -> abi.Contract:
-        sp = client.suggested_params()
-
-        approval_result = client.compile(self.approval_source())
-        approval_program = base64.b64decode(approval_result["result"])
-
-        clear_result = client.compile(self.clear_source())
-        clear_program = base64.b64decode(clear_result["result"])
-
-        ctx = AtomicTransactionComposer()
-        ctx.add_transaction(
-            TransactionWithSigner(
-                ApplicationCreateTxn(
-                    address_from_private_key(signer.private_key),
-                    sp,
-                    oc.NoOpOC,
-                    approval_program,
-                    clear_program,
-                    self.global_schema(),
-                    self.local_schema(),
-                ),
-                signer,
-            )
-        )
-        result = wait_for_confirmation(client, ctx.submit(client)[0])
-        return self.get_contract(result["application-index"])
-
-    def update_app(
-        self, client: algod.AlgodClient, app_id: int, signer: AccountTransactionSigner
-    ):
-        sp = client.suggested_params()
-
-        approval_result = client.compile(self.approval_source())
-        approval_program = base64.b64decode(approval_result["result"])
-
-        clear_result = client.compile(self.clear_source())
-        clear_program = base64.b64decode(clear_result["result"])
-
-        ctx = AtomicTransactionComposer()
-        ctx.add_transaction(
-            TransactionWithSigner(
-                ApplicationUpdateTxn(
-                    address_from_private_key(signer.private_key),
-                    sp,
-                    app_id,
-                    approval_program,
-                    clear_program,
-                ),
-                signer,
-            )
-        )
-        ctx.execute(client, 2)
-        return self.get_contract(app_id)
-
-    def delete_app(
-        self, client: algod.AlgodClient, app_id: int, signer: AccountTransactionSigner
-    ):
-        sp = client.suggested_params()
-
-        ctx = AtomicTransactionComposer()
-        ctx.add_transaction(
-            TransactionWithSigner(
-                ApplicationDeleteTxn(
-                    address_from_private_key(signer.private_key), sp, app_id
-                ),
-                signer,
-            )
-        )
-        return ctx.execute(client, 2)
 
     def approval_source(self) -> str:
         return compileTeal(
