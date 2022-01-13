@@ -10,17 +10,14 @@ Start the sandbox in dev mode
 ./sandbox up dev
 ```
 
-Get account to use
+initialize a virtual environment
 ```
-./sandbox goal account list
-./sandbox goal account export -a $ADDR_FROM_LIST
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
-Paste mnemonic into demo.py, ovewriting the existing one and change the host/port/token to whatever you've got locally (usually port 4001)
-
-TODO: provide method to pull from sandbox
-
-If you've got all the requirements from ../requirements.txt, Run
+When you've got all the requirements, Run
 ```
 python demo.py
 ```
