@@ -1,6 +1,8 @@
 import json
+from typing import Tuple
 
 from pyteal import (
+    ABIDynamicArray,
     Bytes,
     Concat,
     Expr,
@@ -17,6 +19,10 @@ from pyteal import (
 )
 
 from pytealutils.application import ABIMethod, DefaultApprove
+
+
+class StringArray(ABIDynamicArray[Tuple[String, String, String]]):
+    pass
 
 
 class KitchenSink(DefaultApprove):
@@ -38,10 +44,10 @@ class KitchenSink(DefaultApprove):
 
         return reverse(a)
 
-    # @staticmethod
-    # @ABIMethod
-    # def echo_array(a: ABIDynamicArray(String)) -> ABIDynamicArray(String):
-    #    return a
+    @staticmethod
+    @ABIMethod
+    def echo_array(a: StringArray) -> String:
+        return a[0]
 
     # @staticmethod
     # @ABIMethod

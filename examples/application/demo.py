@@ -34,6 +34,7 @@ def demo():
         print_results(cc.sub([3, 1]))
         print_results(cc.div([4, 2]))
         print_results(cc.mul([3, 2]))
+        print_results(cc.echo_array([["a", "b"]]))
 
         # Compose from set of app calls
         # comp = AtomicTransactionComposer()
