@@ -1,4 +1,7 @@
-from algosdk.atomic_transaction_composer import AccountTransactionSigner
+from algosdk.atomic_transaction_composer import (
+    AccountTransactionSigner,
+    AtomicTransactionComposer,
+)
 from algosdk.v2client.algod import AlgodClient
 from kitchen_sink import KitchenSink
 
@@ -25,24 +28,19 @@ def demo():
 
     try:
         print_results(cc.reverse(["desrever yllufsseccus"], budget=2))
-
-        # print_results(cc.concat([["this", "string", "is", "joined"]]))
-        ### Single call, increase budget with dummy calls
-        # print_results(cc.split(["this string is split"], budget=2))
-
         print_results(cc.add([1, 1]))
         print_results(cc.sub([3, 1]))
         print_results(cc.div([4, 2]))
         print_results(cc.mul([3, 2]))
-        print_results(cc.echo_array([["a", "b"]]))
+        print_results(cc.echo_first([["a", "b"]]))
 
         # Compose from set of app calls
-        # comp = AtomicTransactionComposer()
-        # cc.compose(cc.add, [1, 1], comp)
-        # cc.compose(cc.sub, [3, 1], comp)
-        # cc.compose(cc.div, [4, 2], comp)
-        # cc.compose(cc.mul, [3, 2], comp)
-        # print_results(comp.execute(cc.client, 2))
+        comp = AtomicTransactionComposer()
+        cc.compose(cc.methods["add"], [1, 1], comp)
+        cc.compose(cc.methods["sub"], [3, 1], comp)
+        cc.compose(cc.methods["div"], [4, 2], comp)
+        cc.compose(cc.methods["mul"], [3, 2], comp)
+        print_results(comp.execute(cc.client, 2))
     except Exception as e:
         print("Fail: {}".format(e))
     finally:
@@ -52,7 +50,8 @@ def demo():
 
 def print_results(results):
     for result in results.abi_results:
-        print("Raw Result: {}".format(result.raw_value))
+        if result.return_value is None:
+            continue
         print("Parsed Result: {}".format(result.return_value))
 
 

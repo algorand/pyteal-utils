@@ -40,9 +40,13 @@ class ContractClient:
 
         self.addr = address_from_private_key(self.signer.private_key)
 
+        methods = {}
         for m in self.contract.methods:
             caller = self._get_caller(m)
             setattr(self, m.name, caller)
+            methods[m.name] = m
+
+        setattr(self, "methods", methods)
 
     def _get_caller(self, m):
         def call(args, budget=1):

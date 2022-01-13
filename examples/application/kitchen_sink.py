@@ -46,46 +46,8 @@ class KitchenSink(DefaultApprove):
 
     @staticmethod
     @ABIMethod
-    def echo_array(a: StringArray) -> String:
+    def echo_first(a: StringArray) -> String:
         return a[0]
-
-    # @staticmethod
-    # @ABIMethod
-    # def split(a: String) -> ABIDynamicArray:
-    #   l = ABIDynamicArray(Bytes(""))
-
-    #   @Subroutine(TealType.none)
-    #   def rsplit(
-    #       data: TealType.bytes, idx: TealType.uint64, lastIdx: TealType.uint64
-    #   ) -> Expr:
-    #       return If(
-    #           Len(data) == idx,  # we're finished, append the last one
-    #           l.append(Substring(data, lastIdx, idx)),
-    #           If(
-    #               GetByte(data, idx) == Int(32),
-    #               Seq(
-    #                   l.append(Substring(data, lastIdx, idx)),
-    #                   rsplit(data, idx + Int(1), idx),
-    #               ),
-    #               rsplit(data, idx + Int(1), lastIdx),
-    #           ),
-    #       )
-    #   return Seq(l.init(), rsplit(a, Int(0), Int(0)), l.serialize())
-
-    # @staticmethod
-    # @ABIMethod
-    # def concat(a: ABIDynamicArray[String]) -> String:
-    #    idx = ScratchVar()
-    #    buff = ScratchVar()
-    #    return Seq(
-    #        buff.store(Bytes("")),
-    #        For(
-    #            idx.store(Int(0)),
-    #            idx.load() < a.size.load(),
-    #            idx.store(idx.load() + Int(1)),
-    #        ).Do(buff.store(Concat(buff.load(), Bytes(" "), a[idx.load()]))),
-    #        buff.load(),
-    #    )
 
     @staticmethod
     @ABIMethod
