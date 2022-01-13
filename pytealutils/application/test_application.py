@@ -1,7 +1,7 @@
 from typing import Tuple
 
 from algosdk.atomic_transaction_composer import AccountTransactionSigner
-from pyteal import ABITuple, String, Uint32
+from pyteal import *
 
 from tests.helpers import _algod_client, get_kmd_accounts
 
