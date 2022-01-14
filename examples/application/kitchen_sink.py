@@ -21,7 +21,7 @@ from pyteal import (
 from pytealutils.application import ABIMethod, DefaultApprove
 
 
-class StringArray(ABIDynamicArray[Tuple[String, String, String]]):
+class StringArray(ABIDynamicArray[Tuple[String]]):
     pass
 
 
@@ -48,6 +48,14 @@ class KitchenSink(DefaultApprove):
     @ABIMethod
     def echo_first(a: StringArray) -> String:
         return a[0]
+
+    @staticmethod
+    @ABIMethod
+    def echo_array(a: StringArray) -> StringArray:
+        return a
+        # return Itob(a.item_len)
+        # return a.value
+        # return Itob(a.item_len)
 
     @staticmethod
     @ABIMethod
