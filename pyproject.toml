@@ -6,8 +6,8 @@ authors = [""]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-pyteal = "^0.9.0"
-py-algorand-sdk = {git = "https://github.com/algorand/py-algorand-sdk.git", rev = "6ed0817f67903bb68d516e98f860e79b2839e06f"}
+pyteal = {git = "https://github.com/algorand/pyteal.git", rev = "b67a71a224eb1b8c477ae32b5c4d0ab01a680edb"}
+py-algorand-sdk = {git = "https://github.com/algorand/py-algorand-sdk.git", rev = "5b496e0928af1dcae4e393693421f590a6111907"}
 pytest = "^6.2.5"
 pytest-xdist = "^2.4.0"
 PyYAML = "^6.0"
