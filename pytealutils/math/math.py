@@ -41,13 +41,30 @@ half_uint = Int(_half_uint)
 
 @Subroutine(TealType.uint64)
 def odd(x: TealType.uint64):
-    """odd returns 1 if x is odd"""
+    """odd returns 1 if x is odd
+
+    Args:
+        x: uint64 to evaluate
+
+    Returns:
+        uint64 1 or 0 where 1 is true and 0 is false
+
+    """
     return x & Int(1)
 
 
 @Subroutine(TealType.uint64)
 def even(x: TealType.uint64):
-    """even returns 1 if x is even"""
+    """even returns 1 if x is even
+
+    Args:
+        x: uint64 to evaluate
+
+    Returns:
+        uint64 1 or 0 where 1 is true and 0 is false
+
+
+    """
     return Not(odd(x))
 
 
@@ -55,35 +72,59 @@ def even(x: TealType.uint64):
 def factorial(x: TealType.uint64):
     """factorial returns x! = x * x-1 * x-2 * ...,
     for a 64bit integer, the max possible value is maxes out at 20
+
+    Args:
+        x: uint64 to call evaluate
+
+    Returns:
+        uint64 representing the factorial of the argument passed
+
     """
     return If(x == Int(1), x, x * factorial(x - Int(1)))
 
 
 @Subroutine(TealType.bytes)
 def wide_factorial(x: TealType.bytes):
-    """factorial returns x! = x * x-1 * x-2 * ...,"""
+    """factorial returns x! = x * x-1 * x-2 * ...,
+
+    Args:
+        x: bytes to evaluate as an integer
+
+    Returns:
+        bytes representing the integer that is the result of the factorial applied on the argument passed
+
+    """
     return If(
         BitLen(x) == Int(1), x, BytesMul(x, wide_factorial(BytesMinus(x, Itob(Int(1)))))
     )
 
 
-# @Subroutine(TealType.bytes)
-# def negative_power(x: TealType.uint64, n: TealType.uint64):
-#    """negative power returns x^-n"""
-#    return BytesDiv(Itob(Int(1)), wide_power(x, n))
-
-
 @Subroutine(TealType.bytes)
 def wide_power(x: TealType.uint64, n: TealType.uint64):
+    """wide_power returns the result of x^n evaluated using expw and combining the hi/low uint64s into a byte string
+
+    Args:
+        x: uint64 base for evaluation
+        n: uint64 power to apply as exponent
+
+    Returns:
+        bytes representing the high and low bytes of a wide power evaluation
+
+    """
     return Seq(InlineAssembly("expw", x, n), stack_to_wide())
 
 
 def exponential(x: TealType.uint64, n: TealType.uint64):
     """exponential approximates e**x for n iterations
 
+    TODO: currently this is scaled to 1000 first then scaled back. A better implementation should include the use of ufixed in abi types
+
     Args:
         x: The exponent to apply
         n: The number of iterations, more is better appx but costs ops
+
+    Returns:
+        uint64 that is the result of raising e**x
 
     """
     _scale = Itob(Int(1000))
@@ -104,12 +145,28 @@ def exponential(x: TealType.uint64, n: TealType.uint64):
 
 @Subroutine(TealType.uint64)
 def log2(x: TealType.uint64):
+    """log2 is currently an alias for BitLen
+
+    TODO: implement with ufixed
+
+    """
     return BitLen(x)  # Only returns integral component
 
 
 @Subroutine(TealType.uint64)
 def ln(x: TealType.uint64):
-    """Returns natural log of x for integer passed"""
+    """Returns natural log of x for integer passed
+
+    This is heavily truncated since log2 does not return the fractional component yet
+
+    TODO: implement with ufixed
+
+    Args:
+        x: uint64 on which to take the natural log
+
+    Returns:
+        uint64 as the natural log of the value passed.
+    """
     return (log2(x) * scale) / log2_e
 
 
@@ -118,13 +175,25 @@ def log10(x: TealType.uint64):
     """Returns log base 10 of the integer passed
 
     uses log10(x) = log2(x)/log2(10) identity
+
+    TODO: implement with ufixed
+
+    Args:
+        x: uint64  on which to take the log base 10
+
+    Returns:
+        uint64 as the log10 of the value passed
+
     """
     return (log2(x) * scale) / log2_10
 
 
 @Subroutine(TealType.uint64)
 def pow10(x: TealType.uint64) -> Expr:
-    """Returns 10^x, useful for things like total supply of an asset"""
+    """
+    Returns 10^x, useful for things like total supply of an asset
+
+    """
     return Exp(Int(10), x)
 
 
@@ -142,7 +211,16 @@ def min(a: TealType.uint64, b: TealType.uint64) -> Expr:
 
 @Subroutine(TealType.uint64)
 def div_ceil(a: TealType.uint64, b: TealType.uint64) -> Expr:
-    """Returns the result of division rounded up to the next integer"""
+    """Returns the result of division rounded up to the next integer
+
+    Args:
+        a: uint64 numerator for the operation
+        b: uint64 denominator for the operation
+
+    Returns:
+        uint64 result of a truncated division + 1
+
+    """
     q = a / b
     return If(a % b > Int(0), q + Int(1), q)
 
@@ -158,6 +236,8 @@ def bytes_to_int(x: TealType.bytes):
 
 @Subroutine(TealType.bytes)
 def stack_to_wide():
+    """stack_to_wide returns the combination of the high and low integers returned from a wide math operation as bytes
+    """
     h = ScratchSlot()
     l = ScratchSlot()
     return Seq(
