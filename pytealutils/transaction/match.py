@@ -21,13 +21,14 @@ NoCloseTo = {TxnField.close_remainder_to: Global.zero_address()}
 NoCloseAsset = {TxnField.asset_close_to: Global.zero_address()}
 Common = {**NoRekey, **NoCloseTo, **NoCloseAsset}
 
+HasMinFee = {TxnField.fee: Global.min_txn_fee()}
+
 Payment = {TxnField.type_enum: TxnType.Payment}
 AssetTransfer = {TxnField.type_enum: TxnType.AssetTransfer}
 AssetConfig = {TxnField.type_enum: TxnType.AssetConfig}
 
 ToMe = {TxnField.receiver: Global.current_application_address()}
 FromMe = {TxnField.sender: Global.current_application_address()}
-
 
 def PaymentAmount(amount: Union[int, Int]) -> Dict[TxnField, Expr]:
     if type(amount) == int:
@@ -48,16 +49,16 @@ def AssetIdAndAmount(
 
 
 class Match(Expr):
-    """Match checks a transaction group against a set of transaction field to expression mapping.
-
-    """
+    """Match checks a transaction group against a set of transaction field to expression mapping."""
 
     def __init__(self, *txns: Dict[TxnField, Expr]):
-        filters = []
-        for idx, txn in enumerate(txns):
-            filters.append(And(*[GtxnExpr(idx, k) == v for k, v in txn.items()]))
-
-        self.value = And(*filters)
+        self.value = And(
+            Global.group_size() == Int(len(txns)),
+            *[
+                And(*[GtxnExpr(idx, k) == v for k, v in txn.items()])
+                for idx, txn in enumerate(txns)
+            ]
+        )
 
     def type_of(self) -> TealType:
         return self.value.type_of()
@@ -69,4 +70,4 @@ class Match(Expr):
         return self.value.__teal__(options)
 
     def __str__(self):
-        return "Matcher TODO..."
+        return "Match({})"+self.value.__str__()
