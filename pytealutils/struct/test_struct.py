@@ -1,8 +1,5 @@
-from pyteal import *
 from dataclasses import dataclass
-from pyteal.ast.abi_bytes import String
-from pyteal.ast.abi_uint import Uint64
-
+from pyteal import *
 from tests.helpers import *
 
 from .struct import Struct
@@ -12,13 +9,15 @@ from .struct import Struct
 class MyStruct(Struct):
     id: Uint64
     user: String
-    options: String 
+    options: String
 
 
 def test_struct():
     ms = MyStruct(Uint64(123), String("abc"), String("def"))
 
-    expr = Log(Itob(ms.get("id")))
-    output = [logged_int(123)]
+    print(ms)
+    # print(ms.get("id"))
+    # expr = Log(Itob(ms.get("id")))
+    # output = [logged_int(123)]
 
-    assert_output(expr, output)
+    # assert_output(expr, output)

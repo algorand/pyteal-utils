@@ -1,23 +1,30 @@
 from typing import Dict, List, TypeVar, Sequence, Tuple
 
-from pyteal.ast.abi_collections import ABITuple
-from pyteal.ast.abi_type import ABIType
+from pyteal import *
 
-T = TypeVar('T', bound=Sequence[ABIType])
 
-class Struct(ABITuple[T]):
+class Struct(Expr):
     value: ABITuple
     name_idx: Dict[str, int]
 
-    def __init__(self, *fields: ABIType):
-        self.fields = fields
-        #self.codec = ABITuple[Tuple[([f.type for f in fields]]]
-        self.name_idx = {f.name: idx for idx, f in enumerate(fields)}
-        print(self.name_idx)
+    def __post_init__(self):
 
-    def __call__(self, *values: ABIType):
-        self.value = self.codec(*values)
-        return self
+        type_list = [v.__class__ for v in self.__dict__.values()]
+        self.value = ABITuple[type_list](self.__dict__.values())
+
+        self.name_idx = {f.name: idx for idx, f in enumerate(self.__dict__.keys())}
+
+    def __teal__(self, options: "CompileOptions") -> Tuple[TealBlock, TealSimpleBlock]:
+        return self.value.__teal__(options)
+
+    def has_return(self) -> bool:
+        return self.value.has_return()
+
+    def type_of(self) -> TealType:
+        return self.value.type_of()
+
+    def __str__(self):
+        return ""
 
     def get(self, name: str):
         return self.value[self.name_idx[name]]
