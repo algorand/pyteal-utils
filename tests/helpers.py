@@ -157,8 +157,13 @@ def assert_stateful_output(expr: Expr, output: List[str]):
         transaction.StateSchema(0, 64),
     )
 
-    logs, _ = call_app(client, app_id)
+    logs, cost, callstack = call_app(client, app_id)
+    print("\nCost: {}, CallStack: {}".format(cost, callstack))
+    print(logs)
+
     assert logs == output
+
+    destroy_app(client, app_id)
 
 
 def assert_stateful_fail(expr: Expr, output: List[str]):
@@ -199,7 +204,8 @@ def assert_output(expr: Expr, output: List[str], **kwargs):
     compiled = assemble_bytecode(client, src)
     assert len(compiled["hash"]) == 58
 
-    logs = execute_app(client, compiled["result"], **kwargs)
+    logs, cost, callstack = execute_app(client, compiled["result"], **kwargs)
+    print("\nCost: {}, CallStack: {}".format(cost, callstack))
     print(logs)
     assert logs == output
 
@@ -213,7 +219,8 @@ def assert_application_output(expr: Expr, output: List[str], **kwargs):
     compiled = assemble_bytecode(client, src)
     assert len(compiled["hash"]) == 58
 
-    logs = execute_app(client, compiled["result"], **kwargs)
+    logs, cost, callstack = execute_app(client, compiled["result"], **kwargs)
+    print("\nCost: {}, CallStack: {}".format(cost, callstack))
     print(logs)
     assert logs == output
 
@@ -232,7 +239,7 @@ def assert_close_enough(
     compiled = assemble_bytecode(client, src)
     assert len(compiled["hash"]) == 58
 
-    logs = execute_app(client, compiled["result"], **kwargs)
+    logs, _, _ = execute_app(client, compiled["result"], **kwargs)
     for idx in range(len(output)):
         scale = 10 ** precisions[idx].precision
 
@@ -342,16 +349,20 @@ def execute_app(client: algod.AlgodClient, bytecode: str, **kwargs):
 
     result = client.dryrun(drr)
 
-    return get_logs_from_dryrun(result)
+    return get_stats_from_dryrun(result)
 
 
-def get_logs_from_dryrun(dryrun_result):
-    logs = []
+def get_stats_from_dryrun(dryrun_result):
+    logs, cost, trace_len = [], [], []
     txn = dryrun_result["txns"][0]
     raise_rejected(txn)
     if "logs" in txn:
         logs.extend([b64decode(l).hex() for l in txn["logs"]])
-    return logs
+    if "cost" in txn:
+        cost.append(txn["cost"])
+    if "app-call-trace" in txn:
+        trace_len.append(len(txn["app-call-trace"]))
+    return logs, cost, trace_len
 
 
 def raise_rejected(txn):
@@ -398,20 +409,18 @@ def call_app(client: algod.AlgodClient, app_id: int, **kwargs):
         [
             transaction.ApplicationOptInTxn(acct.address, sp, app_id),
             transaction.ApplicationCallTxn(
-                acct.address,
-                sp,
-                app_id,
-                transaction.OnComplete.DeleteApplicationOC,
-                **kwargs
+                acct.address, sp, app_id, transaction.OnComplete.NoOpOC, **kwargs
             ),
             transaction.ApplicationClearStateTxn(acct.address, sp, app_id),
         ]
     )
 
-    client.send_transactions([txn.sign(acct.private_key) for txn in txns])
+    drr = transaction.create_dryrun(
+        client, [txn.sign(acct.private_key) for txn in txns]
+    )
+    result = client.dryrun(drr)
 
-    result = transaction.wait_for_confirmation(client, txns[1].get_txid(), 3)
-    return [b64decode(l).hex() for l in result["logs"]], result
+    return get_stats_from_dryrun(result)
 
 
 def destroy_app(client: algod.AlgodClient, app_id: int, **kwargs):

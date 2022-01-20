@@ -4,3 +4,6 @@ __pycache__/
 .vscode/
 build/
 dist/
+
+# Sphinx documentation
+docs/build/
