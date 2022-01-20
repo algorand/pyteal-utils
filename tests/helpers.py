@@ -4,7 +4,7 @@ from base64 import b64decode
 from typing import List, Optional
 
 import algosdk.abi as sdkabi
-from algosdk import account, encoding, kmd, mnemonic
+from algosdk import account, encoding, kmd, logic, mnemonic
 from algosdk.future import transaction
 from algosdk.v2client import algod, indexer
 from pyteal import Cond, Expr, Int, Mode, Seq, Txn, compileTeal
@@ -42,18 +42,23 @@ class Account:
         address: str,
         private_key: Optional[str],
         lsig: Optional[transaction.LogicSig] = None,
+        app_id: Optional[int] = None,
     ):
         self.address = address
         self.private_key = private_key
         self.lsig = lsig
+        self.app_id = app_id
 
-        assert self.private_key or self.lsig
+        assert self.private_key or self.lsig or self.app_id
 
     def mnemonic(self) -> str:
         return mnemonic.from_private_key(self.private_key)
 
     def is_lsig(self) -> bool:
-        return bool(not self.private_key and self.lsig)
+        return bool(not self.private_key and not self.app_id and self.lsig)
+
+    def application_address(self) -> str:
+        return logic.get_application_address(self.app_id)
 
     @classmethod
     def create(cls) -> "Account":
