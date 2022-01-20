@@ -193,13 +193,29 @@ def assert_stateful_fail(expr: Expr, output: List[str]):
 def assert_output(expr: Expr, output: List[str], **kwargs):
     assert expr is not None
 
+    src = compile_method(expr)
+    assert len(src) > 0
+
+    compiled = assemble_bytecode(client, src)
+    assert len(compiled["hash"]) == 58
+
+    logs, cost, callstack = execute_app(client, compiled["result"], **kwargs)
+    print("\nCost: {}, CallStack: {}".format(cost, callstack))
+    print(logs)
+    assert logs == output
+
+
+def assert_application_output(expr: Expr, output: List[str], **kwargs):
+    assert expr is not None
+
     src = compile_app(expr)
     assert len(src) > 0
 
     compiled = assemble_bytecode(client, src)
     assert len(compiled["hash"]) == 58
 
-    logs, _ = execute_app(client, compiled["result"], **kwargs)
+    logs, cost, callstack = execute_app(client, compiled["result"], **kwargs)
+    print("\nCost: {}, CallStack: {}".format(cost, callstack))
     print(logs)
     assert logs == output
 
@@ -212,13 +228,13 @@ def assert_close_enough(
     """
     assert expr is not None
 
-    src = compile_app(expr)
+    src = compile_method(expr)
     assert len(src) > 0
 
     compiled = assemble_bytecode(client, src)
     assert len(compiled["hash"]) == 58
 
-    logs, _ = execute_app(client, compiled["result"], **kwargs)
+    logs, _, _ = execute_app(client, compiled["result"], **kwargs)
     for idx in range(len(output)):
         scale = 10 ** precisions[idx].precision
 
@@ -239,7 +255,7 @@ def assert_fail(expr: Expr, output: List[str], **kwargs):
     emsg = None
 
     try:
-        src = compile_app(expr)
+        src = compile_method(expr)
         assert len(src) > 0
 
         compiled = assemble_bytecode(client, src)
@@ -253,8 +269,12 @@ def assert_fail(expr: Expr, output: List[str], **kwargs):
     assert output.pop() in emsg
 
 
-def compile_app(method: Expr, version: int = TEAL_VERSION):
+def compile_method(method: Expr, version: int = TEAL_VERSION):
     return compileTeal(Seq(method, Int(1)), mode=Mode.Application, version=version)
+
+
+def compile_app(application: Expr, version: int = TEAL_VERSION):
+    return compileTeal(application, mode=Mode.Application, version=version)
 
 
 def compile_stateful_app(method: Expr, version: int = TEAL_VERSION):
@@ -302,6 +322,7 @@ def execute_app(client: algod.AlgodClient, bytecode: str, **kwargs):
             CLEAR_PROG,
         )
     ]
+
     if "pad_budget" in kwargs:
         for i in range(kwargs["pad_budget"]):
             txns.append(
@@ -310,18 +331,39 @@ def execute_app(client: algod.AlgodClient, bytecode: str, **kwargs):
                     sp,
                     0,
                     transaction.OnComplete.DeleteApplicationOC,
-                    transaction.StateSchema(0, 0),
-                    transaction.StateSchema(0, 0),
+                    kwargs["local_schema"],
+                    kwargs["global_schema"],
                     CLEAR_PROG,
                     CLEAR_PROG,
                     note=str(i).encode(),
                 )
             )
 
-    txns = transaction.assign_group_id(txns)
-    txid = client.send_transactions([txn.sign(acct.private_key) for txn in txns])
-    result = transaction.wait_for_confirmation(client, txid, 3)
-    return [b64decode(l).hex() for l in result["logs"]], result
+    txns = [txn.sign(acct.private_key) for txn in transaction.assign_group_id(txns)]
+    drr = transaction.create_dryrun(client, txns)
+
+    result = client.dryrun(drr)
+
+    return get_stats_from_dryrun(result)
+
+
+def get_stats_from_dryrun(dryrun_result):
+    logs, cost, trace_len = [], [], []
+    txn = dryrun_result["txns"][0]
+    raise_rejected(txn)
+    if "logs" in txn:
+        logs.extend([b64decode(l).hex() for l in txn["logs"]])
+    if "cost" in txn:
+        cost.append(txn["cost"])
+    if "app-call-trace" in txn:
+        trace_len.append(len(txn['app-call-trace']))
+    return logs, cost, trace_len
+
+
+def raise_rejected(txn):
+    if "app-call-messages" in txn:
+        if "REJECT" in txn["app-call-messages"]:
+            raise Exception(txn["app-call-messages"][-1])
 
 
 def create_app(

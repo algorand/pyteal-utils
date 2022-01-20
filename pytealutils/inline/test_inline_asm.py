@@ -23,5 +23,5 @@ extract a b
     s = ScratchSlot()
     expr = Seq(InlineAssembly(get_uint8, Itob(Int(255))), s.store(), Log(s.load()))
 
-    expected = [INVALID_SYNTAX]
+    expected = ["unable to parse"]
     assert_fail(expr, expected)
