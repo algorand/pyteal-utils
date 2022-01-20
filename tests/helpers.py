@@ -361,7 +361,7 @@ def get_stats_from_dryrun(dryrun_result):
     if "cost" in txn:
         cost.append(txn["cost"])
     if "app-call-trace" in txn:
-        trace_len.append(len(txn['app-call-trace']))
+        trace_len.append(len(txn["app-call-trace"]))
     return logs, cost, trace_len
 
 
@@ -409,20 +409,16 @@ def call_app(client: algod.AlgodClient, app_id: int, **kwargs):
         [
             transaction.ApplicationOptInTxn(acct.address, sp, app_id),
             transaction.ApplicationCallTxn(
-                acct.address,
-                sp,
-                app_id,
-                transaction.OnComplete.NoOpOC,
-                **kwargs
+                acct.address, sp, app_id, transaction.OnComplete.NoOpOC, **kwargs
             ),
             transaction.ApplicationClearStateTxn(acct.address, sp, app_id),
         ]
     )
 
-    drr = transaction.create_dryrun(client, [txn.sign(acct.private_key) for txn in txns])
+    drr = transaction.create_dryrun(
+        client, [txn.sign(acct.private_key) for txn in txns]
+    )
     result = client.dryrun(drr)
-
-
 
     return get_stats_from_dryrun(result)
 
@@ -441,7 +437,7 @@ def destroy_app(client: algod.AlgodClient, app_id: int, **kwargs):
                 transaction.OnComplete.DeleteApplicationOC,
                 app_args=["cleanup"],
                 **kwargs
-            ),
+            )
         ]
     )
 
