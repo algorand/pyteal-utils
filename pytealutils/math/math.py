@@ -236,8 +236,7 @@ def bytes_to_int(x: TealType.bytes):
 
 @Subroutine(TealType.bytes)
 def stack_to_wide():
-    """stack_to_wide returns the combination of the high and low integers returned from a wide math operation as bytes
-    """
+    """stack_to_wide returns the combination of the high and low integers returned from a wide math operation as bytes"""
     h = ScratchSlot()
     l = ScratchSlot()
     return Seq(
