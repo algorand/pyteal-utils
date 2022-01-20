@@ -3,6 +3,9 @@ name = "pyteal-utils"
 version = "0.0.1"
 description = ""
 authors = [""]
+packages = [
+    { include = "pytealutils" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"
