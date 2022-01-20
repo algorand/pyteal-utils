@@ -1,6 +1,6 @@
-from typing import Dict, List, TypeVar, Sequence, Tuple
+from typing import Dict, Tuple
 
-from pyteal import *
+from pyteal import ABITuple, CompileOptions, Expr, TealBlock, TealSimpleBlock, TealType
 
 
 class Struct(Expr):

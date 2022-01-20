@@ -1,5 +1,7 @@
 from dataclasses import dataclass
+
 from pyteal import *
+
 from tests.helpers import *
 
 from .struct import Struct

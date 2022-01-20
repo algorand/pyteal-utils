@@ -2,3 +2,6 @@ pyteal_utils.egg-info/
 __pycache__/
 .venv/
 .vscode/
+
+# Sphinx documentation
+docs/build/
