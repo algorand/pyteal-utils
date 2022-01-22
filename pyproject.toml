@@ -2,7 +2,7 @@
 name = "pyteal-utils"
 version = "0.0.1"
 description = ""
-authors = ["Ben Guidarelli <ben@algorand.com>"]
+authors = ["Algorand Community <communiity@algorand.com>"]
 packages = [
     { include = "pytealutils" }
 ]
