@@ -4,7 +4,7 @@ from base64 import b64decode
 from typing import List, Optional
 
 import algosdk.abi as sdkabi
-from algosdk import account, encoding, kmd, mnemonic
+from algosdk import account, encoding, kmd, logic, mnemonic
 from algosdk.future import transaction
 from algosdk.v2client import algod, indexer
 from pyteal import Cond, Expr, Int, Mode, Seq, Txn, compileTeal
@@ -42,18 +42,23 @@ class Account:
         address: str,
         private_key: Optional[str],
         lsig: Optional[transaction.LogicSig] = None,
+        app_id: Optional[int] = None,
     ):
         self.address = address
         self.private_key = private_key
         self.lsig = lsig
+        self.app_id = app_id
 
-        assert self.private_key or self.lsig
+        assert self.private_key or self.lsig or self.app_id
 
     def mnemonic(self) -> str:
         return mnemonic.from_private_key(self.private_key)
 
     def is_lsig(self) -> bool:
-        return bool(not self.private_key and self.lsig)
+        return bool(not self.private_key and not self.app_id and self.lsig)
+
+    def application_address(self) -> str:
+        return logic.get_application_address(self.app_id)
 
     @classmethod
     def create(cls) -> "Account":
@@ -157,8 +162,13 @@ def assert_stateful_output(expr: Expr, output: List[str]):
         transaction.StateSchema(0, 64),
     )
 
-    logs, _ = call_app(client, app_id)
+    logs, cost, callstack = call_app(client, app_id)
+    print("\nCost: {}, CallStack: {}".format(cost, callstack))
+    print(logs)
+
     assert logs == output
+
+    destroy_app(client, app_id)
 
 
 def assert_stateful_fail(expr: Expr, output: List[str]):
@@ -193,13 +203,29 @@ def assert_stateful_fail(expr: Expr, output: List[str]):
 def assert_output(expr: Expr, output: List[str], **kwargs):
     assert expr is not None
 
+    src = compile_method(expr)
+    assert len(src) > 0
+
+    compiled = assemble_bytecode(client, src)
+    assert len(compiled["hash"]) == 58
+
+    logs, cost, callstack = execute_app(client, compiled["result"], **kwargs)
+    print("\nCost: {}, CallStack: {}".format(cost, callstack))
+    print(logs)
+    assert logs == output
+
+
+def assert_application_output(expr: Expr, output: List[str], **kwargs):
+    assert expr is not None
+
     src = compile_app(expr)
     assert len(src) > 0
 
     compiled = assemble_bytecode(client, src)
     assert len(compiled["hash"]) == 58
 
-    logs, _ = execute_app(client, compiled["result"], **kwargs)
+    logs, cost, callstack = execute_app(client, compiled["result"], **kwargs)
+    print("\nCost: {}, CallStack: {}".format(cost, callstack))
     print(logs)
     assert logs == output
 
@@ -212,13 +238,13 @@ def assert_close_enough(
     """
     assert expr is not None
 
-    src = compile_app(expr)
+    src = compile_method(expr)
     assert len(src) > 0
 
     compiled = assemble_bytecode(client, src)
     assert len(compiled["hash"]) == 58
 
-    logs, _ = execute_app(client, compiled["result"], **kwargs)
+    logs, _, _ = execute_app(client, compiled["result"], **kwargs)
     for idx in range(len(output)):
         scale = 10 ** precisions[idx].precision
 
@@ -239,7 +265,7 @@ def assert_fail(expr: Expr, output: List[str], **kwargs):
     emsg = None
 
     try:
-        src = compile_app(expr)
+        src = compile_method(expr)
         assert len(src) > 0
 
         compiled = assemble_bytecode(client, src)
@@ -253,8 +279,12 @@ def assert_fail(expr: Expr, output: List[str], **kwargs):
     assert output.pop() in emsg
 
 
-def compile_app(method: Expr, version: int = TEAL_VERSION):
+def compile_method(method: Expr, version: int = TEAL_VERSION):
     return compileTeal(Seq(method, Int(1)), mode=Mode.Application, version=version)
+
+
+def compile_app(application: Expr, version: int = TEAL_VERSION):
+    return compileTeal(application, mode=Mode.Application, version=version)
 
 
 def compile_stateful_app(method: Expr, version: int = TEAL_VERSION):
@@ -302,6 +332,7 @@ def execute_app(client: algod.AlgodClient, bytecode: str, **kwargs):
             CLEAR_PROG,
         )
     ]
+
     if "pad_budget" in kwargs:
         for i in range(kwargs["pad_budget"]):
             txns.append(
@@ -310,18 +341,39 @@ def execute_app(client: algod.AlgodClient, bytecode: str, **kwargs):
                     sp,
                     0,
                     transaction.OnComplete.DeleteApplicationOC,
-                    transaction.StateSchema(0, 0),
-                    transaction.StateSchema(0, 0),
+                    kwargs["local_schema"],
+                    kwargs["global_schema"],
                     CLEAR_PROG,
                     CLEAR_PROG,
                     note=str(i).encode(),
                 )
             )
 
-    txns = transaction.assign_group_id(txns)
-    txid = client.send_transactions([txn.sign(acct.private_key) for txn in txns])
-    result = transaction.wait_for_confirmation(client, txid, 3)
-    return [b64decode(l).hex() for l in result["logs"]], result
+    txns = [txn.sign(acct.private_key) for txn in transaction.assign_group_id(txns)]
+    drr = transaction.create_dryrun(client, txns)
+
+    result = client.dryrun(drr)
+
+    return get_stats_from_dryrun(result)
+
+
+def get_stats_from_dryrun(dryrun_result):
+    logs, cost, trace_len = [], [], []
+    txn = dryrun_result["txns"][0]
+    raise_rejected(txn)
+    if "logs" in txn:
+        logs.extend([b64decode(l).hex() for l in txn["logs"]])
+    if "cost" in txn:
+        cost.append(txn["cost"])
+    if "app-call-trace" in txn:
+        trace_len.append(len(txn["app-call-trace"]))
+    return logs, cost, trace_len
+
+
+def raise_rejected(txn):
+    if "app-call-messages" in txn:
+        if "REJECT" in txn["app-call-messages"]:
+            raise Exception(txn["app-call-messages"][-1])
 
 
 def create_app(
@@ -362,20 +414,18 @@ def call_app(client: algod.AlgodClient, app_id: int, **kwargs):
         [
             transaction.ApplicationOptInTxn(acct.address, sp, app_id),
             transaction.ApplicationCallTxn(
-                acct.address,
-                sp,
-                app_id,
-                transaction.OnComplete.DeleteApplicationOC,
-                **kwargs
+                acct.address, sp, app_id, transaction.OnComplete.NoOpOC, **kwargs
             ),
             transaction.ApplicationClearStateTxn(acct.address, sp, app_id),
         ]
     )
 
-    client.send_transactions([txn.sign(acct.private_key) for txn in txns])
+    drr = transaction.create_dryrun(
+        client, [txn.sign(acct.private_key) for txn in txns]
+    )
+    result = client.dryrun(drr)
 
-    result = transaction.wait_for_confirmation(client, txns[1].get_txid(), 3)
-    return [b64decode(l).hex() for l in result["logs"]], result
+    return get_stats_from_dryrun(result)
 
 
 def destroy_app(client: algod.AlgodClient, app_id: int, **kwargs):

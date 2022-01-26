@@ -31,7 +31,15 @@ ascii_nine = Int(_ascii_nine)
 
 @Subroutine(TealType.uint64)
 def ascii_to_int(arg: TealType.uint64):
-    """ascii_to_int converts the integer representing a character in ascii to the actual integer it represents"""
+    """ascii_to_int converts the integer representing a character in ascii to the actual integer it represents
+
+    Args:
+        arg: uint64 in the range 48-57 that is to be converted to an integer
+
+    Returns:
+        uint64 that is the value the ascii character passed in represents
+
+    """
     return Seq(Assert(arg >= ascii_zero), Assert(arg <= ascii_nine), arg - ascii_zero)
 
 
