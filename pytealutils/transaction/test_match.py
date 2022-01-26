@@ -1,4 +1,4 @@
-from pyteal import Approve, Cond, Gtxn, Arg, Return, Bytes
+from pyteal import Approve, Arg, Bytes, Cond, Gtxn, Return
 from pytest import *
 
 from tests.helpers import *
