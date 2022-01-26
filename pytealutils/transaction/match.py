@@ -30,6 +30,7 @@ AssetConfig = {TxnField.type_enum: TxnType.AssetConfig}
 ToMe = {TxnField.receiver: Global.current_application_address()}
 FromMe = {TxnField.sender: Global.current_application_address()}
 
+
 def PaymentAmount(amount: Union[int, Int]) -> Dict[TxnField, Expr]:
     if type(amount) == int:
         amount = Int(amount)
@@ -70,4 +71,4 @@ class Match(Expr):
         return self.value.__teal__(options)
 
     def __str__(self):
-        return "Match({})"+self.value.__str__()
+        return "Match({})" + self.value.__str__()
