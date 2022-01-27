@@ -40,7 +40,7 @@ def PaymentAmount(amount: Union[int, Int]) -> Dict[TxnField, Expr]:
 def AssetIdAndAmount(
     id: Union[int, Int], amount: Union[int, Int]
 ) -> Dict[TxnField, Expr]:
-    if type(id) == int:
+    if type(id) is int:
         id = Int(id)
 
     if type(amount) == int:
