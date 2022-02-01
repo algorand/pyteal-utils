@@ -1,5 +1,5 @@
 from algosdk.future.transaction import StateSchema
-from pyteal import Bytes, Int, Itob, Log, Pop, Seq
+from pyteal import Bytes, BytesZero, Int, Itob, Log, Pop, Seq
 
 from tests.helpers import (
     LOGIC_EVAL_ERROR,
@@ -35,6 +35,16 @@ def test_global_blob_write_read():
         Log(b.read(Int(0), Int(8))),
     )
     expected = [logged_bytes("deadbeef")]
+    assert_output(expr, expected, global_schema=StateSchema(0, 64), pad_budget=3)
+
+
+def test_global_blob_write_read_boundary():
+    expr = Seq(
+        b.zero(),
+        Pop(b.write(Int(0), BytesZero(Int(381)))),
+        Log(b.read(Int(32), Int(40))),
+    )
+    expected = ["00" * 8]
     assert_output(expr, expected, global_schema=StateSchema(0, 64), pad_budget=3)
 
 

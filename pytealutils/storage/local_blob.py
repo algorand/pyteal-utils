@@ -185,7 +185,7 @@ class LocalBlob:
                         .Else(
                             Seq(
                                 delta.store(page_size),
-                                Substring(buff, written.load(), page_size),
+                                Extract(buff, written.load(), page_size),
                             )
                         ),
                     ),

@@ -166,9 +166,9 @@ def assert_stateful_output(expr: Expr, output: List[str]):
     print("\nCost: {}, CallStack: {}".format(cost, callstack))
     print(logs)
 
-    assert logs == output
-
     destroy_app(client, app_id)
+
+    assert logs == output
 
 
 def assert_stateful_fail(expr: Expr, output: List[str]):
