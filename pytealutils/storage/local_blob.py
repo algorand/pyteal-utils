@@ -37,7 +37,7 @@ def _key_and_offset(idx: Int) -> Tuple[Int, Int]:
 
 
 @Subroutine(TealType.bytes)
-def intkey(i: TealType.uint64) -> Expr:
+def intkey(i) -> Expr:
     return Extract(Itob(i), Int(7), Int(1))
 
 
@@ -51,7 +51,7 @@ class LocalBlob:
 
     @staticmethod
     @Subroutine(TealType.none)
-    def zero(acct: TealType.uint64) -> Expr:
+    def zero(acct) -> Expr:
         """
         initializes local state of an account to all zero bytes
 
@@ -68,7 +68,7 @@ class LocalBlob:
 
     @staticmethod
     @Subroutine(TealType.uint64)
-    def get_byte(acct: TealType.uint64, idx: TealType.uint64):
+    def get_byte(acct, idx):
         """
         Get a single byte from local storage of an account by index
         """
@@ -77,7 +77,7 @@ class LocalBlob:
 
     @staticmethod
     @Subroutine(TealType.none)
-    def set_byte(acct: TealType.uint64, idx: TealType.uint64, byte: TealType.uint64):
+    def set_byte(acct, idx, byte):
         """
         Set a single byte from local storage of an account by index
         """
@@ -88,9 +88,7 @@ class LocalBlob:
 
     @staticmethod
     @Subroutine(TealType.bytes)
-    def read(
-        acct: TealType.uint64, bstart: TealType.uint64, bend: TealType.uint64
-    ) -> Expr:
+    def read(acct, bstart, bend) -> Expr:
         """
         read bytes between bstart and bend from local storage of an account by index
         """
@@ -131,9 +129,7 @@ class LocalBlob:
 
     @staticmethod
     @Subroutine(TealType.uint64)
-    def write(
-        acct: TealType.uint64, bstart: TealType.uint64, buff: TealType.bytes
-    ) -> Expr:
+    def write(acct, bstart, buff) -> Expr:
         """
         write bytes between bstart and len(buff) to local storage of an account
         """

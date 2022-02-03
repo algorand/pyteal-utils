@@ -39,7 +39,7 @@ def _key_and_offset(idx: Int) -> Tuple[Int, Int]:
 
 
 @Subroutine(TealType.bytes)
-def intkey(i: TealType.uint64) -> Expr:
+def intkey(i: Expr) -> Expr:
     return Extract(Itob(i), Int(7), Int(1))
 
 
@@ -81,7 +81,7 @@ callsub zero_loop
 
     @staticmethod
     @Subroutine(TealType.uint64)
-    def get_byte(idx: TealType.uint64):
+    def get_byte(idx):
         """
         Get a single byte from global storage of an application by index
         """
@@ -90,7 +90,7 @@ callsub zero_loop
 
     @staticmethod
     @Subroutine(TealType.none)
-    def set_byte(idx: TealType.uint64, byte: TealType.uint64):
+    def set_byte(idx, byte):
         """
         Set a single byte from global storage of an application by index
         """
@@ -101,7 +101,7 @@ callsub zero_loop
 
     @staticmethod
     @Subroutine(TealType.bytes)
-    def read(bstart: TealType.uint64, bstop: TealType.uint64) -> Expr:
+    def read(bstart, bstop) -> Expr:
         """
         read bytes between bstart and bend from global storage of an application by index
         """
@@ -142,7 +142,7 @@ callsub zero_loop
 
     @staticmethod
     @Subroutine(TealType.uint64)
-    def write(bstart: TealType.uint64, buff: TealType.bytes) -> Expr:
+    def write(bstart, buff) -> Expr:
         """
         write bytes between bstart and len(buff) to global storage of an application
         """

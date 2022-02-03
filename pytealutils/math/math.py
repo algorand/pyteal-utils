@@ -40,7 +40,7 @@ half_uint = Int(_half_uint)
 
 
 @Subroutine(TealType.uint64)
-def odd(x: TealType.uint64):
+def odd(x):
     """odd returns 1 if x is odd
 
     Args:
@@ -54,7 +54,7 @@ def odd(x: TealType.uint64):
 
 
 @Subroutine(TealType.uint64)
-def even(x: TealType.uint64):
+def even(x):
     """even returns 1 if x is even
 
     Args:
@@ -69,7 +69,7 @@ def even(x: TealType.uint64):
 
 
 @Subroutine(TealType.uint64)
-def factorial(x: TealType.uint64):
+def factorial(x):
     """factorial returns x! = x * x-1 * x-2 * ...,
     for a 64bit integer, the max possible value is maxes out at 20
 
@@ -84,7 +84,7 @@ def factorial(x: TealType.uint64):
 
 
 @Subroutine(TealType.bytes)
-def wide_factorial(x: TealType.bytes):
+def wide_factorial(x):
     """factorial returns x! = x * x-1 * x-2 * ...,
 
     Args:
@@ -100,7 +100,7 @@ def wide_factorial(x: TealType.bytes):
 
 
 @Subroutine(TealType.bytes)
-def wide_power(x: TealType.uint64, n: TealType.uint64):
+def wide_power(x, n):
     """wide_power returns the result of x^n evaluated using expw and combining the hi/low uint64s into a byte string
 
     Args:
@@ -114,7 +114,7 @@ def wide_power(x: TealType.uint64, n: TealType.uint64):
     return Seq(InlineAssembly("expw", x, n), stack_to_wide())
 
 
-def exponential(x: TealType.uint64, n: TealType.uint64):
+def exponential(x, n):
     """exponential approximates e**x for n iterations
 
     TODO: currently this is scaled to 1000 first then scaled back. A better implementation should include the use of ufixed in abi types
@@ -144,7 +144,7 @@ def exponential(x: TealType.uint64, n: TealType.uint64):
 
 
 @Subroutine(TealType.uint64)
-def log2(x: TealType.uint64):
+def log2(x):
     """log2 is currently an alias for BitLen
 
     TODO: implement with ufixed
@@ -154,7 +154,7 @@ def log2(x: TealType.uint64):
 
 
 @Subroutine(TealType.uint64)
-def ln(x: TealType.uint64):
+def ln(x):
     """Returns natural log of x for integer passed
 
     This is heavily truncated since log2 does not return the fractional component yet
@@ -171,7 +171,7 @@ def ln(x: TealType.uint64):
 
 
 @Subroutine(TealType.uint64)
-def log10(x: TealType.uint64):
+def log10(x):
     """Returns log base 10 of the integer passed
 
     uses log10(x) = log2(x)/log2(10) identity
@@ -189,7 +189,7 @@ def log10(x: TealType.uint64):
 
 
 @Subroutine(TealType.uint64)
-def pow10(x: TealType.uint64) -> Expr:
+def pow10(x) -> Expr:
     """
     Returns 10^x, useful for things like total supply of an asset
 
@@ -198,19 +198,19 @@ def pow10(x: TealType.uint64) -> Expr:
 
 
 @Subroutine(TealType.uint64)
-def max(a: TealType.uint64, b: TealType.uint64) -> Expr:
+def max(a, b) -> Expr:
     """max returns the max of 2 integers"""
     return If(a > b, a, b)
 
 
 @Subroutine(TealType.uint64)
-def min(a: TealType.uint64, b: TealType.uint64) -> Expr:
+def min(a, b) -> Expr:
     """min returns the min of 2 integers"""
     return If(a < b, a, b)
 
 
 @Subroutine(TealType.uint64)
-def div_ceil(a: TealType.uint64, b: TealType.uint64) -> Expr:
+def div_ceil(a, b) -> Expr:
     """Returns the result of division rounded up to the next integer
 
     Args:
@@ -226,7 +226,7 @@ def div_ceil(a: TealType.uint64, b: TealType.uint64) -> Expr:
 
 
 @Subroutine(TealType.uint64)
-def bytes_to_int(x: TealType.bytes):
+def bytes_to_int(x):
     return If(
         Len(x) < Int(8),
         ExtractUint64(Concat(BytesZero(Int(8) - Len(x)), x), Int(0)),

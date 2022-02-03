@@ -39,11 +39,11 @@ class SignedInt(Int):
         return addition_without_overflow
 
     @staticmethod
-    def add(l: TealType.uint64, r: TealType.uint64) -> Expr:
+    def add(l, r) -> Expr:
         return SignedInt.__add_modulo__(l, r)
 
     @staticmethod
-    def subtract(l: TealType.uint64, r: TealType.uint64) -> Expr:
+    def subtract(l, r) -> Expr:
         return SignedInt.__add_modulo__(l, SignedInt.two_complement(r))
 
     @staticmethod

@@ -2,9 +2,7 @@ from pyteal import Expr, InnerTxnBuilder, Seq, Subroutine, TealType, TxnField, T
 
 
 @Subroutine(TealType.none)
-def axfer(
-    receiver: TealType.bytes, asset_id: TealType.uint64, amt: TealType.uint64
-) -> Expr:
+def axfer(receiver, asset_id, amt) -> Expr:
     return Seq(
         InnerTxnBuilder.Begin(),
         InnerTxnBuilder.SetFields(
@@ -20,7 +18,7 @@ def axfer(
 
 
 @Subroutine(TealType.none)
-def pay(receiver: TealType.bytes, amt: TealType.uint64) -> Expr:
+def pay(receiver, amt) -> Expr:
     return Seq(
         InnerTxnBuilder.Begin(),
         InnerTxnBuilder.SetFields(

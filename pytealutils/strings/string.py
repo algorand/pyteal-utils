@@ -30,7 +30,7 @@ ascii_nine = Int(_ascii_nine)
 
 
 @Subroutine(TealType.uint64)
-def ascii_to_int(arg: TealType.uint64):
+def ascii_to_int(arg):
     """ascii_to_int converts the integer representing a character in ascii to the actual integer it represents
 
     Args:
@@ -44,13 +44,13 @@ def ascii_to_int(arg: TealType.uint64):
 
 
 @Subroutine(TealType.bytes)
-def int_to_ascii(arg: TealType.uint64):
+def int_to_ascii(arg):
     """int_to_ascii converts an integer to the ascii byte that represents it"""
     return Extract(Bytes("0123456789"), arg, Int(1))
 
 
 @Subroutine(TealType.uint64)
-def atoi(a: TealType.bytes):
+def atoi(a):
     """atoi converts a byte string representing a number to the integer value it represents"""
     return If(
         Len(a) > Int(0),
@@ -61,7 +61,7 @@ def atoi(a: TealType.bytes):
 
 
 @Subroutine(TealType.bytes)
-def itoa(i: TealType.uint64):
+def itoa(i):
     """itoa converts an integer to the ascii byte string it represents"""
     return If(
         i == Int(0),
@@ -74,7 +74,7 @@ def itoa(i: TealType.uint64):
 
 
 @Subroutine(TealType.bytes)
-def witoa(i: TealType.bytes):
+def witoa(i):
     """witoa converts an byte string interpreted as an integer to the ascii byte string it represents"""
     return If(
         BitLen(i) == Int(0),
@@ -91,37 +91,37 @@ def witoa(i: TealType.bytes):
 
 
 @Subroutine(TealType.bytes)
-def head(s: TealType.bytes):
+def head(s):
     """head gets the first byte from a bytestring, returns as bytes"""
     return Extract(s, Int(0), Int(1))
 
 
 @Subroutine(TealType.bytes)
-def tail(s: TealType.bytes):
+def tail(s):
     """tail returns the string with the first character removed"""
     return Substring(s, Int(1), Len(s))
 
 
 @Subroutine(TealType.bytes)
-def suffix(s: TealType.bytes, n: TealType.uint64):
+def suffix(s, n):
     """suffix returns the last n bytes of a given byte string"""
     return Substring(s, Len(s) - n, Len(s))
 
 
 @Subroutine(TealType.bytes)
-def prefix(s: TealType.bytes, n: TealType.uint64):
+def prefix(s, n):
     """prefix returns the first n bytes of a given byte string"""
     return Substring(s, Int(0), n)
 
 
 @Subroutine(TealType.bytes)
-def rest(s: TealType.bytes, n: TealType.uint64):
+def rest(s, n):
     """prefix returns the first n bytes of a given byte string"""
     return Substring(s, n, Len(s))
 
 
 @Subroutine(TealType.bytes)
-def encode_uvarint(val: TealType.uint64, b: TealType.bytes):
+def encode_uvarint(val, b):
     """
     Returns the uvarint encoding of an integer
 
