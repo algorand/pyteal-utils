@@ -248,7 +248,7 @@ def stack_to_wide():
 
 
 @Subroutine(TealType.uint64)
-def sarturation(n, upper_limit, lower_limit) -> Expr:
+def saturation(n, upper_limit, lower_limit) -> Expr:
     """Produces an output that is the value of n bounded to the upper and lower
     saturation values. The upper and lower limits are specified by the
     parameters upper_limit and lower_limit."""

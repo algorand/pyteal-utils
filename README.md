@@ -45,6 +45,7 @@ This repository is meant to contain PyTEAL utility methods common in many Smart 
 - `max` - Returns the maximum of 2 integers
 - `min` - Returns the minimum of 2 integers
 - `div_ceil` - Returns the result of division rounded up to the next integer
+- `saturation` - Returns an output that is the value of _n_ bounded to the _upper_ and _lower_ saturation values
 
 ### Storage
 

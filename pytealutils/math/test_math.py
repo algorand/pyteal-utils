@@ -2,7 +2,7 @@ from pyteal import Int, Itob, Log, Seq
 
 from tests.helpers import assert_output, logged_int
 
-from .math import div_ceil, even, max, odd, pow10, sarturation
+from .math import div_ceil, even, max, odd, pow10, saturation
 
 
 def test_even():
@@ -86,14 +86,14 @@ def test_div_ceil():
 
 
 def test_saturation():
-    expr = Log(Itob(sarturation(Int(50), Int(100), Int(20))))
+    expr = Log(Itob(saturation(Int(50), Int(100), Int(20))))
     output = [logged_int(int(50))]
     assert_output(expr, output)
 
-    expr = Log(Itob(sarturation(Int(15), Int(100), Int(20))))
+    expr = Log(Itob(saturation(Int(15), Int(100), Int(20))))
     output = [logged_int(int(20))]
     assert_output(expr, output)
 
-    expr = Log(Itob(sarturation(Int(150), Int(100), Int(20))))
+    expr = Log(Itob(saturation(Int(150), Int(100), Int(20))))
     output = [logged_int(int(100))]
     assert_output(expr, output)
