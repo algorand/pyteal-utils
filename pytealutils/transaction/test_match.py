@@ -3,7 +3,7 @@ from pytest import *
 
 from tests.helpers import *
 
-from .match import *
+from .match import AssetIdAndAmount, Common, HasMinFee, Match, PaymentAmount
 
 
 def test_match():
