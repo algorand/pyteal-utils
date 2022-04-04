@@ -1,5 +1,4 @@
 from pyteal import Approve, Arg, Bytes, Cond, Gtxn, Return, TxnField
-from pytest import *
 
 from tests.helpers import *
 
