@@ -5,3 +5,4 @@ __pycache__/
 
 # Sphinx documentation
 docs/build/
+poetry.lock

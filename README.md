@@ -8,15 +8,17 @@ This repository is meant to contain PyTEAL utility methods common in many Smart 
 
 ## Contents
 
-- [Utils](#utils)
+- [pyteal-utils](#pyteal-utils)
+  - [Contents](#contents)
+  - [Utils](#utils)
     - [Inline Assembly](#inline-assembly)
     - [Iter](#iter)
     - [Math](#math)
     - [Storage](#storage)
     - [Strings](#strings)
     - [Transactions](#transactions)
-- [Contributing](#contributing)
-- [Prerequisites](#prerequisites)
+  - [Contributing](#contributing)
+  - [Prerequisites](#prerequisites)
     - [Set up your PyTEAL environment](#set-up-your-pyteal-environment)
 
 ## Utils
@@ -100,7 +102,7 @@ Please follow the [contribution guide](https://github.com/algorand/pyteal-utils/
 ### Set up your PyTEAL environment
 
 1. Set up the [sandbox](https://github.com/algorand/sandbox) and start it (`dev` mode recommended): `./sandbox up dev`
-2. Clone this repo: `git clone https://github.com/algorand/pyteal-utils.git`
+2. Clone this repo: `git clone https://github.com/algorand/pyteal-utils.git` and `cd` into the `pyteal-utils` directory
 3. Install Python dependecies: `poetry install`
 4. Activate a virual env: `poetry shell`
 5. Configure pre-commit hooks: `pre-commit install`

@@ -8,10 +8,10 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7"
-pyteal = ">=0.9.1"
-py-algorand-sdk = "^1.9.0"
-pytest = "^6.2.5"
+python = ">=3.10"
+pyteal = ">=0.13.0"
+py-algorand-sdk = ">=1.13.1"
+pytest = ">=6.2.5"
 pytest-xdist = "^2.4.0"
 PyYAML = "^6.0"
 pydantic = "^1.8.2"
