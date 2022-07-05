@@ -28,8 +28,8 @@ _scale = 1000000
 _log2_10 = math.log2(10)
 _log2_e = math.log2(math.e)
 
-_max_uint = (2 ** 64) - 1
-_half_uint = (2 ** 32) - 1
+_max_uint = (2**64) - 1
+_half_uint = (2**32) - 1
 
 log2_10 = Int(int(_log2_10 * _scale))
 log2_e = Int(int(_log2_e * _scale))
