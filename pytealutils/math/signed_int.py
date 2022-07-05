@@ -6,12 +6,12 @@ from pyteal import BinaryExpr, Expr, Int, Op, TealType, UnaryExpr
 class SignedInt(Int):
     def __init__(self, value: int):
         assert (
-            -(2 ** 63) <= value <= 2 ** 63 - 1
+            -(2**63) <= value <= 2**63 - 1
         ), "Value must be between -2^63 and 2^63-1"
 
         if value < 0:
             value = abs(value)
-            value = ((value ^ 0xFFFFFFFFFFFFFFFF) + 1) % 2 ** 64
+            value = ((value ^ 0xFFFFFFFFFFFFFFFF) + 1) % 2**64
 
         super().__init__(value)
 
