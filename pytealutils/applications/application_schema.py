@@ -166,6 +166,9 @@ class GlobalStateValue(Expr):
     def get_else(self, val: Expr) -> Expr:
         return If((v := App.globalGetEx(Int(0), self.key)).hasValue(), v.value(), val)
 
+    def is_default(self) -> Expr:
+        return self.get() == self.default
+
 
 class AccountState:
     def __init__(self):
