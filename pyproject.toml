@@ -9,8 +9,8 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.10"
-pyteal = ">=0.13.0"
-py-algorand-sdk = ">=1.13.1"
+pyteal = {git = "https://github.com/algorand/pyteal", branch="feature/abi"}
+py-algorand-sdk = ">=1.15.0"
 pytest = ">=6.2.5"
 pytest-xdist = "^2.4.0"
 PyYAML = "^6.0"
@@ -18,7 +18,7 @@ pydantic = "^1.8.2"
 pytest-depends = "^1.0.1"
 
 [tool.poetry.dev-dependencies]
-black = {version = "^21.9b0", allow-prereleases = true}
+black = {version = "^22.3.0", allow-prereleases = true}
 
 [build-system]
 requires = ["setuptools", "poetry-core>=1.0.0"]

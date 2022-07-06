@@ -29,8 +29,8 @@ _scale = 1000000
 _log2_10 = math.log2(10)
 _log2_e = math.log2(math.e)
 
-_max_uint = (2 ** 64) - 1
-_half_uint = (2 ** 32) - 1
+_max_uint = (2**64) - 1
+_half_uint = (2**32) - 1
 
 log2_10 = Int(int(_log2_10 * _scale))
 log2_e = Int(int(_log2_e * _scale))
@@ -252,10 +252,10 @@ def saturation(n, upper_limit, lower_limit) -> Expr:
     """Produces an output that is the value of n bounded to the upper and lower
     saturation values. The upper and lower limits are specified by the
     parameters upper_limit and lower_limit."""
-    return If(n >= upper_limit).Then(
-        Return(upper_limit)
-    ).ElseIf(n <= lower_limit).Then(
-        Return(lower_limit)
-    ).Else(
-        Return(n)
+    return (
+        If(n >= upper_limit)
+        .Then(Return(upper_limit))
+        .ElseIf(n <= lower_limit)
+        .Then(Return(lower_limit))
+        .Else(Return(n))
     )
